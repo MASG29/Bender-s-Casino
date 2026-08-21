@@ -1,0 +1,11 @@
+spring:
+  http:
+    clients:
+      connect-timeout: 2s
+      read-timeout: 3s
+
+deckofcards:
+  mode: api                       # api | memory  (--deckofcards.mode=memory na demo sem rede)
+  base-url: https://deckofcardsapi.com/api/deck
+  deck-count: 6
+  reshuffle-threshold: 15

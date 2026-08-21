@@ -1,0 +1,59 @@
+Bender-s-Casino/
+├── .gitignore                     ← TAREFA #1, antes de qualquer código
+├── mvnw / mvnw.cmd / .mvn/        ← Maven Wrapper COMMITADO
+├── pom.xml
+├── docs/PLANO-MVP.md              ← este documento
+├── Prompts_to_omni.md             ← histórico de prompts (no .gitignore)
+└── src/
+    ├── main/java/com/bendercasino/
+    │   ├── BenderCasinoApplication.java
+    │   ├── model/
+    │   │   ├── Card.java              (record)
+    │   │   ├── Hand.java
+    │   │   ├── Player.java
+    │   │   ├── Bet.java               (record)
+    │   │   ├── GameSession.java
+    │   │   ├── Deck.java              (record)
+    │   │   ├── GameStatus.java  Outcome.java  JokeTrigger.java
+    │   ├── service/
+    │   │   ├── HandValueCalculator.java   ← função pura, ponto de entrada do TDD
+    │   │   ├── BlackjackService.java
+    │   │   ├── PlayerService.java
+    │   │   └── JokeService.java
+    │   ├── client/
+    │   │   ├── DeckClient.java            (interface)
+    │   │   ├── DeckOfCardsApiClient.java
+    │   │   ├── InMemoryDeckClient.java
+    │   │   └── dto/ DeckResponse.java  DrawResponse.java  ApiCard.java
+    │   ├── repository/
+    │   │   ├── InMemoryPlayerRepository.java
+    │   │   └── InMemoryGameSessionRepository.java
+    │   ├── controller/
+    │   │   ├── PlayerController.java
+    │   │   ├── BlackjackController.java
+    │   │   └── SpaForwardController.java  ← ver secção 4, crítico
+    │   ├── dto/
+    │   │   ├── CreatePlayerRequest.java  PlayerResponse.java
+    │   │   ├── StartGameRequest.java     PlayerActionRequest.java
+    │   │   ├── GameStateResponse.java    HandDto.java  CardDto.java
+    │   │   ├── JokeRequest.java          JokeResponse.java
+    │   │   └── ErrorResponse.java
+    │   ├── exception/
+    │   │   ├── GlobalExceptionHandler.java   (@RestControllerAdvice)
+    │   │   ├── PlayerNotFoundException.java
+    │   │   ├── GameNotFoundException.java
+    │   │   ├── InsufficientBalanceException.java
+    │   │   ├── InvalidBetException.java
+    │   │   ├── InvalidGameStateException.java
+    │   │   └── DeckApiException.java
+    │   ├── config/ RestClientConfig.java
+    │   └── util/  CardMapper.java
+    ├── main/resources/
+    │   ├── application.yml
+    │   ├── bender-jokes.json          ← catálogo de piadas por trigger
+    │   └── static/                    ← SPA (secção 4)
+    └── test/java/com/bendercasino/
+        ├── service/ HandValueCalculatorTest.java  BlackjackServiceTest.java
+        │            JokeServiceTest.java
+        ├── client/  DeckOfCardsApiClientTest.java
+        └── controller/ BlackjackControllerTest.java  PlayerControllerTest.java
