@@ -1,6 +1,5 @@
 package com.bendercasino.service;
 
-import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
 import com.bendercasino.repository.InMemoryPlayerRepository;
@@ -21,23 +20,17 @@ public class PlayerService {
     }
 
     public Player create(String name) {
-        Player player = new Player(name);
-        return playerRepository.save(player);
+        // TODO
+        throw new UnsupportedOperationException("implement");
     }
 
     public Player findById(UUID id) {
-        return playerRepository.findById(id)
-                .orElseThrow(() -> new PlayerNotFoundException(id));
+        // TODO
+        throw new UnsupportedOperationException("implement");
     }
 
     public Player reset(UUID id) {
-        Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new PlayerNotFoundException(id));
-
-        player.reset();
-        playerRepository.save(player);
-        sessionRepository.deleteByPlayerId(id);
-
-        return player;
+        // TODO
+        throw new UnsupportedOperationException("implement");
     }
 }
