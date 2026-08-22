@@ -178,7 +178,7 @@ class BlackjackServiceTest {
 
     // --- 6. stand: dealer busts ---
     @Test
-    @DisplayName("stand dealer busts -> DEALER_BUST, balance 1200")
+    @DisplayName("stand dealer busts -> DEALER_BUST, balance 1100")
     void stand_dealerBusts_dealerBust() {
         var deck = new Deck("deck-1", 308);
         when(deckClient.newShuffledDeck(6)).thenReturn(deck);
@@ -196,7 +196,7 @@ class BlackjackServiceTest {
 
         assertThat(session.getStatus()).isEqualTo(GameStatus.FINISHED);
         assertThat(session.getOutcome()).isEqualTo(Outcome.DEALER_BUST);
-        assertThat(player.getBalance()).isEqualTo(1200); // 1000 - 100 + 200
+        assertThat(player.getBalance()).isEqualTo(1100); // 1000 - 100 + 200
         assertThat(player.getTotalWins()).isEqualTo(1);
         assertThat(session.getBet().payout()).isEqualTo(200);
     }
