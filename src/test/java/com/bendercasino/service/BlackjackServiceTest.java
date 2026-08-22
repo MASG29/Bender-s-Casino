@@ -28,6 +28,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -174,6 +176,7 @@ class BlackjackServiceTest {
         assertThat(player.getBalance()).isEqualTo(1100); // 1000 - 100 + 200
         assertThat(player.getTotalWins()).isEqualTo(1);
         assertThat(session.getBet().payout()).isEqualTo(200);
+        verify(deckClient, times(1)).draw("deck-1", 1);
     }
 
     // --- 6. stand: dealer busts ---
