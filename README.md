@@ -55,7 +55,7 @@ To run the back-end tests:
 
 ## Contributors
 
-- Marco Gil — [@MASG29](https://github.com/MASG29)
+- Marco Guimarães — [@MASG29](https://github.com/MASG29)
 - Diogo Pinto — [@diogompintoo](https://github.com/diogompintoo)
 - Eddie — [@Eddie-PL](https://github.com/Eddie-PL)
 - Tiago Paulos — [@AquaTPPT](https://github.com/AquaTPPT)
