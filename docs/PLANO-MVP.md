@@ -408,7 +408,7 @@ Fontes: `Orbitron` (títulos) + `Share Tech Mono` (números) via Google Fonts. I
     | C2 | `router.js` (History API, `popstate`, links `data-link`) | `static/js/` | C1 |
     | C3 | View **Home**: input de nome → `POST /api/players` → `/lobby` | `views/home.js` | C2, D2 |
     | C4 | View **Lobby**: mesas, saldo, botão "Jogar Blackjack" | `views/lobby.js` | C2 |
-    | C5 | View **Profile**: nome, saldo, `stats`, botão reset → `POST /api/players/{id}/reset` | `views/profile.js` | C2, B7 |
+    | C5 | View **Profile**: nome, saldo, `stats`, botão reset → `POST /api/players/{id}/reset` | `views/profile.js` | C2, B8 |
     | C6 | `table.css` — mesa, slots de cartas, fichas, animação `deal` | `static/css/` | C1 |
     | C7 | `components/card.js` (`<img>` a partir da URL da API) + `chips.js` | `components/` | C6 |
     | C8 | Responsivo + estados de loading/erro | todos | C3-C7 |
@@ -416,7 +416,7 @@ Fontes: `Orbitron` (títulos) + `Share Tech Mono` (números) via Google Fonts. I
     ### 👤 Pessoa D — Front-end / Integração + Bender
     | # | Tarefa | Ficheiros | Depende de |
     |---|---|---|---|
-    | D1 | **`bender-jokes.json`** — ≥6 frases por `JokeTrigger` (conteúdo, sem código) ⚠️ *desbloqueia A8* | `resources/` | — |
+    | D1 | **`bender-jokes.json`** — ≥6 frases por `JokeTrigger` (conteúdo, sem código) ⚠️ *desbloqueia B7* | `resources/` | — |
     | D2 | `api.js` (wrapper fetch) + `ApiError` + `state.js` com `sessionStorage` | `static/js/` | B5 (formato dos DTOs) |
     | D3 | View **BlackjackTable**: apostar → start → hit/stand | `views/blackjack.js` | C6, D2 |
     | D4 | Render do `GameStateResponse` (mãos, valores, carta tapada) | `views/blackjack.js` | D3 |
@@ -463,15 +463,15 @@ main            ← protegida. Só recebe merge do dev no Domingo à noite. Tag 
 | Hora | Quem | O quê |
 |---|---|---|
 | 0:00–0:30 | **Todos** | Reunião: ler `docs/PLANO-MVP.md`, fixar o `GameStateResponse` (secção 3). **É o contrato — a partir daqui não muda.** |
-| 0:30–1:00 | A | A1 + A2 → **push direto para `dev`** (setup inicial). Todos clonam. |
+| 0:30–1:00 | A | A1 → **push direto para `dev`** (setup inicial). Todos clonam. |
 | 1:00–1:30 | B, D | **B1** (interface `DeckClient`) e **D1** (`bender-jokes.json`) → PR imediato. Desbloqueiam A e B. |
 | 1:00–1:30 | C | C1 (`index.html` + `theme.css`) |
-| 1:30–4:00 | A | **A3 (TDD ases!)** → A4 → A5 |
-| 1:30–4:00 | B | B2 → B3 → B4 (Deck API a funcionar) |
+| 1:30–4:00 | A | **A2 (TDD ases!)** → A3 → A4 |
+| 1:30–4:00 | B | B2 → B3 (Deck API a funcionar) |
 | 1:30–4:00 | C | C2 (router) → C4 (lobby) |
 | 1:30–4:00 | D | D2 (`api.js`, `state.js`) |
-| 4:00–7:00 | A | **A6 — `BlackjackService` completo (TDD)** ← *tarefa mais importante do dia* → **acabar com A7 (`PlayerService`)**, porque o B7 de amanhã de manhã depende dele |
-| 4:00–7:00 | B | B5 (DTOs) → B6 (exceções) |
+| 4:00–7:00 | A | **A5 — `BlackjackService` completo (TDD)** ← *tarefa mais importante do dia* |
+| 4:00–7:00 | B | B4 (DTOs) → B5 (exceções) → **B6 (`PlayerService`)** |
 | 4:00–7:00 | C | C3 (home) → C4 (lobby, se faltou) |
 | 4:00–7:00 | D | D5 (painel do Bender) + C6 a pares com C |
 | Fim do dia | **Todos** | Merge para `dev`. `./mvnw test` verde. Demo interna de 5 min. |
@@ -482,8 +482,8 @@ main            ← protegida. Só recebe merge do dev no Domingo à noite. Tag 
 | Hora | Quem | O quê |
 |---|---|---|
 | 0:00–0:15 | Todos | `git pull --rebase origin dev`. Bloqueios em 1 frase cada. |
-| 0:15–3:00 | A | **A8 + A9 (`JokeService` + testes)**. Revisão de PRs. Se o B travar no B7, largar as piadas e ajudar. |
-| 0:15–3:00 | B | **B7 (controllers)** → B8 — *desbloqueado pelo A7, entregue ontem* |
+| 0:15–3:00 | A | **A6 + A7** (testes de `DeckOfCardsApiClient` e `JokeService`). Revisão de PRs. Se o B travar em B8, ajudar nos controllers. |
+| 0:15–3:00 | B | **B7 (`JokeService`)** → **B8 (controllers)** |
 | 0:15–3:00 | C | C6 + C7 (mesa e cartas) |
 | 0:15–3:00 | D | D3 + D4 (ligar a mesa à API) |
 | **3:00** | **Todos** | 🔴 **PONTO DE INTEGRAÇÃO — parar tudo.** Front + back a falar. Jogar uma mão de verdade, os 4 à volta do mesmo ecrã. |
@@ -533,26 +533,26 @@ main            ← protegida. Só recebe merge do dev no Domingo à noite. Tag 
 **Back-end**
 | Issue | Pessoa | Est. | Labels |
 |---|---|---|---|
-| Interface `DeckClient` + DTOs ⚠️ *bloqueia A6* | B | 0.5h | `backend` `deck-api` |
+| Interface `DeckClient` + DTOs ⚠️ *bloqueia A5* | B | 0.5h | `backend` `deck-api` |
 | `HandValueCalculator` (TDD, ases) | A | 1.5h | `backend` |
 | Modelos de domínio + enums | A | 1h | `backend` |
 | Repositórios em memória | A | 0.5h | `backend` |
 | `InMemoryDeckClient` | B | 1h | `backend` `deck-api` |
 | `DeckOfCardsApiClient` + RestClient + timeouts | B | 1.5h | `backend` `deck-api` |
-| Teste do cliente (MockRestServiceServer) | B | 1h | `backend` `deck-api` |
+| Teste do cliente (MockRestServiceServer) | A | 1h | `backend` `deck-api` |
 | **`BlackjackService` (TDD) — caminho crítico** | A | 3h | `backend` |
-| `PlayerService` (criar, saldo, reset, contadores) | A | 1h | `backend` |
-| `JokeService` + prioridade de triggers | A | 2h | `backend` `jokes` |
+| `PlayerService` (criar, saldo, reset, contadores) | B | 1h | `backend` |
+| `JokeService` + prioridade de triggers | B | 2h | `backend` `jokes` |
 | `JokeServiceTest` | A | 1h | `backend` `jokes` |
 | DTOs de request/response | B | 1h | `backend` |
 | Exceções + `GlobalExceptionHandler` | B | 1h | `backend` |
 | Controllers REST (inclui `POST /players/{id}/reset`) | B | 2h | `backend` |
-| Testes de controller (`@WebMvcTest`) | B | 1.5h | `backend` |
+| Testes de controller (`@WebMvcTest`) | A | 1.5h | `backend` |
 
 **Front-end**
 | Issue | Pessoa | Est. | Labels |
 |---|---|---|---|
-| `bender-jokes.json` (≥6 por trigger) ⚠️ *bloqueia A8* | D | 1h | `jokes` |
+| `bender-jokes.json` (≥6 por trigger) ⚠️ *bloqueia B7* | D | 1h | `jokes` |
 | `index.html` + tema neon/metal | C | 1.5h | `frontend` |
 | Router History API | C | 1.5h | `frontend` |
 | `SpaForwardController` (F5 nas rotas) | C | 0.3h | `backend` `frontend` |
@@ -572,9 +572,9 @@ main            ← protegida. Só recebe merge do dev no Domingo à noite. Tag 
 
 **Backlog (pós-MVP):** Roleta · Slots · Dockerfile + deploy Koyeb · teste E2E Playwright · piadas por IA com moderação · persistência JPA/H2 · split/double/insurance · tabela de recordes.
 
-**Total ≈ 46h ÷ 4 pessoas ≈ 11.5h cada em 3 dias.** Somando a tabela: **A ≈ 13h** (e ainda é Git Master, papel não estimado) · **B ≈ 9.5h** · **C ≈ 11.5h** · **D ≈ 12.5h**.
+**Total ≈ 44.5h ÷ 4 pessoas ≈ 11h cada em 3 dias.** Somando a tabela: **A ≈ 10.7h** (e ainda é Git Master, papel não estimado) · **B ≈ 10h** · **C ≈ 11.3h** · **D ≈ 12.5h**.
 
-O B tem folga **de propósito** — carrega o caminho crítico e é quem mais provavelmente derrapa. **Válvula de escape:** se ao fim do Dia 1 o A já passou das 12h reais, o `JokeService` (A8/A9) volta para o B. Não desbloqueia ninguém — é o amortecedor do plano. É apertado — por isso o feature freeze às 15h de Domingo não é uma sugestão.
+É apertado — por isso o feature freeze às 15h de Domingo não é uma sugestão.
 
 ### Setup do Linear (10 minutos, faz-se uma vez)
 
@@ -594,7 +594,7 @@ O B tem folga **de propósito** — carrega o caminho crítico e é quem mais pr
 
 ### 9.1 Piadas do Bender — onde e quando
 
-O `JokeService` tem **dois métodos**, e a diferença entre eles é o teste do A9:
+O `JokeService` tem **dois métodos**, e a diferença entre eles é o teste do A7:
 
 ```java
 // 1. Usado pelo BlackjackService a cada ação. O SERVIÇO resolve o trigger
@@ -605,7 +605,7 @@ String jokeFor(Player player, Outcome outcome);
 String jokeFor(Player player, JokeTrigger trigger);
 ```
 
-Se o trigger fosse sempre um parâmetro de entrada, **a prioridade não era testável** — e é precisamente isso que o `JokeServiceTest` (A9) tem de verificar.
+Se o trigger fosse sempre um parâmetro de entrada, **a prioridade não era testável** — e é precisamente isso que o `JokeServiceTest` (A7) tem de verificar.
 
 **Prioridade dos triggers** — resolvida dentro do método 1, o primeiro que der match ganha:
 
