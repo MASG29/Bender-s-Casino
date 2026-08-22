@@ -417,13 +417,13 @@ Fontes: `Orbitron` (títulos) + `Share Tech Mono` (números) via Google Fonts. I
     | # | Tarefa | Ficheiros | Depende de |
     |---|---|---|---|
     | D1 | **`bender-jokes.json`** — ≥6 frases por `JokeTrigger` (conteúdo, sem código) ⚠️ *desbloqueia B7* | `resources/` | — |
-    | D2 | `api.js` (wrapper fetch) + `ApiError` + `state.js` com `sessionStorage` | `static/js/` | B5 (formato dos DTOs) |
+    | D2 | `api.js` (wrapper fetch) + `ApiError` + `state.js` com `sessionStorage` | `static/js/` | B4 (formato dos DTOs) |
     | D3 | View **BlackjackTable**: apostar → start → hit/stand | `views/blackjack.js` | C6, D2 |
     | D4 | Render do `GameStateResponse` (mãos, valores, carta tapada) | `views/blackjack.js` | D3 |
     | D5 | `components/bender.js` — painel do Bender, efeito typewriter, fala em cada ação | `components/` | D2 |
     | D6 | Animações: distribuir, virar a carta do dealer, contador de fichas | `static/js/` | D4 |
     | D7 | Ecrãs de fim de mão (WIN/LOSE/PUSH/BLACKJACK) + "Nova mão" | `views/blackjack.js` | D4 |
-    | D8 | Tratamento de erros na UI (saldo insuficiente, API de cartas em baixo) | `static/js/` | D2, B6 |
+    | D8 | Tratamento de erros na UI (saldo insuficiente, API de cartas em baixo) | `static/js/` | D2, B5 |
     
     **Caminho crítico:** `B1 → A5 → B8 → D3`. **B1 e D1 são as duas primeiras coisas a serem feitas no Dia 1**, porque desbloqueiam duas pessoas cada.
 
