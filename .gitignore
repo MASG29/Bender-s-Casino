@@ -1,0 +1,16 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Build
+target/
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# OS
+.DS_Store
+
+# Local-only (não faz parte da aplicação)
+.claude/
+CLAUDE.md
