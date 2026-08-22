@@ -1,6 +1,6 @@
 # Bender's Casino — Tarefas Back-end
 
-> Arquitetura completa, contrato REST e regras de negócio: ver `docs/PLANO-MVP.md`.
+> Contrato REST, modelos e regras de negócio combinados em equipa no Dia 1 — ver `GameStateResponse` e `PlayerResponse` no código (`dto/`) como fonte de verdade.
 
 **Regra da divisão:** o Marco escreve todos os testes de back-end (é também o Git Master); o Diogo implementa as suas tarefas sem anexar testes — ver regra 2 da secção 6 do plano.
 

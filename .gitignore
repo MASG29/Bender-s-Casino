@@ -10,7 +10,3 @@ target/
 
 # OS
 .DS_Store
-
-# Local-only (não faz parte da aplicação)
-.claude/
-CLAUDE.md

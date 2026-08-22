@@ -2,8 +2,6 @@ Bender-s-Casino/
 ├── .gitignore                     ← TAREFA #1, antes de qualquer código
 ├── mvnw / mvnw.cmd / .mvn/        ← Maven Wrapper COMMITADO
 ├── pom.xml
-├── docs/PLANO-MVP.md              ← este documento
-├── Prompts_to_omni.md             ← histórico de prompts (no .gitignore)
 └── src/
     ├── main/java/com/bendercasino/
     │   ├── BenderCasinoApplication.java
