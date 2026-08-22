@@ -34,7 +34,7 @@ O commit inicial do esqueleto já entregou (a preencher só o que falta, marcado
 | B3 | `RestClientConfig` + implementar `DeckOfCardsApiClient` (chamadas reais à Deck of Cards API) | `client/`, `config/` | B1 |
 | B4 | DTOs de request/response | `dto/` | ✅ feito |
 | B5 | `GlobalExceptionHandler` + 6 exceções | `exception/` | ✅ feito |
-| B6 | Implementar `PlayerService` (criar, saldo, streaks, `reset()`). O `reset()` usa os dois repositórios: repõe o jogador e apaga a sessão ativa | `service/` | A4 |
+| B6 | Implementar `PlayerService` (criar, saldo, streaks, `reset()`). O `reset()` usa os dois repositórios: repõe o jogador e apaga a sessão ativa. `PlayerServiceTest` já existe (branch `feat/a-dominio`) — implementar contra ele, não escrever teste novo | `service/` | A4 |
 | B7 | Implementar `JokeService` + `JokeTrigger` + carregar `bender-jokes.json` | `service/` | D1 |
 | B8 | Implementar `PlayerController` + `BlackjackController` (inclui `POST /players/{id}/reset`) | `controller/` | A5, B4, B5, B6 |
 
