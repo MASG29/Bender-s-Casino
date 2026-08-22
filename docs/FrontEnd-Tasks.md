@@ -1,6 +1,6 @@
 # Bender's Casino — Tarefas Front-end
 
-> Arquitetura completa, contrato REST (`GameStateResponse`, `PlayerResponse`) e tema visual: ver `docs/PLANO-MVP.md`, secções 3 e 4.
+> Contrato REST combinado em equipa no Dia 1 — `GameStateResponse` e `PlayerResponse` (ver `dto/` no back-end) são a fonte de verdade para o que a UI recebe.
 
 SPA vanilla HTML/CSS/JS em `src/main/resources/static/`, mesma origem que o back-end — sem CORS, um único `.jar` no fim.
 
