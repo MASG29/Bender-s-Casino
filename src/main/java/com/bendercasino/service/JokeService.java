@@ -66,7 +66,6 @@ public class JokeService {
     private String pick(Player player, JokeTrigger trigger, List<String> pool) {
         if (pool.isEmpty()) {
             List<String> fallback = jokes.getOrDefault(trigger, List.of("..."));
-            pool = fallback;
         }
         String key = player.getId() + ":" + trigger.name();
         int last =  lastJokeIndex.getOrDefault(key, -1);

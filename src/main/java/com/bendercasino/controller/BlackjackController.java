@@ -30,25 +30,29 @@ public class BlackjackController {
     @PostMapping("/start")
     public GameStateResponse start(@Valid @RequestBody StartGameRequest request) {
         GameSession session = blackjackService.start(request.playerId(), request.bet());
-        return toDTO(session);
+        Player player = playerService.findById(request.playerId());
+        return toDTO(session, player);
     }
 
     @PostMapping("/hit")
     public GameStateResponse hit(@Valid @RequestBody PlayerActionRequest request) {
         GameSession session = blackjackService.hit(request.playerId());
-        return toDTO(session);
+        Player player = playerService.findById(request.playerId());
+        return toDTO(session, player);
     }
 
     @PostMapping("/stand")
     public GameStateResponse stand(@Valid @RequestBody PlayerActionRequest request) {
         GameSession session = blackjackService.stand(request.playerId());
-        return toDTO(session);
+        Player player = playerService.findById(request.playerId());
+        return toDTO(session, player);
     }
 
     @GetMapping("/state/{playerId}")
     public GameStateResponse state(@PathVariable UUID playerId) {
         GameSession session = blackjackService.getState(playerId);
-        return toDTO(session);
+        Player player = playerService.findById(playerId);
+        return toDTO(session, player);
     }
 
     @PostMapping("/joke")
@@ -59,11 +63,20 @@ public class BlackjackController {
         return new JokeResponse(joke);
     }
 
-    private GameStateResponse toDTO(GameSession session) {
+    private GameStateResponse toDTO(GameSession session, Player player) {
         boolean hidden = session.getStatus() == GameStatus.PLAYER_TURN;
+
         HandDto dealerDto = hidden
                 ? CardMapper.toDtoDealerHidden(session.getDealerHand())
                 : CardMapper.toDto(session.getDealerHand());
+
+        String joke = jokeService.jokeFor(player, session.getOutcome());
+
+        GameStateResponse.StreaksDto streaks = new GameStateResponse.StreaksDto(
+                player.getConsecutiveWins(),
+                player.getConsecutiveLosses(),
+                player.getConsecutiveBlackjacks()
+        );
 
         return new GameStateResponse(
                 session.getGameId(),
@@ -74,8 +87,8 @@ public class BlackjackController {
                 session.getBet().amount(),
                 session.getOutcome() != null ? session.getOutcome().name() : null,
                 session.getBet().payout(),
-                null,
-                null
+                joke,
+                streaks
         );
     }
 }
