@@ -63,4 +63,4 @@ function start() {
     navigate(window.location.pathname, true);
 }
 
-export default { start };
+export default { start, navigate };
