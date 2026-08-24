@@ -24,7 +24,7 @@ function setAnchorEventListener() {
 async function launchController(controllerName) {
     try {
         const controllerModule = await import(
-            `./controllers/${controllerName}.js`
+            `./views/pages/${controllerName}.js`
             );
         controllerModule.init();
     } catch (error) {
@@ -58,11 +58,9 @@ function navigate(path, firstLoad = false) {
 }
 
 function start() {
-    const path = window.location.pathname;
-
-    navigate(path, true);
     setAnchorEventListener();
     addEventListener("popstate", handlePopState);
+    navigate(window.location.pathname, true);
 }
 
-export default { start };
+export default { start, navigate };

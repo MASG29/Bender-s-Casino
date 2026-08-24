@@ -19,4 +19,9 @@ export default {
         path: "/profile",
         controller: "profile",
     },
+
+    currentPath: {
+        path: "",
+        controller: "",
+    },
 }
