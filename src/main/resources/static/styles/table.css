@@ -1,0 +1,241 @@
+/* ---------- blackjack table ---------- */
+
+.bj {
+    /* chip rail width + floor gap, so headings and controls line up with the felt */
+    --bj-offset: 142px;
+
+    margin: 0 auto;
+    max-width: 1280px;
+    padding: 5vh 4vw 8vh;
+    text-align: center;
+}
+
+.bj h2 {
+    padding-left: var(--bj-offset);
+    font-size: 1.6rem;
+    color: var(--text);
+    margin-bottom: 28px;
+}
+
+.bj-floor {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.bj-table {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6vh;
+    min-height: 70vh;
+    padding: 52px 36px;
+    border: 12px solid var(--steel-darker);
+    border-radius: 220px / 110px;
+    background: radial-gradient(ellipse at 50% 38%, #1f5c3d 0%, #163f2b 62%, #0e2b1d 100%);
+    box-shadow:
+            inset 0 0 90px rgba(0, 0, 0, 0.55),
+            0 12px 34px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- chip rail ---------- */
+
+.bj-chips {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 14px;
+    background: var(--panel);
+    border: 1px solid #0d0d0d;
+}
+
+.bj-chip {
+    background: none;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    line-height: 0;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.bj-chip img {
+    width: 84px;
+    height: 84px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.55));
+}
+
+.bj-chip:hover {
+    transform: translateY(-3px) scale(1.04);
+    filter: brightness(1.1);
+}
+
+.bj-chip:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ---------- seats ---------- */
+
+.bj-seat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.bj-seat-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.bj-score {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #f0efe9;
+}
+
+/* ---------- card slots ---------- */
+
+.bj-hand {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    min-height: 154px;
+}
+
+.bj-slot {
+    width: 110px;
+    height: 154px;
+    border: 2px dashed rgba(255, 255, 255, 0.16);
+    border-radius: 10px;
+}
+
+/* ---------- cards ---------- */
+
+.card {
+    width: 110px;
+    height: 154px;
+    perspective: 800px;
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+}
+
+.card.is-facedown .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+}
+
+.card-front {
+    background: #f5f4ef var(--card-img, none) center / contain no-repeat;
+    border: 1px solid #0d0d0d;
+}
+
+.card-back {
+    transform: rotateY(180deg);
+    border: 1px solid #0d0d0d;
+    background:
+            repeating-linear-gradient(45deg, #6d2020 0 6px, #571919 6px 12px);
+}
+
+/* ---------- deal animation ---------- */
+
+@keyframes deal {
+    from {
+        transform:
+                translate(
+                        calc(var(--deck-left, 0px) - var(--slot-left, 0px)),
+                        calc(var(--deck-top, 0px) - var(--slot-top, 0px))
+                )
+                rotate(-8deg);
+        opacity: 0.5;
+    }
+    to {
+        transform: translate(0, 0) rotate(0);
+        opacity: 1;
+    }
+}
+
+.card.is-dealing {
+    animation: deal 0.35s ease-out;
+}
+
+/* ---------- action buttons ---------- */
+
+.bj .blackjack-ui {
+    justify-content: center;
+    padding-left: var(--bj-offset);
+    margin-top: 4vh;
+}
+
+.bj .blackjack-ui button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.bj .blackjack-ui button:disabled .button_top {
+    transform: translateY(0);
+}
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 900px) {
+    .bj {
+        --bj-offset: 0px;
+    }
+
+    .bj-floor {
+        flex-direction: column-reverse;
+    }
+
+    .bj-chips {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .bj-chip img {
+        width: 66px;
+        height: 66px;
+    }
+}
+
+@media (max-width: 600px) {
+    .bj-table {
+        border-radius: 70px / 46px;
+        padding: 30px 16px;
+        gap: 4vh;
+        min-height: 56vh;
+    }
+
+    .bj-hand {
+        min-height: 112px;
+        gap: 8px;
+    }
+
+    .card,
+    .bj-slot {
+        width: 80px;
+        height: 112px;
+    }
+}

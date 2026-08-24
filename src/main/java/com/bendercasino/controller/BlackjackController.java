@@ -67,28 +67,28 @@ public class BlackjackController {
         boolean hidden = session.getStatus() == GameStatus.PLAYER_TURN;
 
         HandDto dealerDto = hidden
-            ? CardMapper.toDtoDealerHidden(session.getDealerHand())
-            : CardMapper.toDto(session.getDealerHand());
+                ? CardMapper.toDtoDealerHidden(session.getDealerHand())
+                : CardMapper.toDto(session.getDealerHand());
 
         String joke = jokeService.jokeFor(player, session.getOutcome());
 
         GameStateResponse.StreaksDto streaks = new GameStateResponse.StreaksDto(
-            player.getConsecutiveWins(),
-            player.getConsecutiveLosses(),
-            player.getConsecutiveBlackjacks()
+                player.getConsecutiveWins(),
+                player.getConsecutiveLosses(),
+                player.getConsecutiveBlackjacks()
         );
 
         return new GameStateResponse(
-            session.getGameId(),
-            session.getPlayerId(),
-            session.getStatus().name(),
-            CardMapper.toDto(session.getPlayerHand()),
-            dealerDto,
-            session.getBet().amount(),
-            session.getOutcome() != null ? session.getOutcome().name() : null,
-            session.getBet().payout(),
-            joke,
-            streaks
+                session.getGameId(),
+                session.getPlayerId(),
+                session.getStatus().name(),
+                CardMapper.toDto(session.getPlayerHand()),
+                dealerDto,
+                session.getBet().amount(),
+                session.getOutcome() != null ? session.getOutcome().name() : null,
+                session.getBet().payout(),
+                joke,
+                streaks
         );
     }
 }

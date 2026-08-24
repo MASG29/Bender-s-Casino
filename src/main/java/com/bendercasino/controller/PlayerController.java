@@ -45,15 +45,15 @@ public class PlayerController {
 
     private PlayerResponse toDto(Player player) {
         return new PlayerResponse(
-            player.getId(),
-            player.getName(),
-            player.getBalance(),
-            new PlayerResponse.StatsDto(
-                player.getTotalWins(),
-                player.getTotalLosses(),
-                player.getTotalPushes(),
-                player.getTotalBlackjacks()
-            )
+                player.getId(),
+                player.getName(),
+                player.getBalance(),
+                new PlayerResponse.StatsDto(
+                        player.getTotalWins(),
+                        player.getTotalLosses(),
+                        player.getTotalPushes(),
+                        player.getTotalBlackjacks()
+                )
         );
     }
 }
