@@ -19,5 +19,5 @@ export function button(parent, text, classes) {
 export function stylizedButton(parent, text) {
   const but = button(parent);
   const span = element("span", but, ["button_top"], text);
-  return button;
+  return but;
 }

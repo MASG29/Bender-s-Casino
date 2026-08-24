@@ -1,7 +1,3 @@
-import { render } from "../blackjack.js";
-
-function renderBlackjackGame() {
+export function init() {
   render();
 }
-
-renderBlackjackGame();
