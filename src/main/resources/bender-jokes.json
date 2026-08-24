@@ -1,0 +1,47 @@
+{
+  "GAME_START": [
+    "game_start_joke1",
+    "game_start_joke2"
+  ],
+  "PLAYER_BLACKJACK": [
+    "player_blackjack_joke1",
+    "player_blackjack_joke2"
+  ],
+  "PLAYER_BUST": [
+    "Eh, I'd blame the dealer if I were you. Oh, wait, that's me!",
+    "Aww, did you lose? Here, let me get you a tissue. Oh wait, I don't care.",
+    "Being this rich AND this good-looking should be illegal. Somebody arrest me."
+  ],
+  "PLAYER_WIN": [
+    "win_joke_1",
+    "win_joke_2"
+  ],
+  "DEALER_WIN": [
+    "dealer_win_joke1",
+    "dealer_win_joke2"
+  ],
+  "DEALER_BUST": [
+    "dealer_bust_joke1",
+    "dealer_bust_joke2"
+  ],
+  "PUSH": [
+    "push_joke1",
+    "push_joke2"
+  ],
+  "LOSING_STREAK": [
+    "losing_streak_joke1",
+    "losing_streak_joke2"
+  ],
+  "WINNING_STREAK": [
+    "winning_streak_joke1",
+    "winning_streak_joke2"
+  ],
+  "DOUBLE_BLACKJACK": [
+    "double_blackjack_joke1",
+    "double_blackjack_joke2"
+  ],
+  "BROKE": [
+    "broke_joke1",
+    "broke_joke2"
+  ]
+}
