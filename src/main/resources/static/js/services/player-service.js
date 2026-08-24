@@ -24,6 +24,13 @@ export async function createPlayer(name) {
   return response;
 }
 
-async function getPlayerById(playerID) {
-  const response = await fetch(`${API_BASE_URL}players`, {});
+export async function getPlayerById(playerID) {
+  const response = await fetch(`${API_BASE_URL}players/${playerID}`);
+
+  if (!response.ok) {
+    const err = response.text();
+    throw new Error(err);
+  }
+
+  return response.json();
 }
