@@ -101,6 +101,84 @@ h1{
 .join p{ margin: 14px auto 4px; max-width: 42ch; color: var(--text-dim); font-size: 0.9rem; }
 .join .btn{ margin-top: 20px; }
 
+/* ---------- lobby tables ---------- */
+.lobby{
+    margin: 0 auto;
+    max-width: 920px;
+    padding: 8vh 6vw 8vh;
+    text-align: center;
+}
+.lobby h2{ font-size: 1.6rem; color: var(--text); }
+.lobby p{ margin: 14px auto 28px; max-width: 42ch; color: var(--text-dim); font-size: 0.9rem; }
+.tables{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+.table{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 28px 18px 22px;
+    background: var(--panel);
+    border: 1px solid #0d0d0d;
+    color: var(--text);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.table-game{ font-size: 1.05rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.table-meta{ font-size: 0.75rem; color: var(--text-dim); }
+.table-live{
+    background: var(--steel-light);
+    color: #161616;
+    transition: background .15s, transform .15s, box-shadow .15s;
+}
+.table-live .table-meta{ color: var(--steel-darker); }
+.table-live:hover{
+    background: var(--steel-lighter);
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 1px #0d0d0d, 0 0 18px rgba(212, 212, 207, 0.4);
+}
+.table-soon{
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* ---------- profile ---------- */
+.profile{
+    margin: 0 auto;
+    max-width: 920px;
+    padding: 8vh 6vw 8vh;
+    text-align: center;
+}
+.profile h2{ font-size: 1.6rem; color: var(--text); }
+.profile-grid,
+.stats{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-top: 28px;
+}
+.profile-card{
+    padding: 22px 18px;
+    background: var(--panel);
+    border: 1px solid #0d0d0d;
+    text-align: left;
+}
+.profile-label{
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+}
+.profile-value{
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.profile .btn{ margin-top: 32px; }
+
 /* ---------- footer ---------- */
 .site-footer{
     padding: 26px 5vw;
