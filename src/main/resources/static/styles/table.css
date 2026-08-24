@@ -24,6 +24,7 @@
 }
 
 .bj-table {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -78,6 +79,30 @@
     transform: none;
 }
 
+/* ---------- deck / shoe ---------- */
+
+.bj-deck {
+    position: absolute;
+    top: 34px;
+    right: 90px;
+    width: 110px;
+    height: 154px;
+}
+
+.bj-deck-card {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    background: url("/assets/Cards.Back/red.card.png") center / cover no-repeat;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+}
+
+.bj-deck-card:nth-child(1) { transform: translate(8px, 8px); }
+.bj-deck-card:nth-child(2) { transform: translate(6px, 6px); }
+.bj-deck-card:nth-child(3) { transform: translate(4px, 4px); }
+.bj-deck-card:nth-child(4) { transform: translate(2px, 2px); }
+.bj-deck-card:nth-child(5) { transform: translate(0, 0); }
+
 /* ---------- seats ---------- */
 
 .bj-seat {
@@ -116,68 +141,7 @@
     border-radius: 10px;
 }
 
-/* ---------- cards ---------- */
-
-.card {
-    width: 110px;
-    height: 154px;
-    perspective: 800px;
-}
-
-.card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.5s ease;
-}
-
-.card.is-facedown .card-inner {
-    transform: rotateY(180deg);
-}
-
-.card-front,
-.card-back {
-    position: absolute;
-    inset: 0;
-    border-radius: 10px;
-    backface-visibility: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
-}
-
-.card-front {
-    background: #f5f4ef var(--card-img, none) center / contain no-repeat;
-    border: 1px solid #0d0d0d;
-}
-
-.card-back {
-    transform: rotateY(180deg);
-    border: 1px solid #0d0d0d;
-    background:
-            repeating-linear-gradient(45deg, #6d2020 0 6px, #571919 6px 12px);
-}
-
-/* ---------- deal animation ---------- */
-
-@keyframes deal {
-    from {
-        transform:
-                translate(
-                        calc(var(--deck-left, 0px) - var(--slot-left, 0px)),
-                        calc(var(--deck-top, 0px) - var(--slot-top, 0px))
-                )
-                rotate(-8deg);
-        opacity: 0.5;
-    }
-    to {
-        transform: translate(0, 0) rotate(0);
-        opacity: 1;
-    }
-}
-
-.card.is-dealing {
-    animation: deal 0.35s ease-out;
-}
+/* card styling lives in style.css */
 
 /* ---------- action buttons ---------- */
 
@@ -228,12 +192,18 @@
         min-height: 56vh;
     }
 
+    .bj-deck {
+        top: 18px;
+        right: 26px;
+        width: 80px;
+        height: 112px;
+    }
+
     .bj-hand {
         min-height: 112px;
         gap: 8px;
     }
 
-    .card,
     .bj-slot {
         width: 80px;
         height: 112px;
