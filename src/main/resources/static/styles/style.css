@@ -270,7 +270,7 @@ button:active .button_top {
     border-radius: 6px;
 }
 .card-back {
-    background: url("static/assets/Cards.Back/red.card.png") center/cover;
+    background: url("/assets/Cards.Back/red.card.png") center/cover;
 }
 
 .card-front {
