@@ -13,7 +13,7 @@ export function init() {
 
     <section class="hero">
       <div class="hero-image">
-        <img class="bender-img" src="/assets/img_1.png" alt="Robot casino dealer mascot">
+        <img class="bender-img" src="/assets/Bender.png" alt="Robot casino dealer mascot">
       </div>
       <h1>The House Always Bends The Rules</h1>
       <div class="hero-text">
