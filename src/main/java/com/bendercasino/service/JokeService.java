@@ -24,7 +24,7 @@ public class JokeService {
     public JokeService(ObjectMapper objectMapper) {
         InputStream is = getClass().getResourceAsStream("/bender-jokes.json");
         jokes = objectMapper.readValue(is,
-                new TypeReference<Map<JokeTrigger, List<String>>>() {});
+            new TypeReference<Map<JokeTrigger, List<String>>>() {});
     }
 
     public String jokeFor(Player player, Outcome outcome) {
@@ -59,7 +59,7 @@ public class JokeService {
 
     public String jokeFor(Player player, JokeTrigger trigger) {
         List<String> pool = jokes.getOrDefault(trigger,
-                jokes.getOrDefault(JokeTrigger.GAME_START, List.of("...")));
+            jokes.getOrDefault(JokeTrigger.GAME_START, List.of("...")));
 
         return pick(player, trigger, pool);
     }
