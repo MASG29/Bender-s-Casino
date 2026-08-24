@@ -1,17 +1,21 @@
 import { element, button, stylizedButton } from "../../js/constants/element.js";
-import { getState, startGame, playerHit, playerStand } from "../../js/services/blackjack-service.js";
+import {
+  getState,
+  startGame,
+  playerHit,
+  playerStand,
+} from "../../js/services/blackjack-service.js";
 
 const CHIPS = [
-    { value: 1, image: "/assets/1dollar.coin.png" },
-    { value: 5, image: "/assets/5dollarcoin.png" },
-    { value: 10, image: "/assets/10dollarcoin.png" },
-    { value: 25, image: "/assets/25dollarcoin.png" },
-    { value: 50, image: "/assets/50dollarcoin.png" },
-    { value: 100, image: "/assets/100dollarcoin.png" },
+  { value: 1, image: "/assets/1dollar.coin.png" },
+  { value: 5, image: "/assets/5dollarcoin.png" },
+  { value: 10, image: "/assets/10dollarcoin.png" },
+  { value: 25, image: "/assets/25dollarcoin.png" },
+  { value: 50, image: "/assets/50dollarcoin.png" },
+  { value: 100, image: "/assets/100dollarcoin.png" },
 ];
 
 export function init() {
-
   console.log(sessionStorage.getItem("playerId"));
   const main = document.querySelector("main");
   const ui = element("div", main, ["blackjack-ui"]);
@@ -27,11 +31,13 @@ export function init() {
 
             <div class="bj-floor">
                 <div class="bj-chips">
-                    ${CHIPS.map(chip => `
+                    ${CHIPS.map(
+                      (chip) => `
                         <button class="bj-chip" type="button" data-chip="${chip.value}" aria-label="Bet ${chip.value}">
                             <img src="${chip.image}" alt="${chip.value} dollar chip">
                         </button>
-                    `).join("")}
+                    `,
+                    ).join("")}
                 </div>
 
                 <div id="table" class="bj-table">
@@ -72,89 +78,86 @@ export function init() {
     const ui = document.querySelector("#ui");
     const hit = document.querySelector("#bj-hit");
     const stand = document.querySelector("#bj-stand");
-    const table = document.querySelector("#table")
+    const table = document.querySelector("#table");
     const playerTable = document.querySelector("#player");
     const dealerTable = document.querySelector("#dealer");
     const formContainer = document.querySelector("#form");
-    const form = document.querySelector("form");   
+    const form = document.querySelector("form");
     let gameState = await getState(sessionStorage.getItem("playerId"));
-
 
     //debug
     console.log(gameState);
-    const playerCardsContainer = element("div", playerTable)
-    const dealerCardsContainer = element("div", dealerTable)
+    const playerCardsContainer = element("div", playerTable);
+    const dealerCardsContainer = element("div", dealerTable);
 
     function playerCards() {
-        gameState.playerHand.cards.forEach(e => {
-            const cardContainer = element("div", playerCardsContainer);
-            const p = element("p", cardContainer);
-            p.textContent = e.value + " of " + e.suit;
-        })
+      gameState.playerHand.cards.forEach((e) => {
+        const cardContainer = element("div", playerCardsContainer);
+        const p = element("p", cardContainer);
+        p.textContent = e.value + " of " + e.suit;
+      });
     }
 
     function dealerCards() {
-        gameState.dealerHand.cards.forEach(e => {
-            const cardContainer = element("div", dealerCardsContainer);
-            const p = element("p", cardContainer);
-            p.textContent = e.value + " of " + e.suit;
-        })
-
-        
+      gameState.dealerHand.cards.forEach((e) => {
+        const cardContainer = element("div", dealerCardsContainer);
+        const p = element("p", cardContainer);
+        p.textContent = e.value + " of " + e.suit;
+      });
     }
 
     function displayScores() {
-        const playerScore = element("p", playerTable);
-        const dealerScore = element("p", dealerTable);
-        playerScore.textContent = "Score: " + gameState.playerHand.value;
-        dealerScore.textContent = "Score: " + gameState.dealerHand.value;
-
+      const playerScore = (document.querySelector("#player-score").textContent =
+        "Score: " + gameState.playerHand.value);
+      const dealerScore = (document.querySelector("#dealer-score").textContent =
+        "Score: " + gameState.dealerHand.value);
     }
 
     function updatePlayerCards() {
-        playerCardsContainer.innerHTML = "";
-        playerCards();
+      playerCardsContainer.innerHTML = "";
+      playerCards();
     }
 
     function updateDealerCards() {
-        dealerCardsContainer.innerHTML = "";
-        dealerCards();
+      dealerCardsContainer.innerHTML = "";
+      dealerCards();
     }
 
     function controls() {
-        hit.addEventListener("click", async () => {
-            gameState = await playerHit(sessionStorage.getItem("playerId"));
-            console.log(gameState);
-            updatePlayerCards();
-        })
-        stand.addEventListener("click", async () => {
-            gameState = await playerStand(sessionStorage.getItem("playerId"));
-            console.log(gameState);
-            updateDealerCards();
-        })
+      hit.addEventListener("click", async () => {
+        gameState = await playerHit(sessionStorage.getItem("playerId"));
+        console.log(gameState);
+        updatePlayerCards();
+        displayScores();
+      });
+      stand.addEventListener("click", async () => {
+        gameState = await playerStand(sessionStorage.getItem("playerId"));
+        console.log(gameState);
+        updateDealerCards();
+        displayScores();
+      });
     }
 
     if (gameState.status == "PLAYER_TURN") {
-        table.removeChild(formContainer);
-        playerCards();
-        dealerCards();
-        displayScores();
-    }
-
-    else { 
-
-    form.addEventListener("submit", async (e) => {
       table.removeChild(formContainer);
-      e.preventDefault();
-    
-      gameState = await startGame(sessionStorage.getItem("playerId"), e.target.amount.value);
-
       playerCards();
       dealerCards();
       displayScores();
+    } else {
+      form.addEventListener("submit", async (e) => {
+        table.removeChild(formContainer);
+        e.preventDefault();
 
-    })
+        gameState = await startGame(
+          sessionStorage.getItem("playerId"),
+          e.target.amount.value,
+        );
+
+        playerCards();
+        dealerCards();
+        displayScores();
+      });
     }
     controls();
-    });
+  });
 }
