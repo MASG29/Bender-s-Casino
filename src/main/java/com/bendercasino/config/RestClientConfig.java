@@ -9,7 +9,8 @@ import org.springframework.web.client.RestClient;
 public class RestClientConfig {
 
     @Bean
-    public RestClient.Builder restClientBuilder(@Value("${deckofcards.base-url}") String baseUrl) {
+    public RestClient.Builder restClientBuilder(
+            @Value("${deckofcards.base-url}") String baseUrl) {
         return RestClient.builder().baseUrl(baseUrl);
     }
 }
