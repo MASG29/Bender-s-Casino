@@ -40,7 +40,7 @@ O commit inicial do esqueleto já entregou (a preencher só o que falta, marcado
 
 ## Caminho crítico
 
-`B1 → A5 → B8 → D3` (D3 é do front-end, ver `FrontEnd-Tasks.md`).
+`B1 → A5 → B8 → D3` (D3 é do front-end, ver `BlackJack-FrontEnd.md`).
 
 ## Branches
 
@@ -52,3 +52,9 @@ main
 ```
 
 PRs de `feat/b-api` não precisam de teste anexado — os testes chegam num PR seguinte do Marco antes do merge para `dev`. `./mvnw test` (Marco) ou `./mvnw compile` (Diogo) tem de passar localmente antes de abrir PR.
+
+
+---
+
+> Isto é o MVP do blackjack (Fase 1). Para a Fase 2 — jogos novos, login e núcleo de jogo —
+> ver [../Fase2-Jogos.md](../Fase2-Jogos.md) e [../AGORA.md](../AGORA.md).
