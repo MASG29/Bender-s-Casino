@@ -15,7 +15,7 @@ export async function startGame(playerId, betAmount) {
   return response.json();
 }
 
-export async function hit(playerId) {
+export async function playerHit(playerId) {
   const response = await fetch(`${API_BASE_URL}blackjack/hit`, {
     method: "POST",
     headers: {
@@ -34,7 +34,7 @@ export async function hit(playerId) {
   return response.json();
 }
 
-export async function stand(playerId) {
+export async function playerStand(playerId) {
   const response = await fetch(`${API_BASE_URL}blackjack/stand`, {
     method: "POST",
     headers: {
