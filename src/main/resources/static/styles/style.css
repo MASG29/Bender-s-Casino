@@ -233,6 +233,55 @@ button:active .button_top {
     transform: translateY(0);
 }
 
+/* posição inicial: em cima do baralho, virada para baixo */
+.card {
+    /* substituída por carta, com a URL vinda da API */
+    --card-img: none;
+
+    position: absolute;
+    top: var(--deck-top, 0);
+    left: var(--deck-left, 0);
+    width: 70px;
+    height: 100px;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease-out;
+}
+.card.dealt {
+    /* posição final: o slot de destino */
+    top: var(--slot-top);
+    left: var(--slot-left);
+}
+/* efeito de virar a carta (face para baixo -> face para cima) */
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease-in-out;
+}
+.card.face-up .card-inner {
+    transform: rotateY(180deg);
+}
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 6px;
+}
+.card-back {
+    background: url("static/assets/Cards.Back/red.card.png") center/cover;
+}
+
+.card-front {
+    background-color: #f5f4ef;
+    background-image: var(--card-img);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transform: rotateY(180deg);
+}
+
 /* ---------- footer ---------- */
 
 .site-footer {
