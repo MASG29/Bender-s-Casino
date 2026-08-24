@@ -47,10 +47,3 @@ main
      ├─ feat/c-ui            (Eddie)
      └─ feat/d-integracao    (Tiago Paulos)
 ```
-
-
-
----
-
-> Isto é o MVP do blackjack (Fase 1). Para a Fase 2 — jogos novos, login e núcleo de jogo —
-> ver [../Fase2-Jogos.md](../Fase2-Jogos.md) e [../AGORA.md](../AGORA.md).
