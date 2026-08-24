@@ -15,67 +15,72 @@ const CHIPS = [
   { value: 100, image: "/assets/100dollarcoin.png" },
 ];
 
-export function init() {
-  console.log(sessionStorage.getItem("playerId"));
-  const main = document.querySelector("main");
-  const ui = element("div", main, ["blackjack-ui"]);
+function tableMarkup() {
+  return `
+    <section class="bj">
+      <h2>Blackjack</h2>
+      <div class="bj-floor">
+        <div class="bj-chips">
+          ${CHIPS.map(
+            (chip) => `
+            <button class="bj-chip" type="button" data-chip="${chip.value}" aria-label="Bet ${chip.value}">
+              <img src="${chip.image}" alt="${chip.value} dollar chip">
+            </button>
+          `,
+          ).join("")}
+        </div>
 
+        <div id="table" class="bj-table">
+          <div id="dealer" class="bj-seat bj-dealer">
+            <p class="bj-seat-label">Dealer</p>
+            <div class="bj-hand" id="dealer-hand">
+              <div class="bj-slot"></div>
+              <div class="bj-slot"></div>
+            </div>
+            <p class="bj-score" id="dealer-score">—</p>
+          </div>
+
+          <p id="ending"></p>
+
+          <div id="form">
+            <form>
+              <label for="amount">Bet amount:</label>
+              <input type="number" name="amount">
+            </form>
+          </div>
+
+          <div id="player" class="bj-seat bj-player">
+            <p class="bj-score" id="player-score">—</p>
+            <div class="bj-hand" id="player-hand">
+              <div class="bj-slot"></div>
+              <div class="bj-slot"></div>
+            </div>
+            <p class="bj-seat-label">You</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="ui" class="blackjack-ui">
+        <button type="button" id="bj-hit"><span class="button_top">Hit</span></button>
+        <button type="button" id="bj-stand"><span class="button_top">Stand</span></button>
+      </div>
+    </section>
+  `;
+}
+
+export function init() {
+  const main = document.querySelector("main");
   const start = stylizedButton(main, "Start");
 
   start.addEventListener("click", async () => {
     main.removeChild(start);
+    await startRound();
+  });
 
-    document.querySelector("main").innerHTML = `
-        <section class="bj">
-            <h2>Blackjack</h2>
+  // One round of the game: render markup, wire everything, play until FINISHED.
+  async function startRound() {
+    document.querySelector("main").innerHTML = tableMarkup();
 
-            <div class="bj-floor">
-                <div class="bj-chips">
-                    ${CHIPS.map(
-                      (chip) => `
-                        <button class="bj-chip" type="button" data-chip="${chip.value}" aria-label="Bet ${chip.value}">
-                            <img src="${chip.image}" alt="${chip.value} dollar chip">
-                        </button>
-                    `,
-                    ).join("")}
-                </div>
-
-                <div id="table" class="bj-table">
-                    <div id="dealer" class="bj-seat bj-dealer">
-                        <p class="bj-seat-label">Dealer</p>
-                        <div class="bj-hand" id="dealer-hand">
-                            <div class="bj-slot"></div>
-                            <div class="bj-slot"></div>
-                        </div>
-                        <p class="bj-score" id="dealer-score">—</p>
-                    </div>
-
-                    <div id="form" >
-                    <form> 
-                    <label for = "amount">Bet amount:</label>
-                    <input type="number" name="amount">
-                    </form> 
-                    </div>
-
-                    <div id="player" class="bj-seat bj-player">
-                        <p class="bj-score" id="player-score">—</p>
-                        <div class="bj-hand" id="player-hand">
-                            <div class="bj-slot"></div>
-                            <div class="bj-slot"></div>
-                        </div>
-                        <p class="bj-seat-label">You</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="ui" class="blackjack-ui">
-                <button type="button" id="bj-hit"><span class="button_top">Hit</span></button>
-                <button type="button" id="bj-stand"><span class="button_top">Stand</span></button>
-            </div>
-        </section>
-    `;
-
-    const ui = document.querySelector("#ui");
     const hit = document.querySelector("#bj-hit");
     const stand = document.querySelector("#bj-stand");
     const table = document.querySelector("#table");
@@ -83,81 +88,125 @@ export function init() {
     const dealerTable = document.querySelector("#dealer");
     const formContainer = document.querySelector("#form");
     const form = document.querySelector("form");
-    let gameState = await getState(sessionStorage.getItem("playerId"));
+    const playerScoreEl = document.querySelector("#player-score");
+    const dealerScoreEl = document.querySelector("#dealer-score");
+    const endingEl = document.querySelector("#ending");
 
-    //debug
-    console.log(gameState);
     const playerCardsContainer = element("div", playerTable);
     const dealerCardsContainer = element("div", dealerTable);
 
-    function playerCards() {
-      gameState.playerHand.cards.forEach((e) => {
-        const cardContainer = element("div", playerCardsContainer);
-        const p = element("p", cardContainer);
-        p.textContent = e.value + " of " + e.suit;
+    // FIX: getState throws (404 GAME_NOT_FOUND) for a fresh player with no
+    // active game. That used to crash startRound() before the form's submit
+    // listener was attached, so the browser fell back to a native form
+    // submit -> page reload. Now it falls back to a NO_GAME state instead.
+    let gameState;
+    try {
+      gameState = await getState(sessionStorage.getItem("playerId"));
+    } catch (err) {
+      console.log("No active game found, starting fresh:", err.message);
+      gameState = { status: "NO_GAME" };
+    }
+
+    function renderPlayerCards() {
+      playerCardsContainer.innerHTML = "";
+      gameState.playerHand.cards.forEach((c) => {
+        const cardEl = element("div", playerCardsContainer);
+        element("p", cardEl).textContent = c.value + " of " + c.suit;
       });
     }
 
-    function dealerCards() {
-      gameState.dealerHand.cards.forEach((e) => {
-        const cardContainer = element("div", dealerCardsContainer);
-        const p = element("p", cardContainer);
-        p.textContent = e.value + " of " + e.suit;
+    function renderDealerCards() {
+      dealerCardsContainer.innerHTML = "";
+      gameState.dealerHand.cards.forEach((c) => {
+        const cardEl = element("div", dealerCardsContainer);
+        element("p", cardEl).textContent = c.value + " of " + c.suit;
       });
     }
 
     function displayScores() {
-      const playerScore = (document.querySelector("#player-score").textContent =
-        "Score: " + gameState.playerHand.value);
-      const dealerScore = (document.querySelector("#dealer-score").textContent =
-        "Score: " + gameState.dealerHand.value);
+      playerScoreEl.textContent = "Score: " + gameState.playerHand.value;
+      dealerScoreEl.textContent = "Score: " + gameState.dealerHand.value;
     }
 
-    function updatePlayerCards() {
-      playerCardsContainer.innerHTML = "";
-      playerCards();
+    function setControlsEnabled(enabled) {
+      hit.disabled = !enabled;
+      stand.disabled = !enabled;
     }
 
-    function updateDealerCards() {
-      dealerCardsContainer.innerHTML = "";
-      dealerCards();
+    function checkForEnd() {
+      if (gameState.status !== "FINISHED") return false;
+
+      setControlsEnabled(false);
+
+      switch (gameState.outcome) {
+        case "PLAYER_WIN":
+          endingEl.textContent = "Player wins!";
+          break;
+        case "DEALER_WIN":
+          endingEl.textContent = "Dealer wins!";
+          break;
+        default:
+          endingEl.textContent = "Round over.";
+      }
+
+      const playAgain = stylizedButton(endingEl, "Play again");
+      playAgain.addEventListener("click", () => startRound());
+
+      return true;
     }
 
-    function controls() {
-      hit.addEventListener("click", async () => {
+    hit.addEventListener("click", async () => {
+      if (gameState.status !== "PLAYER_TURN") return;
+      try {
         gameState = await playerHit(sessionStorage.getItem("playerId"));
-        console.log(gameState);
-        updatePlayerCards();
-        displayScores();
-      });
-      stand.addEventListener("click", async () => {
-        gameState = await playerStand(sessionStorage.getItem("playerId"));
-        console.log(gameState);
-        updateDealerCards();
-        displayScores();
-      });
-    }
+      } catch (err) {
+        console.error("Hit failed:", err.message);
+        return;
+      }
+      renderPlayerCards();
+      displayScores();
+      checkForEnd();
+    });
 
-    if (gameState.status == "PLAYER_TURN") {
+    stand.addEventListener("click", async () => {
+      if (gameState.status !== "PLAYER_TURN") return;
+      try {
+        gameState = await playerStand(sessionStorage.getItem("playerId"));
+      } catch (err) {
+        console.error("Stand failed:", err.message);
+        return;
+      }
+      renderDealerCards();
+      displayScores();
+      checkForEnd();
+    });
+
+    if (gameState.status === "PLAYER_TURN") {
       table.removeChild(formContainer);
-      playerCards();
-      dealerCards();
+      renderPlayerCards();
+      renderDealerCards();
       displayScores();
     } else {
+      setControlsEnabled(false); // no hitting/standing before a bet exists
       form.addEventListener("submit", async (e) => {
-        table.removeChild(formContainer);
         e.preventDefault();
+        table.removeChild(formContainer);
 
-        gameState = await startGame(
-          sessionStorage.getItem("playerId"),
-          e.target.amount.value,
-        );
+        try {
+          gameState = await startGame(
+            sessionStorage.getItem("playerId"),
+            e.target.amount.value,
+          );
+        } catch (err) {
+          console.error("Failed to start game:", err.message);
+          return;
+        }
 
-        playerCards();
-        dealerCards();
+        renderPlayerCards();
+        renderDealerCards();
         displayScores();
+        setControlsEnabled(true);
       });
     }
-    controls();
-  });
+  }
 }

@@ -1,0 +1,90 @@
+{
+  "GAME_START": [
+    "Alright {player}, sit down. I've got blackjack, and I would've had hookers too, but budget cuts.",
+    "New shoe, who dis? Let's lose some money, {player}.",
+    "I'm 40% dealer, 60% pure evil. Deal me in, {player}... wait, I deal. Never mind.",
+    "Welcome to my table, {player}. The house always wins. I am the house. Do the math.",
+    "Ah, a fresh victim— I mean, valued guest. Sit down, {player}.",
+    "Let's get this over with, {player}, I've got a bottle of Olde Fortran waiting for me."
+  ],
+  "PLAYER_BLACKJACK": [
+    "21? Congratulations, {player}, you can count to 21. Somebody get this genius a trophy.",
+    "Blackjack! I'd clap, but I only have these hands for stealing and holding grudges.",
+    "Nice hand, {player}. Did you cheat? I would have.",
+    "Well, kiss my shiny metal ass. You actually pulled it off, {player}.",
+    "Blackjack. Great, now I have to pretend to be a good sport. Bleh.",
+    "You win this round, {player}. Don't get used to it, I rig the next shoe."
+  ],
+  "PLAYER_BUST": [
+    "Eh, I'd blame the dealer if I were you. Oh, wait, that's me!",
+    "Aww, did you lose? Here, let me get you a tissue. Oh wait, I don't care.",
+    "Being this rich AND this good-looking should be illegal. Somebody arrest me.",
+    "Busted, {player}. Just like my last three marriages.",
+    "Ooh, over 21! Bad news, {player} — math doesn't care about your feelings.",
+    "You bust more than my liver, {player}, and that's saying something."
+  ],
+  "PLAYER_WIN": [
+    "Fine, {player}, take the chips. I'll just add it to your tab of regrets.",
+    "You win. Somewhere, a tiny robot violin is playing for me.",
+    "Congratulations, {player}. Don't spend it all on hookers. That's my thing.",
+    "You beat the house, {player}. The house is filing a complaint.",
+    "A winner is you, {player}. A loser is still me, apparently.",
+    "Take the money and run, {player}, before I recalculate the odds in my favor."
+  ],
+  "DEALER_WIN": [
+    "Game's over, loser! I have all the money. Compare your life to mine and then, eh, you know the rest.",
+    "House wins. Shocking absolutely nobody, {player}.",
+    "That's my chip now, {player}. Actually all of them are my chips now.",
+    "Better luck next time, {player}. Or don't, keeps my nacho fund healthy.",
+    "I win again. It's almost like I'm a robot programmed to bend the rules.",
+    "Thanks for the donation, {player}. I'll spend it responsibly. Ha, just kidding, blackjack and booze."
+  ],
+  "DEALER_BUST": [
+    "Whoa, I busted? Somebody must've tampered with this deck. It definitely wasn't me.",
+    "I went over 21? Impossible, I'm a perfect calculating machine. Mostly.",
+    "Ugh, fine, {player}, take your winnings. I'll get it back with interest and spite.",
+    "Dealer busts! Don't get used to it, {player}, this is a clerical error.",
+    "I hate this game. I hate this deck. I hate everyone here except myself.",
+    "Well played by nobody, I just made a mistake. Robots don't make mistakes! ...I need a drink."
+  ],
+  "PUSH": [
+    "A push? Boring. Nobody wins, nobody cries, what's the point of that.",
+    "Tie game, {player}. The most disappointing outcome in gambling, besides you existing.",
+    "Push. We both walk away with our dignity, which for me was never much to begin with.",
+    "Nobody wins here, {player}. Story of your life, probably.",
+    "A tie. Even I can't screw you over this round. Enjoy the anticlimax.",
+    "Push means we both get nothing, which is exactly how much I care right now."
+  ],
+  "LOSING_STREAK": [
+    "Three losses in a row, {player}? At this point I should charge you rent for that seat.",
+    "You're on a cold streak, {player}. Colder than my heart, and that's a low bar.",
+    "Keep losing like this, {player}, and I'll start feeling bad. Ha, just kidding, never happening.",
+    "Losing streak alert! Somebody get {player} a violin. A tiny, sad one.",
+    "At this rate, {player}, you'll owe ME money. That's a new one.",
+    "Rough night, {player}? Don't worry, my nacho cheese fund thanks you for your service."
+  ],
+  "WINNING_STREAK": [
+    "Okay, {player}, three wins in a row. I'm starting to suspect you of cheating. I would.",
+    "A winning streak? Somebody check {player} for hidden aces. And a conscience.",
+    "You're on fire, {player}. Literally, if I get my way with these cables.",
+    "Alright hotshot, {player}, don't let it go to your head. I need that money for blackjack AND hookers.",
+    "Winning streak, huh? Enjoy it, {player}, the house always finds a way back.",
+    "Three in a row! At this point I'm legally obligated to be suspicious of you, {player}."
+  ],
+  "DOUBLE_BLACKJACK": [
+    "Two blackjacks back to back? Okay {player}, now I KNOW you're cheating. I respect it.",
+    "Double blackjack! Alright, {player}, teach me your ways. Or don't, I'll just steal your seat later.",
+    "Unbelievable. Actually, no, I don't believe it, {player}. Show me your sleeves.",
+    "Two natural 21s in a row. The universe owes ME an apology for this.",
+    "Okay {player}, that's either incredible luck or a crime. I'm hoping for the crime, more interesting.",
+    "Double blackjack. I'm shutting this table down and opening a new scam. I mean, game."
+  ],
+  "BROKE": [
+    "Oh look, {player} is out of money. Casino tradition says you now owe me a kidney.",
+    "Broke already, {player}? That was fast, even for my standards.",
+    "No more chips, {player}? Guess it's back to the unemployment line for you.",
+    "You're broke, {player}. Don't worry, I accept payment in shame, and you've got plenty.",
+    "Zero balance, {player}. On the bright side, you can't lose any more of it! Silver lining.",
+    "Cleaned you out, {player}. Don't feel bad, I do this to everyone. It's kind of my whole thing."
+  ]
+}
