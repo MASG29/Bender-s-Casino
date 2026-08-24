@@ -58,6 +58,12 @@ public class GlobalExceptionHandler {
         return build(400, "VALIDATION_ERROR", msg, req.getRequestURI());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest req) {
+        return build(400, "INVALID_ARGUMENT", ex.getMessage(), req.getRequestURI());
+    }
+
     private ErrorResponse build(int status, String error, String message, String path) {
         return new ErrorResponse(Instant.now().toString(), status, error, message, path);
     }
