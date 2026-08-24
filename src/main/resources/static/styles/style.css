@@ -291,3 +291,83 @@ button:active .button_top {
     color: var(--text-dim);
     font-size: 0.72rem;
 }
+
+
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10,10,10,0.85);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+}
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal-box {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--steel-dark);
+  padding: 40px 36px 36px;
+  transform: translateY(16px);
+  transition: transform .25s;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+}
+.modal-backdrop.open .modal-box {
+  transform: translateY(0);
+}
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--steel);
+  font-size: 1rem;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--text); }
+.modal-title { font-size: 1.5rem; color: var(--text); margin-bottom: 8px; }
+.modal-hint  { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 22px; line-height: 1.6; }
+.modal-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--steel-dark);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color .15s;
+}
+.modal-input:focus { border-color: var(--steel-light); }
+.modal-input::placeholder { color: var(--steel); }
+.modal-error { min-height: 1.2em; font-size: 0.78rem; color: #c0392b; margin-top: 8px; }
+.modal-submit {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  background: var(--steel-light);
+  color: #161616;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 2px solid #0d0d0d;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background .15s, transform .15s;
+}
+.modal-submit:hover:not(:disabled) { background: var(--steel-lighter); transform: translateY(-1px); }
+.modal-submit:disabled { opacity: 0.5; cursor: not-allowed; }
