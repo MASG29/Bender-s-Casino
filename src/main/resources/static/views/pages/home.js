@@ -1,5 +1,6 @@
 import { element } from "../../js/constants/element.js";
 import { createPlayer } from "../../js/services/player-service.js";
+import router from "../../router.js";
 
 export function init() {
   const main = document.querySelector("main");
@@ -42,7 +43,6 @@ export function init() {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const player = await createPlayer(input.value);
-      savePlayerId(player.playerId);
       router.navigate("/lobby");
     });
   });

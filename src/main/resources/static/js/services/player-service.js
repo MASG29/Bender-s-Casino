@@ -16,7 +16,14 @@ export async function createPlayer(name) {
     throw new Error(err);
   }
 
-  const text = await response.text();
+  const text = await response.json();
   console.log(text);
+
+  sessionStorage.setItem("playerId", text.playerId);
+
   return response;
+}
+
+async function getPlayerById(playerID) {
+  const response = await fetch(`${API_BASE_URL}players`, {});
 }
