@@ -140,47 +140,102 @@ h1{
     transform: translateY(-1px);
     box-shadow: 0 0 0 1px #0d0d0d, 0 0 18px rgba(212, 212, 207, 0.4);
 }
-.table-soon{
+.table-soon {
     opacity: 0.45;
     cursor: not-allowed;
 }
 
 /* ---------- profile ---------- */
-.profile{
+
+.profile {
     margin: 0 auto;
     max-width: 920px;
     padding: 8vh 6vw 8vh;
     text-align: center;
 }
-.profile h2{ font-size: 1.6rem; color: var(--text); }
+
+.profile h2 {
+    font-size: 1.6rem;
+    color: var(--text);
+}
+
 .profile-grid,
-.stats{
+.stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 16px;
     margin-top: 28px;
 }
-.profile-card{
+
+.profile-card {
     padding: 22px 18px;
     background: var(--panel);
     border: 1px solid #0d0d0d;
     text-align: left;
 }
-.profile-label{
+
+.profile-label {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-dim);
 }
-.profile-value{
+
+.profile-value {
     margin-top: 10px;
     font-size: 1.2rem;
     font-weight: 700;
 }
-.profile .btn{ margin-top: 32px; }
+
+.profile .btn {
+    margin-top: 32px;
+}
+
+/* ---------- blackjack buttons ---------- */
+
+button {
+    --button_radius: 0.75em;
+    --button_color: #e8e8e8;
+    --button_outline_color: #000000;
+    font-size: 17px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--button_radius);
+    background: var(--button_outline_color);
+}
+
+.blackjack-ui {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    gap: 50px;
+}
+
+.button_top {
+    display: block;
+    box-sizing: border-box;
+    border: 2px solid var(--button_outline_color);
+    border-radius: var(--button_radius);
+    padding: 0.75em 1.5em;
+    background: var(--button_color);
+    color: var(--button_outline_color);
+    transform: translateY(-0.2em);
+    transition: transform 0.1s ease;
+}
+
+button:hover .button_top {
+    transform: translateY(-0.33em);
+}
+
+button:active .button_top {
+    transform: translateY(0);
+}
 
 /* ---------- footer ---------- */
-.site-footer{
+
+.site-footer {
     padding: 26px 5vw;
     text-align: center;
     border-top: 3px solid var(--steel-dark);
