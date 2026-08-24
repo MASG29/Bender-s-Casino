@@ -10,3 +10,6 @@ target/
 
 # OS
 .DS_Store
+
+# Notas pessoais (não partilhadas com a equipa)
+docs/Marco-Progresso.md
