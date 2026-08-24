@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 import { element, button, stylizedButton } from "../../js/constants/element.js";
-import { startGame } from "../../js/services/blackjack-service.js";
+import { getState, startGame, playerHit, playerStand } from "../../js/services/blackjack-service.js";
 
-export function init() {
-  document.querySelector("main").innerHTML = `
-        <section class="join">
-=======
 const CHIPS = [
     { value: 1, image: "/assets/1dollar.coin.png" },
     { value: 5, image: "/assets/5dollarcoin.png" },
@@ -16,9 +11,18 @@ const CHIPS = [
 ];
 
 export function init() {
+
+  console.log(sessionStorage.getItem("playerId"));
+  const main = document.querySelector("main");
+  const ui = element("div", main, ["blackjack-ui"]);
+
+  const start = stylizedButton(main, "Start");
+
+  start.addEventListener("click", async () => {
+    main.removeChild(start);
+
     document.querySelector("main").innerHTML = `
         <section class="bj">
->>>>>>> 1c8ee0fd564a4c0f71f3f2eb11660ed53e4813ef
             <h2>Blackjack</h2>
 
             <div class="bj-floor">
@@ -30,8 +34,8 @@ export function init() {
                     `).join("")}
                 </div>
 
-                <div class="bj-table">
-                    <div class="bj-seat bj-dealer">
+                <div id="table" class="bj-table">
+                    <div id="dealer" class="bj-seat bj-dealer">
                         <p class="bj-seat-label">Dealer</p>
                         <div class="bj-hand" id="dealer-hand">
                             <div class="bj-slot"></div>
@@ -40,7 +44,14 @@ export function init() {
                         <p class="bj-score" id="dealer-score">—</p>
                     </div>
 
-                    <div class="bj-seat bj-player">
+                    <div id="form" >
+                    <form> 
+                    <label for = "amount">Bet amount:</label>
+                    <input type="number" name="amount">
+                    </form> 
+                    </div>
+
+                    <div id="player" class="bj-seat bj-player">
                         <p class="bj-score" id="player-score">—</p>
                         <div class="bj-hand" id="player-hand">
                             <div class="bj-slot"></div>
@@ -51,44 +62,99 @@ export function init() {
                 </div>
             </div>
 
-            <div class="blackjack-ui">
+            <div id="ui" class="blackjack-ui">
                 <button type="button" id="bj-hit"><span class="button_top">Hit</span></button>
                 <button type="button" id="bj-stand"><span class="button_top">Stand</span></button>
             </div>
         </section>
-        <div id="App" class="blackjack-background"> 
-            
-        </div>
     `;
-<<<<<<< HEAD
 
-  console.log(sessionStorage.getItem("playerId"));
-  const body = document.querySelector("#App");
-  const ui = element("div", body, ["blackjack-ui"]);
-  const start = stylizedButton(body, "Start");
+    const ui = document.querySelector("#ui");
+    const hit = document.querySelector("#bj-hit");
+    const stand = document.querySelector("#bj-stand");
+    const table = document.querySelector("#table")
+    const playerTable = document.querySelector("#player");
+    const dealerTable = document.querySelector("#dealer");
+    const formContainer = document.querySelector("#form");
+    const form = document.querySelector("form");   
+    let gameState = await getState(sessionStorage.getItem("playerId"));
 
-  start.addEventListener("click", () => {
-    body.removeChild(start);
 
-    const form = element("form", body);
-    const input = element("input", form);
-    input.type = "number";
-    input.name = "amount";
-    const label = element("label", form);
-    label.for = "amount";
-    label.textContent = "Bet amount:";
+    //debug
+    console.log(gameState);
+    const playerCardsContainer = element("div", playerTable)
+    const dealerCardsContainer = element("div", dealerTable)
 
-    const submit = stylizedButton(form, "Bet");
+    function playerCards() {
+        gameState.playerHand.cards.forEach(e => {
+            const cardContainer = element("div", playerCardsContainer);
+            const p = element("p", cardContainer);
+            p.textContent = e.value + " of " + e.suit;
+        })
+    }
 
-    form.addEventListener("submit", (e) => {
+    function dealerCards() {
+        gameState.dealerHand.cards.forEach(e => {
+            const cardContainer = element("div", dealerCardsContainer);
+            const p = element("p", cardContainer);
+            p.textContent = e.value + " of " + e.suit;
+        })
+
+        
+    }
+
+    function displayScores() {
+        const playerScore = element("p", playerTable);
+        const dealerScore = element("p", dealerTable);
+        playerScore.textContent = "Score: " + gameState.playerHand.value;
+        dealerScore.textContent = "Score: " + gameState.dealerHand.value;
+
+    }
+
+    function updatePlayerCards() {
+        playerCardsContainer.innerHTML = "";
+        playerCards();
+    }
+
+    function updateDealerCards() {
+        dealerCardsContainer.innerHTML = "";
+        dealerCards();
+    }
+
+    function controls() {
+        hit.addEventListener("click", async () => {
+            gameState = await playerHit(sessionStorage.getItem("playerId"));
+            console.log(gameState);
+            updatePlayerCards();
+        })
+        stand.addEventListener("click", async () => {
+            gameState = await playerStand(sessionStorage.getItem("playerId"));
+            console.log(gameState);
+            updateDealerCards();
+        })
+    }
+
+    if (gameState.status == "PLAYER_TURN") {
+        table.removeChild(formContainer);
+        playerCards();
+        dealerCards();
+        displayScores();
+    }
+
+    else { 
+
+    form.addEventListener("submit", async (e) => {
+      table.removeChild(formContainer);
       e.preventDefault();
-      startGame(sessionStorage.getItem("playerId"), e.target.amount);
+    
+      gameState = await startGame(sessionStorage.getItem("playerId"), e.target.amount.value);
+
+      playerCards();
+      dealerCards();
+      displayScores();
+
+    })
+    }
+    controls();
     });
-    submit.addEventListener("click", (e) => {
-      const hit = stylizedButton(ui, "Hit");
-      const stand = stylizedButton(ui, "Stand");
-    });
-  });
-=======
->>>>>>> 1c8ee0fd564a4c0f71f3f2eb11660ed53e4813ef
 }
