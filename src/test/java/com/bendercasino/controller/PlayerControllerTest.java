@@ -39,7 +39,7 @@ class PlayerControllerTest {
     @BeforeEach
     void setUp() {
         playerId = UUID.randomUUID();
-        player = new Player("TestPlayer");
+        player = new Player("TestPlayer", "testplayer", "hash");
         playerId = player.getId();
     }
 
@@ -48,12 +48,12 @@ class PlayerControllerTest {
     @Test
     @DisplayName("POST / returns 201 with PlayerResponse on success")
     void create_success() throws Exception {
-        when(playerService.create(eq("TestPlayer"))).thenReturn(player);
+        when(playerService.create(eq("TestPlayer"), eq("testplayer"), eq("secret123"))).thenReturn(player);
 
         mockMvc.perform(post("/api/players")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name":"TestPlayer"}
+                                {"name":"TestPlayer","username":"testplayer","password":"secret123"}
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.playerId").value(playerId.toString()))
@@ -71,7 +71,7 @@ class PlayerControllerTest {
         mockMvc.perform(post("/api/players")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name":""}
+                                {"name":"","username":"","password":""}
                                 """))
                 .andExpect(status().isBadRequest());
     }
@@ -135,7 +135,7 @@ class PlayerControllerTest {
     @Test
     @DisplayName("POST /{id}/reset returns 200 with PlayerResponse on success")
     void reset_success() throws Exception {
-        Player resetPlayer = new Player("TestPlayer");
+        Player resetPlayer = new Player("TestPlayer", "testplayer", "hash");
         when(playerService.reset(eq(playerId))).thenReturn(resetPlayer);
 
         mockMvc.perform(post("/api/players/%s/reset".formatted(playerId)))

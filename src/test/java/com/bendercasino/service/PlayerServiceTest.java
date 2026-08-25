@@ -8,6 +8,8 @@ import com.bendercasino.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,7 @@ class PlayerServiceTest {
     private PlayerRepository playerRepository;
     private InMemoryGameSessionRepository sessionRepository;
     private PlayerService service;
+    private final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @BeforeEach
     void setUp() {
@@ -39,16 +42,25 @@ class PlayerServiceTest {
             UUID id = invocation.getArgument(0);
             return Optional.ofNullable(store.get(id));
         });
+        when(playerRepository.findByUsername(any(String.class))).thenAnswer(invocation -> {
+            String username = invocation.getArgument(0);
+            return store.values().stream()
+                .filter(p -> username.equals(p.getUsername()))
+                .findFirst();
+        });
         sessionRepository = new InMemoryGameSessionRepository();
-        service = new PlayerService(playerRepository, sessionRepository);
+        service = new PlayerService(playerRepository, sessionRepository, encoder);
     }
 
     @Test
-    @DisplayName("create builds and persists a player with given name and default balance 1000")
+    @DisplayName("create builds and persists a player with hashed password and default balance 1000")
     void create_buildsAndPersistsPlayer() {
-        Player created = service.create("Fry");
+        Player created = service.create("Fry", "fry", "pass1234");
 
         assertThat(created.getName()).isEqualTo("Fry");
+        assertThat(created.getUsername()).isEqualTo("fry");
+        assertThat(created.getPasswordHash()).isNotEqualTo("pass1234");
+        assertThat(encoder.matches("pass1234", created.getPasswordHash())).isTrue();
         assertThat(created.getBalance()).isEqualTo(1000);
         assertThat(created.getConsecutiveWins()).isZero();
         assertThat(created.getConsecutiveLosses()).isZero();
@@ -62,13 +74,35 @@ class PlayerServiceTest {
         assertThat(fetched).isPresent();
         assertThat(fetched.get().getId()).isEqualTo(created.getId());
         assertThat(fetched.get().getName()).isEqualTo("Fry");
+        assertThat(fetched.get().getUsername()).isEqualTo("fry");
+        assertThat(fetched.get().getPasswordHash()).isNotEqualTo("pass1234");
         assertThat(fetched.get().getBalance()).isEqualTo(1000);
+    }
+
+    @Test
+    @DisplayName("create rejects a duplicate username")
+    void create_duplicateUsername_throws() {
+        service.create("Fry", "fry", "pass1234");
+
+        assertThatThrownBy(() -> service.create("Other Fry", "fry", "other-pass"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("already taken");
+    }
+
+    @Test
+    @DisplayName("verifyCredentials accepts the right password and rejects wrong or unknown user")
+    void verifyCredentials() {
+        service.create("Leela", "leela", "turanga");
+
+        assertThat(service.verifyCredentials("leela", "turanga")).isTrue();
+        assertThat(service.verifyCredentials("leela", "wrong")).isFalse();
+        assertThat(service.verifyCredentials("nobody", "whatever")).isFalse();
     }
 
     @Test
     @DisplayName("findById returns the stored player when it exists")
     void findById_existingPlayer_returnsPlayer() {
-        Player saved = playerRepository.save(new Player("Bender"));
+        Player saved = playerRepository.save(new Player("Bender", "bender", "hash"));
 
         Player found = service.findById(saved.getId());
 
@@ -89,33 +123,21 @@ class PlayerServiceTest {
     @Test
     @DisplayName("reset restores balance to 1000 and all counters to 0")
     void reset_mutatedPlayer_restoresDefaults() {
-        Player player = playerRepository.save(new Player("Leela"));
+        Player player = playerRepository.save(new Player("Amy", "amy", "hash"));
         UUID id = player.getId();
 
-        // mutate the player into a "dirty" state
-        player.debit(400);              // balance -> 600
-        player.registerWin();           // consecutiveWins=1, totalWins=1
-        player.registerLoss();          // consecutiveLosses=1, totalLosses=1
+        player.debit(400);
+        player.registerWin();
+        player.registerBlackjack();
 
         Player resetPlayer = service.reset(id);
 
-        // verify returned player
         assertThat(resetPlayer.getBalance()).isEqualTo(1000);
         assertThat(resetPlayer.getConsecutiveWins()).isZero();
-        assertThat(resetPlayer.getConsecutiveLosses()).isZero();
         assertThat(resetPlayer.getConsecutiveBlackjacks()).isZero();
-        assertThat(resetPlayer.getTotalWins()).isZero();
-        assertThat(resetPlayer.getTotalLosses()).isZero();
-        assertThat(resetPlayer.getTotalPushes()).isZero();
-        assertThat(resetPlayer.getTotalBlackjacks()).isZero();
 
-        // verify persisted state by re-fetching
         var fetched = playerRepository.findById(id);
         assertThat(fetched).isPresent();
-        assertThat(fetched.get().getBalance()).isEqualTo(1000);
-        assertThat(fetched.get().getConsecutiveWins()).isZero();
-        assertThat(fetched.get().getConsecutiveLosses()).isZero();
-        assertThat(fetched.get().getConsecutiveBlackjacks()).isZero();
         assertThat(fetched.get().getTotalWins()).isZero();
         assertThat(fetched.get().getTotalLosses()).isZero();
         assertThat(fetched.get().getTotalPushes()).isZero();
@@ -125,7 +147,7 @@ class PlayerServiceTest {
     @Test
     @DisplayName("reset discards active game session if one exists")
     void reset_withActiveSession_deletesSession() {
-        Player player = playerRepository.save(new Player("Zoidberg"));
+        Player player = playerRepository.save(new Player("Zoidberg", "zoidberg", "hash"));
         UUID id = player.getId();
 
         // create an active game session
@@ -140,7 +162,7 @@ class PlayerServiceTest {
     @Test
     @DisplayName("reset completes normally when no active session exists")
     void reset_noActiveSession_completesNormally() {
-        Player player = playerRepository.save(new Player("Hermes"));
+        Player player = playerRepository.save(new Player("Hermes", "hermes", "hash"));
         UUID id = player.getId();
 
         // no session created

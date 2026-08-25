@@ -23,7 +23,7 @@ public class PlayerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PlayerResponse create(@Valid @RequestBody CreatePlayerRequest request) {
-        Player player = playerService.create(request.name());
+        Player player = playerService.create(request.name(), request.username(), request.password());
         return toDto(player);
     }
 

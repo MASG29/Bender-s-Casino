@@ -62,7 +62,7 @@ class BlackjackControllerTest {
     @BeforeEach
     void setUp() {
         playerId = UUID.randomUUID();
-        player = new Player("TestPlayer");
+        player = new Player("TestPlayer", "testplayer", "hash");
         playerId = player.getId();
 
         playerHand = new Hand();

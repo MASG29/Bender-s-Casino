@@ -1,5 +1,6 @@
 package com.bendercasino.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -13,6 +14,9 @@ public class Player {
     @Id
     private UUID id;
     private String name;
+    @Column(unique = true, nullable = false)
+    private String username;
+    private String passwordHash;
     private int balance;
 
     private int consecutiveWins;
@@ -25,10 +29,12 @@ public class Player {
     private int totalPushes;
     private int totalBlackjacks;
 
-    public Player(String name) {
-        this.id      = UUID.randomUUID();
-        this.name    = name;
-        this.balance = 1000;
+    public Player(String name, String username, String passwordHash) {
+        this.id           = UUID.randomUUID();
+        this.name         = name;
+        this.username     = username;
+        this.passwordHash = passwordHash;
+        this.balance      = 1000;
     }
 
     protected Player() {
@@ -91,6 +97,10 @@ public class Player {
     // --- getters ---
 
     public UUID getId()                   { return id; }
+
+    public String getUsername()           { return username; }
+    public String getPasswordHash()       { return passwordHash; }
+
     public String getName()               { return name; }
     public int getBalance()               { return balance; }
     public int getConsecutiveWins()       { return consecutiveWins; }
