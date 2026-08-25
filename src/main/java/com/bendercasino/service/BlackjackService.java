@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class BlackjackService {
+public class BlackjackService implements GameService {
 
     private final DeckClient deckClient;
     private final InMemoryPlayerRepository playerRepository;
@@ -82,7 +82,10 @@ public class BlackjackService {
     public GameSession hit(UUID playerId) {
         GameSession session = sessionRepository.findByPlayerId(playerId)
                 .orElseThrow(() -> new GameNotFoundException(playerId));
+        return applyHit(session);
+    }
 
+    private GameSession applyHit(GameSession session) {
         if (session.getStatus() != GameStatus.PLAYER_TURN) {
             throw new InvalidGameStateException("Cannot hit: game not in player turn");
         }
@@ -90,7 +93,7 @@ public class BlackjackService {
         List<Card> drawn = deckClient.draw(session.getDeckId(), 1);
         state(session).getPlayerHand().add(drawn.get(0));
 
-        Player player = playerRepository.findById(playerId).orElseThrow();
+        Player player = playerRepository.findById(session.getPlayerId()).orElseThrow();
         if (state(session).getPlayerHand().isBusted()) {
             resolvePlayerBust(player, session);
         }
@@ -103,7 +106,10 @@ public class BlackjackService {
     public GameSession stand(UUID playerId) {
         GameSession session = sessionRepository.findByPlayerId(playerId)
                 .orElseThrow(() -> new GameNotFoundException(playerId));
+        return applyStand(session);
+    }
 
+    private GameSession applyStand(GameSession session) {
         if (session.getStatus() != GameStatus.PLAYER_TURN) {
             throw new InvalidGameStateException("Cannot stand: game not in player turn");
         }
@@ -113,7 +119,7 @@ public class BlackjackService {
             state(session).getDealerHand().add(drawn.get(0));
         }
 
-        Player player = playerRepository.findById(playerId).orElseThrow();
+        Player player = playerRepository.findById(session.getPlayerId()).orElseThrow();
         resolveStand(player, session);
 
         playerRepository.save(player);
@@ -124,6 +130,23 @@ public class BlackjackService {
     public GameSession getState(UUID playerId) {
         return sessionRepository.findByPlayerId(playerId)
                 .orElseThrow(() -> new GameNotFoundException(playerId));
+    }
+
+    @Override
+    public GameSession act(UUID gameId, String action, Object payload) {
+        GameSession session = sessionRepository.findByGameId(gameId)
+                .orElseThrow(() -> new GameNotFoundException(gameId));
+        return switch (action) {
+            case "hit" -> applyHit(session);
+            case "stand" -> applyStand(session);
+            default -> throw new InvalidGameStateException("Unknown action: " + action);
+        };
+    }
+
+    @Override
+    public GameSession state(UUID gameId) {
+        return sessionRepository.findByGameId(gameId)
+                .orElseThrow(() -> new GameNotFoundException(gameId));
     }
 
     private BlackjackState state(GameSession session) {
