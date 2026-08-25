@@ -7,12 +7,12 @@ import {
 } from "../../js/services/blackjack-service.js";
 
 const CHIPS = [
-  { value: 1, image: "/assets/1dollar.coin.png" },
-  { value: 5, image: "/assets/5dollarcoin.png" },
-  { value: 10, image: "/assets/10dollarcoin.png" },
-  { value: 25, image: "/assets/25dollarcoin.png" },
-  { value: 50, image: "/assets/50dollarcoin.png" },
-  { value: 100, image: "/assets/100dollarcoin.png" },
+    { value: 1, image: "/assets/Coins/1dollar.coin.png" },
+    { value: 5, image: "/assets/Coins/5dollarcoin.png" },
+    { value: 10, image: "/assets/Coins/10dollarcoin.png" },
+    { value: 25, image: "/assets/Coins/25dollarcoin.png" },
+    { value: 50, image: "/assets/Coins/50dollarcoin.png" },
+    { value: 100, image: "/assets/Coins/100dollarcoin.png" },
 ];
 
 function tableMarkup() {
@@ -30,15 +30,23 @@ function tableMarkup() {
           ).join("")}
         </div>
 
-        <div id="table" class="bj-table">
-          <div id="dealer" class="bj-seat bj-dealer">
-            <p class="bj-seat-label">Dealer</p>
-            <div class="bj-hand" id="dealer-hand">
-              <div class="bj-slot"></div>
-              <div class="bj-slot"></div>
-            </div>
-            <p class="bj-score" id="dealer-score">—</p>
-          </div>
+                <div class="bj-table">
+                    <div class="bj-deck" id="bj-deck">
+                        <div class="bj-deck-card"></div>
+                        <div class="bj-deck-card"></div>
+                        <div class="bj-deck-card"></div>
+                        <div class="bj-deck-card"></div>
+                        <div class="bj-deck-card"></div>
+                    </div>
+
+                    <div class="bj-seat bj-dealer">
+                        <p class="bj-seat-label">Dealer</p>
+                        <div class="bj-hand" id="dealer-hand">
+                            <div class="bj-slot"></div>
+                            <div class="bj-slot"></div>
+                        </div>
+                        <p class="bj-score" id="dealer-score">—</p>
+                    </div>
 
           <p id="ending"></p>
 
