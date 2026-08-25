@@ -21,3 +21,18 @@ export function stylizedButton(parent, text) {
   const span = element("span", but, ["button_top"], text);
   return but;
 }
+
+export function move(el, aPos, bPos) {
+  console.log(aPos.left);
+  const deltaX = aPos.left - bPos.left + 40;
+  const deltaY = aPos.top - bPos.top + 23;
+  console.log(deltaX);
+  console.log(deltaY);
+
+  el.style.transform = `translate(0px, 0px)`;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      el.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    });
+  });
+}
