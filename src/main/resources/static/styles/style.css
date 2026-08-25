@@ -336,6 +336,35 @@ button:active .button_top {
   font-size: 1rem;
   cursor: pointer;
 }
+
+.modal-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--steel-dark);
+}
+.modal-tab {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+    margin-bottom: -1px;
+}
+.modal-tab:hover { color: var(--text); }
+.modal-tab.active {
+    color: var(--text);
+    border-bottom-color: var(--steel-light);
+}
+
 .modal-close:hover { color: var(--text); }
 .modal-title { font-size: 1.5rem; color: var(--text); margin-bottom: 8px; }
 .modal-hint  { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 22px; line-height: 1.6; }
