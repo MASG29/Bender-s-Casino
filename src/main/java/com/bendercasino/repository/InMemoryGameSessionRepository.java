@@ -22,6 +22,12 @@ public class InMemoryGameSessionRepository {
         return Optional.ofNullable(store.get(playerId));
     }
 
+    public Optional<GameSession> findByGameId(UUID gameId) {
+        return store.values().stream()
+                .filter(s -> s.getGameId().equals(gameId))
+                .findFirst();
+    }
+
     public void deleteByPlayerId(UUID playerId) {
         store.remove(playerId);
     }
