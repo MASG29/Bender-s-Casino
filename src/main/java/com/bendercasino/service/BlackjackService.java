@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-@Service
+@Service("blackjack")
 public class BlackjackService implements GameService {
 
     private final DeckClient deckClient;
