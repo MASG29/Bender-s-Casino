@@ -12,6 +12,11 @@ export async function startGame(playerId, betAmount) {
     }),
   });
 
+  if (!response.ok) {
+    const errMessage = await response.text();
+    throw new Error(errMessage);
+  }
+
   return response.json();
 }
 

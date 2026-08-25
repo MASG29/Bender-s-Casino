@@ -5,6 +5,7 @@ import {
   playerHit,
   playerStand,
 } from "../../js/services/blackjack-service.js";
+import router from "../../router.js";
 
 const CHIPS = [
   { value: 1, image: "/assets/Coins/1dollar.coin.png" },
@@ -80,6 +81,24 @@ function tableMarkup() {
 export function init() {
   let amount = 0;
   const main = document.querySelector("main");
+
+  // No player session -> the API can't work (playerId would be null).
+  // Send them to the home screen to create a player first.
+  if (!sessionStorage.getItem("playerId")) {
+    main.innerHTML = `
+      <section class="join">
+        <h2>No player yet</h2>
+        <p>Create a player before sitting at the table.</p>
+        <a id="go-home" href="/" class="btn">Go back</a>
+      </section>
+    `;
+    document.querySelector("#go-home").addEventListener("click", (e) => {
+      e.preventDefault();
+      router.navigate("/");
+    });
+    return;
+  }
+
   const start = stylizedButton(main, "Start");
 
   start.addEventListener("click", async () => {
@@ -214,12 +233,16 @@ export function init() {
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
+        if (amount <= 0) {
+          console.warn("Pick at least one chip before dealing.");
+          return;
+        }
         table.removeChild(form);
 
         try {
           gameState = await startGame(
             sessionStorage.getItem("playerId"),
-            e.target.amount,
+            amount,
           );
         } catch (err) {
           console.error("Failed to start game:", err.message);
