@@ -21,7 +21,7 @@ export async function createPlayer(name) {
 
   sessionStorage.setItem("playerId", text.playerId);
 
-  return response.json();
+  return response;
 }
 
 export async function getPlayerById(playerID) {
