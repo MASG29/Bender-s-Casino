@@ -12,7 +12,7 @@ vez**, porque todas tocam em ficheiros partilhados.
 
 | # | Tarefa | Detalhe | Depende de |
 |---|--------|---------|------------|
-| E0 | Testes de controller (A8) | `@WebMvcTest` + `@MockitoBean` para `BlackjackController` e `PlayerController`. É a rede de segurança: sem isto não há como provar que o refactor não partiu o blackjack. | — |
+| E0 | ✅ Testes de controller (A8) | `@WebMvcTest` + `@MockitoBean` para `BlackjackController` e `PlayerController`. É a rede de segurança: sem isto não há como provar que o refactor não partiu o blackjack. | — |
 | E1 | `GameSession` genérico | Tirar `playerHand`/`dealerHand`/`outcome` do `GameSession` e deixar `gameId`, `playerId`, `game` (nome), `bet`, `status`, `state` (estado específico do jogo). O estado de blackjack passa a ser um tipo próprio. | E0 |
 | E2 | Interface `GameService` | `start(playerId, bet)`, `act(gameId, action, payload)`, `state(gameId)`. `BlackjackService` passa a implementá-la sem mudar de comportamento. | E1 |
 | E3 | Rotas `/api/games/{game}/...` | Um controller genérico que despacha para o `GameService` certo pelo nome do jogo. **Manter `/api/blackjack` como alias** para o front-end atual não partir. | E2 |
