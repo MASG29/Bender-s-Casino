@@ -7,12 +7,12 @@ import {
 } from "../../js/services/blackjack-service.js";
 
 const CHIPS = [
-    { value: 1, image: "/assets/Coins/1dollar.coin.png" },
-    { value: 5, image: "/assets/Coins/5dollarcoin.png" },
-    { value: 10, image: "/assets/Coins/10dollarcoin.png" },
-    { value: 25, image: "/assets/Coins/25dollarcoin.png" },
-    { value: 50, image: "/assets/Coins/50dollarcoin.png" },
-    { value: 100, image: "/assets/Coins/100dollarcoin.png" },
+  { value: 1, image: "/assets/Coins/1dollar.coin.png" },
+  { value: 5, image: "/assets/Coins/5dollarcoin.png" },
+  { value: 10, image: "/assets/Coins/10dollarcoin.png" },
+  { value: 25, image: "/assets/Coins/25dollarcoin.png" },
+  { value: 50, image: "/assets/Coins/50dollarcoin.png" },
+  { value: 100, image: "/assets/Coins/100dollarcoin.png" },
 ];
 
 function tableMarkup() {
@@ -30,7 +30,7 @@ function tableMarkup() {
           ).join("")}
         </div>
 
-                <div class="bj-table">
+                <div id="table" class="bj-table">
                     <div class="bj-deck" id="bj-deck">
                         <div class="bj-deck-card"></div>
                         <div class="bj-deck-card"></div>
@@ -39,7 +39,7 @@ function tableMarkup() {
                         <div class="bj-deck-card"></div>
                     </div>
 
-                    <div class="bj-seat bj-dealer">
+                    <div id="dealer" class="bj-seat bj-dealer">
                         <p class="bj-seat-label">Dealer</p>
                         <div class="bj-hand" id="dealer-hand">
                             <div class="bj-slot"></div>
@@ -49,10 +49,14 @@ function tableMarkup() {
                     </div>
 
           <p id="ending"></p>
-
-          <div id="bet-amount">
-              <p></p>
-          </div>
+          <form>
+            <p id="bet-amount" name="amount">
+            Bet amount: 0
+            </p>
+            <button type="submit">
+              <span class="button_top">Start</span>
+            </button> 
+          </form>
 
           <div id="player" class="bj-seat bj-player">
             <p class="bj-score" id="player-score">—</p>
@@ -74,7 +78,6 @@ function tableMarkup() {
 }
 
 export function init() {
-
   let amount = 0;
   const main = document.querySelector("main");
   const start = stylizedButton(main, "Start");
@@ -93,8 +96,8 @@ export function init() {
     const table = document.querySelector("#table");
     const playerTable = document.querySelector("#player");
     const dealerTable = document.querySelector("#dealer");
-    const formContainer = document.querySelector("#bet-amount");
     const form = document.querySelector("form");
+    const formContainer = document.querySelector("#bet-amount");
     const playerScoreEl = document.querySelector("#player-score");
     const dealerScoreEl = document.querySelector("#dealer-score");
     const endingEl = document.querySelector("#ending");
@@ -131,12 +134,14 @@ export function init() {
     }
 
     function chips() {
-        document.querySelectorAll("#chips").forEach((e) => {
-          e.addEventListener("click",() => {
-            amount += CHIPS.value;
-            console.log(amount);
-          })
-        })
+      document.querySelectorAll(".bj-chip").forEach((e) => {
+        e.addEventListener("click", () => {
+          console.log(e.dataset.chip);
+          amount += parseInt(e.dataset.chip);
+          console.log(amount);
+          formContainer.textContent = "Bet amount: " + amount;
+        });
+      });
     }
 
     function displayScores() {
@@ -204,14 +209,17 @@ export function init() {
       displayScores();
     } else {
       setControlsEnabled(false); // no hitting/standing before a bet exists
+
+      chips();
+
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        table.removeChild(formContainer);
+        table.removeChild(form);
 
         try {
           gameState = await startGame(
             sessionStorage.getItem("playerId"),
-            e.target.amount.value,
+            e.target.amount,
           );
         } catch (err) {
           console.error("Failed to start game:", err.message);
