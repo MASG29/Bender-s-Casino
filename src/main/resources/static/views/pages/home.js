@@ -22,10 +22,11 @@ export function init() {
     </section>
     `;
 
-  const button = document.querySelector("#create-name");
-  button.addEventListener("click", (e) => {});
   const createBtn = document.querySelector("#create-name");
-  createBtn.addEventListener("click", () => {
+  // The link has href="#": without preventDefault the browser fires popstate
+  // and the router re-renders the home page, wiping the form we just built.
+  createBtn.addEventListener("click", (e) => {
+    e.preventDefault();
     const form = document.createElement("form");
 
     const input = document.createElement("input");
@@ -38,7 +39,7 @@ export function init() {
     submit.textContent = "Submit";
 
     form.append(input, submit);
-    createBtn.replaceWith(form); // ou form.appendChild depois depende onde quiseres pôr
+    createBtn.replaceWith(form);
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
