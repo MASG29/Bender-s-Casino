@@ -4,25 +4,41 @@ import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
-import com.bendercasino.repository.InMemoryPlayerRepository;
+import com.bendercasino.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class PlayerServiceTest {
 
-    private InMemoryPlayerRepository playerRepository;
+    private PlayerRepository playerRepository;
     private InMemoryGameSessionRepository sessionRepository;
     private PlayerService service;
 
     @BeforeEach
     void setUp() {
-        playerRepository = new InMemoryPlayerRepository();
+        playerRepository = mock(PlayerRepository.class);
+        Map<UUID, Player> store = new HashMap<>();
+        when(playerRepository.save(any(Player.class))).thenAnswer(invocation -> {
+            Player p = invocation.getArgument(0);
+            store.put(p.getId(), p);
+            return p;
+        });
+        when(playerRepository.findById(any(UUID.class))).thenAnswer(invocation -> {
+            UUID id = invocation.getArgument(0);
+            return Optional.ofNullable(store.get(id));
+        });
         sessionRepository = new InMemoryGameSessionRepository();
         service = new PlayerService(playerRepository, sessionRepository);
     }
