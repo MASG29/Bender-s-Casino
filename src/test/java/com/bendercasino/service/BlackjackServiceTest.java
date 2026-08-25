@@ -7,6 +7,7 @@ import com.bendercasino.exception.InvalidBetException;
 import com.bendercasino.exception.InvalidGameStateException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.Bet;
+import com.bendercasino.model.BlackjackState;
 import com.bendercasino.model.Card;
 import com.bendercasino.model.Deck;
 import com.bendercasino.model.GameSession;
@@ -43,6 +44,10 @@ class BlackjackServiceTest {
     private Player player;
     private UUID playerId;
 
+    private static BlackjackState state(GameSession session) {
+        return (BlackjackState) session.getState();
+    }
+
     private static Card card(String value, String suit) {
         return new Card(value.substring(0, 1) + suit.substring(0, 1), value, suit, "");
     }
@@ -76,11 +81,11 @@ class BlackjackServiceTest {
         GameSession session = service.start(playerId, 100);
 
         assertThat(session.getStatus()).isEqualTo(GameStatus.PLAYER_TURN);
-        assertThat(session.getOutcome()).isNull();
-        assertThat(session.getPlayerHand().getCards()).hasSize(2);
-        assertThat(session.getDealerHand().getCards()).hasSize(2);
-        assertThat(session.getPlayerHand().value()).isEqualTo(5);
-        assertThat(session.getDealerHand().value()).isEqualTo(18);
+        assertThat(state(session).getOutcome()).isNull();
+        assertThat(state(session).getPlayerHand().getCards()).hasSize(2);
+        assertThat(state(session).getDealerHand().getCards()).hasSize(2);
+        assertThat(state(session).getPlayerHand().value()).isEqualTo(5);
+        assertThat(state(session).getDealerHand().value()).isEqualTo(18);
     }
 
     // --- 2. Player blackjack, dealer not ---
@@ -99,7 +104,7 @@ class BlackjackServiceTest {
         GameSession session = service.start(playerId, 100);
 
         assertThat(session.getStatus()).isEqualTo(GameStatus.FINISHED);
-        assertThat(session.getOutcome()).isEqualTo(Outcome.PLAYER_BLACKJACK);
+        assertThat(state(session).getOutcome()).isEqualTo(Outcome.PLAYER_BLACKJACK);
         assertThat(player.getBalance()).isEqualTo(1150); // 1000 - 100 + 250
         assertThat(player.getTotalBlackjacks()).isEqualTo(1);
         assertThat(player.getConsecutiveBlackjacks()).isEqualTo(1);
@@ -122,7 +127,7 @@ class BlackjackServiceTest {
         GameSession session = service.start(playerId, 100);
 
         assertThat(session.getStatus()).isEqualTo(GameStatus.FINISHED);
-        assertThat(session.getOutcome()).isEqualTo(Outcome.PUSH);
+        assertThat(state(session).getOutcome()).isEqualTo(Outcome.PUSH);
         assertThat(player.getBalance()).isEqualTo(1000); // 1000 - 100 + 100
         assertThat(player.getTotalPushes()).isEqualTo(1);
         assertThat(session.getBet().payout()).isEqualTo(100);
@@ -147,10 +152,10 @@ class BlackjackServiceTest {
         GameSession session = service.hit(playerId);
 
         assertThat(session.getStatus()).isEqualTo(GameStatus.FINISHED);
-        assertThat(session.getOutcome()).isEqualTo(Outcome.PLAYER_BUST);
+        assertThat(state(session).getOutcome()).isEqualTo(Outcome.PLAYER_BUST);
         assertThat(player.getBalance()).isEqualTo(900); // 1000 - 100 + 0
         assertThat(player.getTotalLosses()).isEqualTo(1);
-        assertThat(session.getPlayerHand().isBusted()).isTrue();
+        assertThat(state(session).getPlayerHand().isBusted()).isTrue();
     }
 
     // --- 5. stand: dealer draws exactly one card to reach 17 ---
@@ -172,7 +177,7 @@ class BlackjackServiceTest {
         GameSession session = service.stand(playerId);
 
         assertThat(session.getStatus()).isEqualTo(GameStatus.FINISHED);
-        assertThat(session.getOutcome()).isEqualTo(Outcome.PLAYER_WIN);
+        assertThat(state(session).getOutcome()).isEqualTo(Outcome.PLAYER_WIN);
         assertThat(player.getBalance()).isEqualTo(1100); // 1000 - 100 + 200
         assertThat(player.getTotalWins()).isEqualTo(1);
         assertThat(session.getBet().payout()).isEqualTo(200);
@@ -198,7 +203,7 @@ class BlackjackServiceTest {
         GameSession session = service.stand(playerId);
 
         assertThat(session.getStatus()).isEqualTo(GameStatus.FINISHED);
-        assertThat(session.getOutcome()).isEqualTo(Outcome.DEALER_BUST);
+        assertThat(state(session).getOutcome()).isEqualTo(Outcome.DEALER_BUST);
         assertThat(player.getBalance()).isEqualTo(1100); // 1000 - 100 + 200
         assertThat(player.getTotalWins()).isEqualTo(1);
         assertThat(session.getBet().payout()).isEqualTo(200);
@@ -221,7 +226,7 @@ class BlackjackServiceTest {
         GameSession session = service.stand(playerId);
 
         assertThat(session.getStatus()).isEqualTo(GameStatus.FINISHED);
-        assertThat(session.getOutcome()).isEqualTo(Outcome.PUSH);
+        assertThat(state(session).getOutcome()).isEqualTo(Outcome.PUSH);
         assertThat(player.getBalance()).isEqualTo(1000); // 1000 - 100 + 100
         assertThat(player.getTotalPushes()).isEqualTo(1);
         assertThat(session.getBet().payout()).isEqualTo(100);
@@ -244,7 +249,7 @@ class BlackjackServiceTest {
         GameSession session = service.stand(playerId);
 
         assertThat(session.getStatus()).isEqualTo(GameStatus.FINISHED);
-        assertThat(session.getOutcome()).isEqualTo(Outcome.DEALER_WIN);
+        assertThat(state(session).getOutcome()).isEqualTo(Outcome.DEALER_WIN);
         assertThat(player.getBalance()).isEqualTo(900); // 1000 - 100 + 0
         assertThat(player.getTotalLosses()).isEqualTo(1);
         assertThat(session.getBet().payout()).isEqualTo(0);

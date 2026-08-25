@@ -6,6 +6,7 @@ import com.bendercasino.dto.JokeResponse;
 import com.bendercasino.dto.PlayerActionRequest;
 import com.bendercasino.dto.StartGameRequest;
 import com.bendercasino.model.Bet;
+import com.bendercasino.model.BlackjackState;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
 import com.bendercasino.model.Hand;
@@ -72,13 +73,14 @@ class BlackjackControllerTest {
         dealerHand.add(new com.bendercasino.model.Card("9S", "9", "SPADES", ""));
         dealerHand.add(new com.bendercasino.model.Card("9D", "9", "DIAMONDS", ""));
 
-        session = new GameSession(playerId, "deck-1", 100);
-        session.getPlayerHand().add(playerHand.getCards().get(0));
-        session.getPlayerHand().add(playerHand.getCards().get(1));
-        session.getDealerHand().add(dealerHand.getCards().get(0));
-        session.getDealerHand().add(dealerHand.getCards().get(1));
+        session = new GameSession(playerId, "deck-1", "blackjack", 100);
+        BlackjackState state = new BlackjackState();
+        state.getPlayerHand().add(playerHand.getCards().get(0));
+        state.getPlayerHand().add(playerHand.getCards().get(1));
+        state.getDealerHand().add(dealerHand.getCards().get(0));
+        state.getDealerHand().add(dealerHand.getCards().get(1));
+        session.setState(state);
         session.setStatus(GameStatus.PLAYER_TURN);
-        session.setOutcome(null);
     }
 
     // --- POST /api/blackjack/start ---
@@ -171,7 +173,7 @@ class BlackjackControllerTest {
     @DisplayName("POST /stand returns 200 with GameStateResponse on success")
     void stand_success() throws Exception {
         session.setStatus(GameStatus.FINISHED);
-        session.setOutcome(Outcome.PLAYER_WIN);
+        ((BlackjackState) session.getState()).setOutcome(Outcome.PLAYER_WIN);
         session.getBet().withPayout(200);
 
         when(blackjackService.stand(eq(playerId))).thenReturn(session);
