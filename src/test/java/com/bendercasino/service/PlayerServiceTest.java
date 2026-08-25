@@ -1,5 +1,6 @@
 package com.bendercasino.service;
 
+import com.bendercasino.exception.InvalidCredentialsException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.Player;
@@ -97,6 +98,28 @@ class PlayerServiceTest {
         assertThat(service.verifyCredentials("leela", "turanga")).isTrue();
         assertThat(service.verifyCredentials("leela", "wrong")).isFalse();
         assertThat(service.verifyCredentials("nobody", "whatever")).isFalse();
+    }
+
+    @Test
+    @DisplayName("login returns the player for valid credentials")
+    void login_validCredentials_returnsPlayer() {
+        Player created = service.create("Leela", "leela", "turanga");
+
+        Player logged = service.login("leela", "turanga");
+
+        assertThat(logged.getId()).isEqualTo(created.getId());
+        assertThat(logged.getUsername()).isEqualTo("leela");
+    }
+
+    @Test
+    @DisplayName("login throws InvalidCredentialsException for wrong password or unknown user")
+    void login_badCredentials_throws() {
+        service.create("Leela", "leela", "turanga");
+
+        assertThatThrownBy(() -> service.login("leela", "wrong"))
+                .isInstanceOf(InvalidCredentialsException.class);
+        assertThatThrownBy(() -> service.login("nobody", "whatever"))
+                .isInstanceOf(InvalidCredentialsException.class);
     }
 
     @Test

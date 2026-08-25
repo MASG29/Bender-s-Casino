@@ -1,5 +1,6 @@
 package com.bendercasino.service;
 
+import com.bendercasino.exception.InvalidCredentialsException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
@@ -36,6 +37,13 @@ public class PlayerService {
         return playerRepository.findByUsername(username)
             .map(player -> passwordEncoder.matches(rawPassword, player.getPasswordHash()))
             .orElse(false);
+    }
+
+    public Player login(String username, String rawPassword) {
+        if (!verifyCredentials(username, rawPassword)) {
+            throw new InvalidCredentialsException();
+        }
+        return playerRepository.findByUsername(username).orElseThrow(InvalidCredentialsException::new);
     }
 
     public Player findById(UUID id) {
