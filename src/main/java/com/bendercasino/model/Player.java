@@ -1,11 +1,18 @@
 package com.bendercasino.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.util.UUID;
 
+@Entity
+@Table(name = "players")
 public class Player {
 
-    private final UUID id;
-    private final String name;
+    @Id
+    private UUID id;
+    private String name;
     private int balance;
 
     private int consecutiveWins;
@@ -22,6 +29,9 @@ public class Player {
         this.id      = UUID.randomUUID();
         this.name    = name;
         this.balance = 1000;
+    }
+
+    protected Player() {
     }
 
     public void debit(int amount) {
