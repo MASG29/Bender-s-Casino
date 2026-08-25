@@ -1,6 +1,7 @@
 package com.bendercasino.controller;
 
 import com.bendercasino.dto.*;
+import com.bendercasino.model.BlackjackState;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
 import com.bendercasino.model.JokeTrigger;
@@ -64,13 +65,14 @@ public class BlackjackController {
     }
 
     private GameStateResponse toDTO(GameSession session, Player player) {
+        BlackjackState state = (BlackjackState) session.getState();
         boolean hidden = session.getStatus() == GameStatus.PLAYER_TURN;
 
         HandDto dealerDto = hidden
-                ? CardMapper.toDtoDealerHidden(session.getDealerHand())
-                : CardMapper.toDto(session.getDealerHand());
+                ? CardMapper.toDtoDealerHidden(state.getDealerHand())
+                : CardMapper.toDto(state.getDealerHand());
 
-        String joke = jokeService.jokeFor(player, session.getOutcome());
+        String joke = jokeService.jokeFor(player, state.getOutcome());
 
         GameStateResponse.StreaksDto streaks = new GameStateResponse.StreaksDto(
                 player.getConsecutiveWins(),
@@ -82,10 +84,10 @@ public class BlackjackController {
                 session.getGameId(),
                 session.getPlayerId(),
                 session.getStatus().name(),
-                CardMapper.toDto(session.getPlayerHand()),
+                CardMapper.toDto(state.getPlayerHand()),
                 dealerDto,
                 session.getBet().amount(),
-                session.getOutcome() != null ? session.getOutcome().name() : null,
+                state.getOutcome() != null ? state.getOutcome().name() : null,
                 session.getBet().payout(),
                 joke,
                 streaks
