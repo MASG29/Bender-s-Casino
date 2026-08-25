@@ -1,6 +1,7 @@
 package com.bendercasino.controller;
 
 import com.bendercasino.dto.CreatePlayerRequest;
+import com.bendercasino.dto.LoginRequest;
 import com.bendercasino.dto.PlayerResponse;
 import com.bendercasino.model.Player;
 import com.bendercasino.service.PlayerService;
@@ -24,6 +25,12 @@ public class PlayerController {
     @ResponseStatus(HttpStatus.CREATED)
     public PlayerResponse create(@Valid @RequestBody CreatePlayerRequest request) {
         Player player = playerService.create(request.name(), request.username(), request.password());
+        return toDto(player);
+    }
+
+    @PostMapping("/login")
+    public PlayerResponse login(@Valid @RequestBody LoginRequest request) {
+        Player player = playerService.login(request.username(), request.password());
         return toDto(player);
     }
 

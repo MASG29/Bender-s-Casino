@@ -64,6 +64,12 @@ public class GlobalExceptionHandler {
         return build(400, "VALIDATION_ERROR", msg, req.getRequestURI());
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleInvalidCredentials(InvalidCredentialsException ex, HttpServletRequest req) {
+        return build(401, "INVALID_CREDENTIALS", ex.getMessage(), req.getRequestURI());
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest req) {

@@ -1,6 +1,7 @@
 package com.bendercasino.controller;
 
 import com.bendercasino.dto.CreatePlayerRequest;
+import com.bendercasino.exception.InvalidCredentialsException;
 import com.bendercasino.dto.PlayerResponse;
 import com.bendercasino.model.Player;
 import com.bendercasino.service.PlayerService;
@@ -83,6 +84,39 @@ class PlayerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    // --- POST /api/players/login ---
+
+    @Test
+    @DisplayName("POST /login returns 200 with PlayerResponse on valid credentials")
+    void login_success() throws Exception {
+        when(playerService.login("testplayer", "secret123")).thenReturn(player);
+
+        mockMvc.perform(post("/api/players/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"username":"testplayer","password":"secret123"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.playerId").value(playerId.toString()))
+                .andExpect(jsonPath("$.name").value("TestPlayer"))
+                .andExpect(jsonPath("$.balance").value(1000));
+    }
+
+    @Test
+    @DisplayName("POST /login returns 401 on invalid credentials")
+    void login_badCredentials_returns401() throws Exception {
+        when(playerService.login(anyString(), anyString()))
+                .thenThrow(new InvalidCredentialsException());
+
+        mockMvc.perform(post("/api/players/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"username":"testplayer","password":"wrong"}
+                                """))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("INVALID_CREDENTIALS"));
     }
 
     // --- GET /api/players/{id} ---
