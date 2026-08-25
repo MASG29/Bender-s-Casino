@@ -113,7 +113,7 @@ class PlayerServiceTest {
         UUID id = player.getId();
 
         // create an active game session
-        sessionRepository.save(new GameSession(id, "deck-1", 100));
+        sessionRepository.save(new GameSession(id, "deck-1", "blackjack", 100));
         assertThat(sessionRepository.findByPlayerId(id)).isPresent();
 
         service.reset(id);

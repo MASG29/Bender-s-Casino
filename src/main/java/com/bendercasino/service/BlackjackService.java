@@ -7,6 +7,7 @@ import com.bendercasino.exception.InvalidBetException;
 import com.bendercasino.exception.InvalidGameStateException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.Bet;
+import com.bendercasino.model.BlackjackState;
 import com.bendercasino.model.Card;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
@@ -19,8 +20,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-@Service
-public class BlackjackService {
+@Service("blackjack")
+public class BlackjackService implements GameService {
 
     private final DeckClient deckClient;
     private final InMemoryPlayerRepository playerRepository;
@@ -59,14 +60,15 @@ public class BlackjackService {
 
         player.debit(bet);
 
-        GameSession session = new GameSession(playerId, deck.deckId(), bet);
-        session.getPlayerHand().add(cards.get(0));
-        session.getPlayerHand().add(cards.get(1));
-        session.getDealerHand().add(cards.get(2));
-        session.getDealerHand().add(cards.get(3));
+        GameSession session = new GameSession(playerId, deck.deckId(), "blackjack", bet);
+        session.setState(new BlackjackState());
+        state(session).getPlayerHand().add(cards.get(0));
+        state(session).getPlayerHand().add(cards.get(1));
+        state(session).getDealerHand().add(cards.get(2));
+        state(session).getDealerHand().add(cards.get(3));
 
-        boolean playerBlackjack = session.getPlayerHand().isBlackjack();
-        boolean dealerBlackjack = session.getDealerHand().isBlackjack();
+        boolean playerBlackjack = state(session).getPlayerHand().isBlackjack();
+        boolean dealerBlackjack = state(session).getDealerHand().isBlackjack();
 
         if (playerBlackjack || dealerBlackjack) {
             resolveBlackjack(player, session, playerBlackjack, dealerBlackjack);
@@ -80,16 +82,19 @@ public class BlackjackService {
     public GameSession hit(UUID playerId) {
         GameSession session = sessionRepository.findByPlayerId(playerId)
                 .orElseThrow(() -> new GameNotFoundException(playerId));
+        return applyHit(session);
+    }
 
+    private GameSession applyHit(GameSession session) {
         if (session.getStatus() != GameStatus.PLAYER_TURN) {
             throw new InvalidGameStateException("Cannot hit: game not in player turn");
         }
 
         List<Card> drawn = deckClient.draw(session.getDeckId(), 1);
-        session.getPlayerHand().add(drawn.get(0));
+        state(session).getPlayerHand().add(drawn.get(0));
 
-        Player player = playerRepository.findById(playerId).orElseThrow();
-        if (session.getPlayerHand().isBusted()) {
+        Player player = playerRepository.findById(session.getPlayerId()).orElseThrow();
+        if (state(session).getPlayerHand().isBusted()) {
             resolvePlayerBust(player, session);
         }
 
@@ -101,17 +106,20 @@ public class BlackjackService {
     public GameSession stand(UUID playerId) {
         GameSession session = sessionRepository.findByPlayerId(playerId)
                 .orElseThrow(() -> new GameNotFoundException(playerId));
+        return applyStand(session);
+    }
 
+    private GameSession applyStand(GameSession session) {
         if (session.getStatus() != GameStatus.PLAYER_TURN) {
             throw new InvalidGameStateException("Cannot stand: game not in player turn");
         }
 
-        while (session.getDealerHand().value() < 17) {
+        while (state(session).getDealerHand().value() < 17) {
             List<Card> drawn = deckClient.draw(session.getDeckId(), 1);
-            session.getDealerHand().add(drawn.get(0));
+            state(session).getDealerHand().add(drawn.get(0));
         }
 
-        Player player = playerRepository.findById(playerId).orElseThrow();
+        Player player = playerRepository.findById(session.getPlayerId()).orElseThrow();
         resolveStand(player, session);
 
         playerRepository.save(player);
@@ -124,23 +132,44 @@ public class BlackjackService {
                 .orElseThrow(() -> new GameNotFoundException(playerId));
     }
 
+    @Override
+    public GameSession act(UUID gameId, String action, Object payload) {
+        GameSession session = sessionRepository.findByGameId(gameId)
+                .orElseThrow(() -> new GameNotFoundException(gameId));
+        return switch (action) {
+            case "hit" -> applyHit(session);
+            case "stand" -> applyStand(session);
+            default -> throw new InvalidGameStateException("Unknown action: " + action);
+        };
+    }
+
+    @Override
+    public GameSession state(UUID gameId) {
+        return sessionRepository.findByGameId(gameId)
+                .orElseThrow(() -> new GameNotFoundException(gameId));
+    }
+
+    private BlackjackState state(GameSession session) {
+        return (BlackjackState) session.getState();
+    }
+
     private void resolveBlackjack(Player player, GameSession session, boolean playerBlackjack, boolean dealerBlackjack) {
         session.setStatus(GameStatus.FINISHED);
         int betAmount = session.getBet().amount();
 
         if (playerBlackjack && dealerBlackjack) {
-            session.setOutcome(Outcome.PUSH);
+            state(session).setOutcome(Outcome.PUSH);
             session.setBet(session.getBet().withPayout(betAmount));
             player.credit(betAmount);
             player.registerPush();
         } else if (playerBlackjack) {
-            session.setOutcome(Outcome.PLAYER_BLACKJACK);
+            state(session).setOutcome(Outcome.PLAYER_BLACKJACK);
             int payout = betAmount * 5 / 2;
             session.setBet(session.getBet().withPayout(payout));
             player.credit(payout);
             player.registerBlackjack();
         } else {
-            session.setOutcome(Outcome.DEALER_WIN);
+            state(session).setOutcome(Outcome.DEALER_WIN);
             session.setBet(session.getBet().withPayout(0));
             player.registerLoss();
         }
@@ -148,7 +177,7 @@ public class BlackjackService {
 
     private void resolvePlayerBust(Player player, GameSession session) {
         session.setStatus(GameStatus.FINISHED);
-        session.setOutcome(Outcome.PLAYER_BUST);
+        state(session).setOutcome(Outcome.PLAYER_BUST);
         session.setBet(session.getBet().withPayout(0));
         player.registerLoss();
     }
@@ -156,27 +185,27 @@ public class BlackjackService {
     private void resolveStand(Player player, GameSession session) {
         session.setStatus(GameStatus.FINISHED);
         int betAmount = session.getBet().amount();
-        int playerValue = session.getPlayerHand().value();
-        int dealerValue = session.getDealerHand().value();
+        int playerValue = state(session).getPlayerHand().value();
+        int dealerValue = state(session).getDealerHand().value();
 
-        if (session.getDealerHand().isBusted()) {
-            session.setOutcome(Outcome.DEALER_BUST);
+        if (state(session).getDealerHand().isBusted()) {
+            state(session).setOutcome(Outcome.DEALER_BUST);
             int payout = betAmount * 2;
             session.setBet(session.getBet().withPayout(payout));
             player.credit(payout);
             player.registerWin();
         } else if (playerValue > dealerValue) {
-            session.setOutcome(Outcome.PLAYER_WIN);
+            state(session).setOutcome(Outcome.PLAYER_WIN);
             int payout = betAmount * 2;
             session.setBet(session.getBet().withPayout(payout));
             player.credit(payout);
             player.registerWin();
         } else if (dealerValue > playerValue) {
-            session.setOutcome(Outcome.DEALER_WIN);
+            state(session).setOutcome(Outcome.DEALER_WIN);
             session.setBet(session.getBet().withPayout(0));
             player.registerLoss();
         } else {
-            session.setOutcome(Outcome.PUSH);
+            state(session).setOutcome(Outcome.PUSH);
             int payout = betAmount;
             session.setBet(session.getBet().withPayout(payout));
             player.credit(payout);

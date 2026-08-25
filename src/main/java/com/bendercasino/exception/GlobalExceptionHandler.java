@@ -25,6 +25,12 @@ public class GlobalExceptionHandler {
         return build(404, "GAME_NOT_FOUND", ex.getMessage(), req.getRequestURI());
     }
 
+    @ExceptionHandler(UnknownGameException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleUnknownGame(UnknownGameException ex, HttpServletRequest req) {
+        return build(404, "UNKNOWN_GAME", ex.getMessage(), req.getRequestURI());
+    }
+
     @ExceptionHandler(InvalidBetException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidBet(InvalidBetException ex, HttpServletRequest req) {
