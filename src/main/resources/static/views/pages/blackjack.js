@@ -20,7 +20,7 @@ function tableMarkup() {
     <section class="bj">
       <h2>Blackjack</h2>
       <div class="bj-floor">
-        <div class="bj-chips">
+        <div id="chips" class="bj-chips">
           ${CHIPS.map(
             (chip) => `
             <button class="bj-chip" type="button" data-chip="${chip.value}" aria-label="Bet ${chip.value}">
@@ -42,11 +42,8 @@ function tableMarkup() {
 
           <p id="ending"></p>
 
-          <div id="form">
-            <form>
-              <label for="amount">Bet amount:</label>
-              <input type="number" name="amount">
-            </form>
+          <div id="bet-amount">
+              <p></p>
           </div>
 
           <div id="player" class="bj-seat bj-player">
@@ -69,6 +66,8 @@ function tableMarkup() {
 }
 
 export function init() {
+
+  let amount = 0;
   const main = document.querySelector("main");
   const start = stylizedButton(main, "Start");
 
@@ -86,7 +85,7 @@ export function init() {
     const table = document.querySelector("#table");
     const playerTable = document.querySelector("#player");
     const dealerTable = document.querySelector("#dealer");
-    const formContainer = document.querySelector("#form");
+    const formContainer = document.querySelector("#bet-amount");
     const form = document.querySelector("form");
     const playerScoreEl = document.querySelector("#player-score");
     const dealerScoreEl = document.querySelector("#dealer-score");
@@ -121,6 +120,15 @@ export function init() {
         const cardEl = element("div", dealerCardsContainer);
         element("p", cardEl).textContent = c.value + " of " + c.suit;
       });
+    }
+
+    function chips() {
+        document.querySelectorAll("#chips").forEach((e) => {
+          e.addEventListener("click",() => {
+            amount += CHIPS.value;
+            console.log(amount);
+          })
+        })
     }
 
     function displayScores() {
