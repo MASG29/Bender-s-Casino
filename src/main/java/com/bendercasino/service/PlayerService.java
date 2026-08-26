@@ -61,13 +61,8 @@ public class PlayerService {
         return playerRepository.findById(id).orElseThrow(() -> new PlayerNotFoundException(id));
     }
 
-    /**
-     * Reset do saldo e das estatísticas. Antes da persistência (L-B1) isto era inofensivo:
-     * o estado morria com o processo. Agora que o saldo vive em H2, um POST anónimo a
-     * /api/players/{id}/reset apagava a conta de outra pessoa — por isso o reset só é
-     * permitido ao próprio jogador autenticado (o username da sessão tem de ser o dono
-     * do id). Não há roles de admin; se um dia houver, acrescentar aqui a exceção.
-     */
+    // balance and stats persist now, so an anonymous reset would wipe someone else's
+    // account; only the account owner's own session is allowed to reset it
     public Player reset(UUID id, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()
                 || !findById(id).getUsername().equals(authentication.getName())) {

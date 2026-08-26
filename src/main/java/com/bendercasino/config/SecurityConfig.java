@@ -19,23 +19,19 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // L-B4: a API de jogo e a de jogador ficam fechadas; /api/auth/** e os estáticos
-    // da SPA ficam abertos. Sem formLogin — a autenticação é feita pelo AuthController
-    // (POST /api/auth/login), que guarda o contexto na sessão HTTP.
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                // estáticos + rotas do SPA (o SpaForwardController faz forward para index.html)
                 .requestMatchers("/", "/index.html", "/favicon.ico", "/assets/**", "/styles/**",
                                  "/js/**", "/views/**", "/*.js", "/*.css", "/*.png", "/*.ico",
                                  "/error", "/{path:[^.]*}", "/{path:[^.]*}/{subpath:[^.]*}").permitAll()
                 .requestMatchers("/api/games/**", "/api/players/**", "/api/blackjack/**").authenticated()
                 .anyRequest().denyAll())
             .exceptionHandling(ex -> ex
-                // 401 em JSON em vez de redirect para um form de login que não existe
+                // no formLogin configured, so fall back to plain 401 instead of a redirect
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
         return http.build();
     }

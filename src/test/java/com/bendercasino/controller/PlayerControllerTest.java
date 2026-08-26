@@ -44,7 +44,6 @@ class PlayerControllerTest {
         playerId = player.getId();
     }
 
-    // --- GET /api/players/{id} ---
 
     @Test
     @DisplayName("GET /{id} returns 200 with PlayerResponse on success")
@@ -69,12 +68,11 @@ class PlayerControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // --- GET /api/players/{id}/balance ---
 
     @Test
     @DisplayName("GET /{id}/balance returns 200 with balance map on success")
     void getBalance_success() throws Exception {
-        player.credit(250); // balance = 1250
+        player.credit(250);
         when(playerService.findById(eq(playerId))).thenReturn(player);
 
         mockMvc.perform(get("/api/players/%s/balance".formatted(playerId)))
@@ -89,14 +87,13 @@ class PlayerControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // --- POST /api/players/{id}/reset ---
 
     @Test
     @DisplayName("POST /{id}/reset returns 200 with PlayerResponse when the authenticated player resets themselves")
     void reset_success() throws Exception {
-        // nullable: no slice @WebMvcTest o resolver entrega null ao parâmetro Authentication
+        // the Authentication param resolves to null in a @WebMvcTest slice, so the mock must accept that
         Player resetPlayer = new Player("TestPlayer", "testplayer", "Test", "Player", "test@example.com", "hash");
-        resetPlayer.credit(500); // saldo 1500: prova que o que sai é o DTO do service, não um valor fixo
+        resetPlayer.credit(500);
         when(playerService.reset(eq(playerId), nullable(Authentication.class))).thenReturn(resetPlayer);
 
         mockMvc.perform(post("/api/players/%s/reset".formatted(playerId))
@@ -104,7 +101,7 @@ class PlayerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.playerId").value(resetPlayer.getId().toString()))
                 .andExpect(jsonPath("$.name").value("TestPlayer"))
-                .andExpect(jsonPath("$.balance").value(1500)) // o stub devolve o jogador com 500 creditados
+                .andExpect(jsonPath("$.balance").value(1500))
                 .andExpect(jsonPath("$.stats.wins").value(0))
                 .andExpect(jsonPath("$.stats.losses").value(0))
                 .andExpect(jsonPath("$.stats.pushes").value(0))

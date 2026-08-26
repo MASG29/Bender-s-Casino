@@ -101,8 +101,6 @@ public class Player {
         totalBlackjacks       = 0;
     }
 
-    // --- getters ---
-
     public UUID getId()                   { return id; }
 
     public String getUsername()           { return username; }
