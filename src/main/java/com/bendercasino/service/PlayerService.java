@@ -27,11 +27,12 @@ public class PlayerService {
     }
 
     public Player create(CreatePlayerRequest request) {
-    if (playerRepository.findByUsername(request.email()).isPresent()) {
-        throw new IllegalArgumentException("Email already taken: " + request.email());
+    if (playerRepository.findByUsername(request.username()).isPresent()) {
+        throw new IllegalArgumentException("Username already taken: " + request.username());
     }
     Player player = new Player(
         request.name(),
+        request.username(),
         request.firstName(),
         request.lastName(),
         request.email(),
