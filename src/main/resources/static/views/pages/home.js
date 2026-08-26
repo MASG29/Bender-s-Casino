@@ -125,33 +125,27 @@ async function submitLogin() {
         btn.disabled = true;
         btn.querySelector(".btn-label").textContent = "Loading...";
 
-        // TODO: apagar quando o backend estiver pronto
-        const player = { playerId: "mock-id-123", name: identifier || identifier, balance: 1000 };
-        state.setPlayer(player);
-        state.updateHeader();
-        document.getElementById("login-modal").classList.remove("open");
-        router.navigate("/lobby");
-        return;
+        
 
-        // try {
-        //     const res = await fetch("/api/players/login", {
-        //         method : "POST",
-        //         headers: { "Content-Type": "application/json" },
-        //         body   : JSON.stringify({ identifier, password }),
-        //     });
-        //     if (!res.ok) {
-        //         const err = await res.json().catch(() => ({}));
-        //         throw new Error(err.message || `Erro ${res.status}`);
-        //     }
-        //     const player = await res.json();
-        //     state.setPlayer(player);
-        //     document.getElementById("login-modal").classList.remove("open");
-        //     router.navigate("/lobby");
-        // } catch (err) {
-        //     errorEl.textContent = err.message || "Something went wrong.";
-        //     btn.disabled = false;
-        //     btn.querySelector(".btn-label").textContent = "Login";
-        // }
+         try {
+             const res = await fetch("/api/players/login", {
+                 method : "POST",
+                 headers: { "Content-Type": "application/json" },
+                 body   : JSON.stringify({ identifier, password }),
+             });
+             if (!res.ok) {
+                 const err = await res.json().catch(() => ({}));
+                 throw new Error(err.message || `Erro ${res.status}`);
+             }
+             const player = await res.json();
+             state.setPlayer(player);
+             document.getElementById("login-modal").classList.remove("open");
+             router.navigate("/lobby");
+         } catch (err) {
+             errorEl.textContent = err.message || "Something went wrong.";
+             btn.disabled = false;
+             btn.querySelector(".btn-label").textContent = "Login";
+         }
 
     } else {
         const firstName = document.getElementById("reg-firstname").value.trim();
@@ -172,33 +166,26 @@ async function submitLogin() {
         btn.disabled = true;
         btn.querySelector(".btn-label").textContent = "Loading...";
 
-        // TODO: substituir mock pelo try/catch real
-        
-        const player = { playerId: "mock-id-123", name: nickname || identifier, balance: 1000 };
-        state.setPlayer(player);
-        state.updateHeader();
-        document.getElementById("login-modal").classList.remove("open");
-        router.navigate("/lobby");
-        return;
+      
 
-        // try {
-        //     const res = await fetch("/api/players", {
-        //         method : "POST",
-        //         headers: { "Content-Type": "application/json" },
-        //         body   : JSON.stringify({ firstName, lastName, nickname, email, password }),
-        //     });
-        //     if (!res.ok) {
-        //         const err = await res.json().catch(() => ({}));
-        //         throw new Error(err.message || `Erro ${res.status}`);
-        //     }
-        //     const player = await res.json();
-        //     state.setPlayer(player);
-        //     document.getElementById("login-modal").classList.remove("open");
-        //     router.navigate("/lobby");
-        // } catch (err) {
-        //     errorEl.textContent = err.message || "Something went wrong.";
-        //     btn.disabled = false;
-        //     btn.querySelector(".btn-label").textContent = "Create Account";
-        // }
+         try {
+             const res = await fetch("/api/players", {
+                 method : "POST",
+                 headers: { "Content-Type": "application/json" },
+                 body   : JSON.stringify({ firstName, lastName, nickname, email, password }),
+             });
+             if (!res.ok) {
+                 const err = await res.json().catch(() => ({}));
+                 throw new Error(err.message || `Erro ${res.status}`);
+             }
+             const player = await res.json();
+             state.setPlayer(player);
+             document.getElementById("login-modal").classList.remove("open");
+             router.navigate("/lobby");
+         } catch (err) {
+             errorEl.textContent = err.message || "Something went wrong.";
+             btn.disabled = false;
+             btn.querySelector(".btn-label").textContent = "Create Account";
+        }
     }
 }
