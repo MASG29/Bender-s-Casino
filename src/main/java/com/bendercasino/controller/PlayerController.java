@@ -3,6 +3,7 @@ package com.bendercasino.controller;
 import com.bendercasino.dto.PlayerResponse;
 import com.bendercasino.model.Player;
 import com.bendercasino.service.PlayerService;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.UUID;
@@ -29,8 +30,8 @@ public class PlayerController {
     }
 
     @PostMapping("/{id}/reset")
-    public PlayerResponse reset(@PathVariable UUID id) {
-        return toDto(playerService.reset(id));
+    public PlayerResponse reset(@PathVariable UUID id, Authentication authentication) {
+        return toDto(playerService.reset(id, authentication));
     }
 
     private PlayerResponse toDto(Player player) {

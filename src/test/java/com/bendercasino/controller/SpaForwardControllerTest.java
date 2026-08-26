@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -81,19 +82,19 @@ class SpaForwardControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/players/{id} inexistente vai ao PlayerController e devolve 404 JSON, não o index.html")
+    @DisplayName("GET /api/players/{id} inexistente vai ao PlayerController e devolve 404 JSON, não o index.html (com sessão)")
     void apiPlayerRouteNotForwarded() throws Exception {
         UUID randomId = UUID.randomUUID();
-        mockMvc.perform(get("/api/players/" + randomId))
+        mockMvc.perform(get("/api/players/" + randomId).with(user("testplayer").roles("PLAYER")))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("PLAYER_NOT_FOUND"));
     }
 
     @Test
-    @DisplayName("GET /api/games/blackjack/{id}/state com jogo inexistente devolve 404 JSON, não o index.html")
+    @DisplayName("GET /api/games/blackjack/{id}/state com jogo inexistente devolve 404 JSON, não o index.html (com sessão)")
     void apiGameStateRouteNotForwarded() throws Exception {
         UUID randomGameId = UUID.randomUUID();
-        mockMvc.perform(get("/api/games/blackjack/" + randomGameId + "/state"))
+        mockMvc.perform(get("/api/games/blackjack/" + randomGameId + "/state").with(user("testplayer").roles("PLAYER")))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("GAME_NOT_FOUND"));
     }
