@@ -28,10 +28,10 @@ public class PlayerController {
 }
 
     @PostMapping("/login")
-    public PlayerResponse login(@Valid @RequestBody LoginRequest request) {
-        Player player = playerService.login(request.username(), request.password());
-        return toDto(player);
-    }
+public PlayerResponse login(@Valid @RequestBody LoginRequest request) {
+    Player player = playerService.login(request.identifier(), request.password());
+    return toDto(player);
+}
 
     @GetMapping("/{id}")
     public PlayerResponse getById(@PathVariable UUID id) {
