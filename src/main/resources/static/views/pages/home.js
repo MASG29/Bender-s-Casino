@@ -173,8 +173,9 @@ async function submitLogin() {
              const res = await fetch("/api/players", {
                  method : "POST",
                  headers: { "Content-Type": "application/json" },
-                 body: JSON.stringify({ 
+                 body: JSON.stringify({
                     name     : nickname,
+                    username : nickname,
                     firstName: firstName,
                     lastName : lastName,
                     email    : email,

@@ -32,9 +32,10 @@ public class Player {
     private int totalPushes;
     private int totalBlackjacks;
 
-    public Player(String name, String firstName, String lastName, String email, String passwordHash) {
+    public Player(String name, String username, String firstName, String lastName, String email, String passwordHash) {
     this.id           = UUID.randomUUID();
     this.name         = name;
+    this.username     = username;
     this.firstName    = firstName;
     this.lastName     = lastName;
     this.email        = email;
