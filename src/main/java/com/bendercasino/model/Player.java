@@ -14,11 +14,12 @@ public class Player {
     @Id
     private UUID id;
     private String name;
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String username;
+    @Column(unique = false)
     private String firstName;
     private String lastName;
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String email;
     private String passwordHash;
     private int balance;
