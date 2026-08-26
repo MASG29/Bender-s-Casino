@@ -3,8 +3,6 @@ package com.bendercasino.controller;
 import com.bendercasino.dto.PlayerResponse;
 import com.bendercasino.model.Player;
 import com.bendercasino.service.PlayerService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.UUID;
