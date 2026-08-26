@@ -15,10 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Contexto completo (todos os controllers carregados) para provar que o catch-all do
- * SpaForwardController nunca disputa rotas com os controllers de /api/**.
- */
+// full context, not a slice: needs every controller loaded to prove the catch-all never wins over /api/**
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 class SpaForwardControllerTest {

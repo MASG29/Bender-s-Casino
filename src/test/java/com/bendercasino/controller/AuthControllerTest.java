@@ -36,7 +36,6 @@ class AuthControllerTest {
         playerId = player.getId();
     }
 
-    // --- POST /api/auth/register ---
 
     @Test
     @DisplayName("POST /register returns 201 with PlayerResponse on success")
@@ -77,7 +76,6 @@ class AuthControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // --- POST /api/auth/login ---
 
     @Test
     @DisplayName("POST /login returns 200 with PlayerResponse on valid credentials")
@@ -109,7 +107,6 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.error").value("INVALID_CREDENTIALS"));
     }
 
-    // --- POST /api/auth/logout ---
 
     @Test
     @DisplayName("POST /logout returns 200 with status logged_out")

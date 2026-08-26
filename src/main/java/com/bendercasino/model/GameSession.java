@@ -27,8 +27,6 @@ public class GameSession {
         return status == GameStatus.FINISHED;
     }
 
-    // --- getters / setters ---
-
     public UUID getGameId()         { return gameId; }
     public UUID getPlayerId()       { return playerId; }
     public String getDeckId()       { return deckId; }

@@ -204,7 +204,6 @@ class PlayerServiceTest {
         Player player = playerRepository.save(new Player("Zoidberg", "zoidberg", "John", "Zoidberg", "zoidberg@example.com", "hash"));
         UUID id = player.getId();
 
-        // create an active game session
         sessionRepository.save(new GameSession(id, "deck-1", "blackjack", 100));
         assertThat(sessionRepository.findByPlayerId(id)).isPresent();
 
@@ -218,8 +217,6 @@ class PlayerServiceTest {
     void reset_noActiveSession_completesNormally() {
         Player player = playerRepository.save(new Player("Hermes", "hermes", "Hermes", "Conrad", "hermes@example.com", "hash"));
         UUID id = player.getId();
-
-        // no session created
 
         Player resetPlayer = service.reset(id, authFor("hermes"));
 
@@ -247,7 +244,6 @@ class PlayerServiceTest {
         assertThatThrownBy(() -> service.reset(player.getId(), authFor("not-amy")))
                 .isInstanceOf(ForbiddenResetException.class);
 
-        // nada foi alterado
         var fetched = playerRepository.findById(player.getId());
         assertThat(fetched).isPresent();
         assertThat(fetched.get().getBalance()).isEqualTo(600);

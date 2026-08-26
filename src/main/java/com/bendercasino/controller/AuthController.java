@@ -46,7 +46,7 @@ public class AuthController {
                                 HttpServletResponse httpResponse) {
         Player player = playerService.login(loginRequest.identifier(), loginRequest.password());
 
-        // Sessão HTTP do Spring Security: autentica e guarda o contexto na sessão.
+        // no formLogin filter runs here, so build and persist the auth context by hand
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 player.getUsername(), null, AuthorityUtils.createAuthorityList("ROLE_PLAYER"));
         SecurityContextHolder.getContext().setAuthentication(auth);

@@ -6,7 +6,6 @@ const PROTECTED = ["/lobby", "/profile", "/blackjack"];
 function navigate(path, firstLoad = false) {
     if (path == routes.currentPath.path) return;
 
-    // GUARD — rota e protegida e vai automagicamente para o home
     if (PROTECTED.includes(path) && !state.isLoggedIn()) {
         path = "/";
     }

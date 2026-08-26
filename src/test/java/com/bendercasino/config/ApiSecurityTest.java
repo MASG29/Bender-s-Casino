@@ -23,11 +23,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * L-B4: /api/games/** e /api/players/** exigem sessão autenticada; /api/auth/** e os
- * estáticos da SPA ficam abertos. Contexto completo (filtros de security incluídos),
- * com o H2 em memória do application.yml de testes.
- */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 class ApiSecurityTest {
@@ -39,12 +34,10 @@ class ApiSecurityTest {
 
     @BeforeEach
     void setUp() {
-        // o login do teste anterior deixa contexto no ThreadLocal; cada teste começa limpo
+        // SecurityContextHolder is thread-local and MockMvc reuses the thread across tests
         SecurityContextHolder.clearContext();
         uniqueSuffix = UUID.randomUUID().toString().substring(0, 8);
     }
-
-    // --- pedido sem sessão ---
 
     @Test
     @DisplayName("GET /api/players/{id} sem sessão devolve 401")
@@ -84,8 +77,6 @@ class ApiSecurityTest {
         mockMvc.perform(post("/api/players/" + UUID.randomUUID() + "/reset"))
                 .andExpect(status().isUnauthorized());
     }
-
-    // --- pedido com sessão válida (login primeiro) ---
 
     @Test
     @DisplayName("Depois de POST /api/auth/login, GET /api/players/{id} com a mesma sessão devolve 200")
@@ -132,13 +123,10 @@ class ApiSecurityTest {
         UUID id = register(username);
         MockHttpSession session = login(username);
 
-        // um endpoint autenticado qualquer: se a sessão não tivesse o contexto, devolvia 401
         mockMvc.perform(get("/api/players/" + id + "/balance").session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.balance").value(1000));
     }
-
-    // --- rotas que continuam abertas ---
 
     @Test
     @DisplayName("POST /api/auth/register continua aberto sem sessão (201)")
@@ -181,9 +169,6 @@ class ApiSecurityTest {
         assertThat(result.getResponse().getForwardedUrl()).isEqualTo("/index.html");
     }
 
-    // --- helpers ---
-
-    /** Regista um jogador novo (username/email únicos por teste) e devolve o playerId. */
     private UUID register(String username) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -194,7 +179,6 @@ class ApiSecurityTest {
         return UUID.fromString(body.get("playerId").asText());
     }
 
-    /** Faz login e devolve a sessão criada, para usar nos pedidos seguintes. */
     private MockHttpSession login(String username) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
