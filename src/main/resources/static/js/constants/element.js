@@ -22,17 +22,25 @@ export function stylizedButton(parent, text) {
   return but;
 }
 
-export function move(el, aPos, bPos) {
-  console.log(aPos.left);
-  const deltaX = aPos.left - bPos.left + 40;
-  const deltaY = aPos.top - bPos.top + 23;
-  console.log(deltaX);
-  console.log(deltaY);
-
+export function move(el, aPos, directionChange) {
   el.style.transform = `translate(0px, 0px)`;
-  requestAnimationFrame(() => {
+  if (directionChange.top == null) {
     requestAnimationFrame(() => {
-      el.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+      requestAnimationFrame(() => {
+        el.style.transform = `translate(${aPos.left + directionChange}px,${aPos.top}px)`;
+      });
     });
-  });
+  } else if (directionChange.left == null) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transform = `translate(${aPos.left}px,${aPos.top + directionChange}px)`;
+      });
+    });
+  } else {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transform = `translate(${aPos.left + directionChange}px,${aPos.top + directionChange}px)`;
+      });
+    });
+  }
 }
