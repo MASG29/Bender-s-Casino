@@ -15,6 +15,11 @@ export default {
         controller: "blackjack",
     },
 
+    roulette:{
+        path: "/roulette",
+        controller: "roulette",
+    },
+
     profile: {
         path: "/profile",
         controller: "profile",
