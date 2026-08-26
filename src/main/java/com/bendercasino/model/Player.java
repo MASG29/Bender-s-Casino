@@ -15,6 +15,9 @@ public class Player {
     private UUID id;
     private String name;
     @Column(unique = true, nullable = false)
+    private String firstName;
+    private String lastName;
+    private String email;
     private String username;
     private String passwordHash;
     private int balance;
@@ -29,13 +32,15 @@ public class Player {
     private int totalPushes;
     private int totalBlackjacks;
 
-    public Player(String name, String username, String passwordHash) {
-        this.id           = UUID.randomUUID();
-        this.name         = name;
-        this.username     = username;
-        this.passwordHash = passwordHash;
-        this.balance      = 1000;
-    }
+    public Player(String name, String firstName, String lastName, String email, String passwordHash) {
+    this.id           = UUID.randomUUID();
+    this.name         = name;
+    this.firstName    = firstName;
+    this.lastName     = lastName;
+    this.email        = email;
+    this.passwordHash = passwordHash;
+    this.balance      = 1000;
+}
 
     protected Player() {
     }
@@ -102,6 +107,10 @@ public class Player {
     public String getPasswordHash()       { return passwordHash; }
 
     public String getName()               { return name; }
+    public String getFirstName()          { return firstName; }
+    public String getLastName()           { return lastName; }
+    public String getEmail()              { return email; }
+    
     public int getBalance()               { return balance; }
     public int getConsecutiveWins()       { return consecutiveWins; }
     public int getConsecutiveLosses()     { return consecutiveLosses; }

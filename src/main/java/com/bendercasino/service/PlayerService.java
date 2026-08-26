@@ -1,5 +1,6 @@
 package com.bendercasino.service;
 
+import com.bendercasino.dto.CreatePlayerRequest;
 import com.bendercasino.exception.InvalidCredentialsException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.Player;
@@ -25,13 +26,19 @@ public class PlayerService {
         this.passwordEncoder   = passwordEncoder;
     }
 
-    public Player create(String name, String username, String rawPassword) {
-        if (playerRepository.findByUsername(username).isPresent()) {
-            throw new IllegalArgumentException("Username already taken: " + username);
-        }
-        Player player = new Player(name, username, passwordEncoder.encode(rawPassword));
-        return playerRepository.save(player);
+    public Player create(CreatePlayerRequest request) {
+    if (playerRepository.findByUsername(request.email()).isPresent()) {
+        throw new IllegalArgumentException("Email already taken: " + request.email());
     }
+    Player player = new Player(
+        request.name(),
+        request.firstName(),
+        request.lastName(),
+        request.email(),
+        passwordEncoder.encode(request.password())
+    );
+    return playerRepository.save(player);
+}
 
     public boolean verifyCredentials(String username, String rawPassword) {
         return playerRepository.findByUsername(username)

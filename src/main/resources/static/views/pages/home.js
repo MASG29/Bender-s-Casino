@@ -139,6 +139,7 @@ async function submitLogin() {
              }
              const player = await res.json();
              state.setPlayer(player);
+             state.updateHeader();
              document.getElementById("login-modal").classList.remove("open");
              router.navigate("/lobby");
          } catch (err) {
@@ -172,7 +173,13 @@ async function submitLogin() {
              const res = await fetch("/api/players", {
                  method : "POST",
                  headers: { "Content-Type": "application/json" },
-                 body   : JSON.stringify({ firstName, lastName, nickname, email, password }),
+                 body: JSON.stringify({ 
+                    name     : nickname,
+                    firstName: firstName,
+                    lastName : lastName,
+                    email    : email,
+                    password : password,
+                }),
              });
              if (!res.ok) {
                  const err = await res.json().catch(() => ({}));
@@ -180,6 +187,7 @@ async function submitLogin() {
              }
              const player = await res.json();
              state.setPlayer(player);
+             state.updateHeader();
              document.getElementById("login-modal").classList.remove("open");
              router.navigate("/lobby");
          } catch (err) {

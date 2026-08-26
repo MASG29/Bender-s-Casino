@@ -24,9 +24,8 @@ public class PlayerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PlayerResponse create(@Valid @RequestBody CreatePlayerRequest request) {
-        Player player = playerService.create(request.name(), request.username(), request.password());
-        return toDto(player);
-    }
+    return toDto(playerService.create(request));
+}
 
     @PostMapping("/login")
     public PlayerResponse login(@Valid @RequestBody LoginRequest request) {
