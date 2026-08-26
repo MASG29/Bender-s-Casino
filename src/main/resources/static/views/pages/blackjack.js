@@ -30,6 +30,23 @@ export function init() {
     return;
   }
 
+  // No player session -> the API can't work (playerId would be null).
+  // Send them to the home screen to create a player first.
+  if (!sessionStorage.getItem("playerId")) {
+    main.innerHTML = `
+      <section class="join">
+        <h2>No player yet</h2>
+        <p>Create a player before sitting at the table.</p>
+        <a id="go-home" href="/" class="btn">Go back</a>
+      </section>
+    `;
+    document.querySelector("#go-home").addEventListener("click", (e) => {
+      e.preventDefault();
+      router.navigate("/");
+    });
+    return;
+  }
+
   const start = stylizedButton(main, "Start");
 
   start.addEventListener("click", async () => {
