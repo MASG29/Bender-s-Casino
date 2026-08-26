@@ -1,4 +1,5 @@
 import router from "/router.js";
+import state from "/js/state.js";
 
 export function init() {
 
@@ -124,13 +125,13 @@ async function submitLogin() {
         btn.disabled = true;
         btn.querySelector(".btn-label").textContent = "Loading...";
 
-        // TODO: substituir mock pelo try/catch real
-        const player = { playerId: "mock-id-123", name: identifier, balance: 1000 };
-        sessionStorage.setItem("playerId",   player.playerId);
-        sessionStorage.setItem("playerName", player.name);
-        sessionStorage.setItem("balance",    player.balance);
+        // TODO: apagar quando o backend estiver pronto
+        const player = { playerId: "mock-id-123", name: identifier || identifier, balance: 1000 };
+        state.setPlayer(player);
+        state.updateHeader();
         document.getElementById("login-modal").classList.remove("open");
         router.navigate("/lobby");
+        return;
 
         // try {
         //     const res = await fetch("/api/players/login", {
@@ -143,9 +144,7 @@ async function submitLogin() {
         //         throw new Error(err.message || `Erro ${res.status}`);
         //     }
         //     const player = await res.json();
-        //     sessionStorage.setItem("playerId",   player.playerId);
-        //     sessionStorage.setItem("playerName", player.name);
-        //     sessionStorage.setItem("balance",    player.balance);
+        //     state.setPlayer(player);
         //     document.getElementById("login-modal").classList.remove("open");
         //     router.navigate("/lobby");
         // } catch (err) {
@@ -174,12 +173,13 @@ async function submitLogin() {
         btn.querySelector(".btn-label").textContent = "Loading...";
 
         // TODO: substituir mock pelo try/catch real
-        const player = { playerId: "mock-id-123", name: nickname, balance: 1000 };
-        sessionStorage.setItem("playerId",   player.playerId);
-        sessionStorage.setItem("playerName", player.name);
-        sessionStorage.setItem("balance",    player.balance);
+        
+        const player = { playerId: "mock-id-123", name: nickname || identifier, balance: 1000 };
+        state.setPlayer(player);
+        state.updateHeader();
         document.getElementById("login-modal").classList.remove("open");
         router.navigate("/lobby");
+        return;
 
         // try {
         //     const res = await fetch("/api/players", {
@@ -192,9 +192,7 @@ async function submitLogin() {
         //         throw new Error(err.message || `Erro ${res.status}`);
         //     }
         //     const player = await res.json();
-        //     sessionStorage.setItem("playerId",   player.playerId);
-        //     sessionStorage.setItem("playerName", player.name);
-        //     sessionStorage.setItem("balance",    player.balance);
+        //     state.setPlayer(player);
         //     document.getElementById("login-modal").classList.remove("open");
         //     router.navigate("/lobby");
         // } catch (err) {
