@@ -47,12 +47,17 @@ public class PlayerService {
             .orElse(false);
     }
 
-    public Player login(String username, String rawPassword) {
-        if (!verifyCredentials(username, rawPassword)) {
-            throw new InvalidCredentialsException();
-        }
-        return playerRepository.findByUsername(username).orElseThrow(InvalidCredentialsException::new);
+    public Player login(String identifier, String rawPassword) {
+    Player player = playerRepository.findByUsername(identifier)
+        .or(() -> playerRepository.findByEmail(identifier))
+        .orElseThrow(InvalidCredentialsException::new);
+
+    if (!passwordEncoder.matches(rawPassword, player.getPasswordHash())) {
+        throw new InvalidCredentialsException();
     }
+
+    return player;
+}
 
     public Player findById(UUID id) {
         return playerRepository.findById(id).orElseThrow(() -> new PlayerNotFoundException(id));
