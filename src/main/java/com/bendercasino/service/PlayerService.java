@@ -1,10 +1,12 @@
 package com.bendercasino.service;
 
+import com.bendercasino.exception.ForbiddenResetException;
 import com.bendercasino.exception.InvalidCredentialsException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
 import com.bendercasino.repository.PlayerRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +61,18 @@ public class PlayerService {
         return playerRepository.findById(id).orElseThrow(() -> new PlayerNotFoundException(id));
     }
 
-    public Player reset(UUID id) {
+    /**
+     * Reset do saldo e das estatísticas. Antes da persistência (L-B1) isto era inofensivo:
+     * o estado morria com o processo. Agora que o saldo vive em H2, um POST anónimo a
+     * /api/players/{id}/reset apagava a conta de outra pessoa — por isso o reset só é
+     * permitido ao próprio jogador autenticado (o username da sessão tem de ser o dono
+     * do id). Não há roles de admin; se um dia houver, acrescentar aqui a exceção.
+     */
+    public Player reset(UUID id, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || !findById(id).getUsername().equals(authentication.getName())) {
+            throw new ForbiddenResetException();
+        }
         Player player = findById(id);
         player.reset();
         sessionRepository.deleteByPlayerId(id);

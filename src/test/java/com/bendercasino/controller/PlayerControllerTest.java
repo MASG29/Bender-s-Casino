@@ -11,10 +11,15 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import org.springframework.security.core.Authentication;
+
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -87,16 +92,19 @@ class PlayerControllerTest {
     // --- POST /api/players/{id}/reset ---
 
     @Test
-    @DisplayName("POST /{id}/reset returns 200 with PlayerResponse on success")
+    @DisplayName("POST /{id}/reset returns 200 with PlayerResponse when the authenticated player resets themselves")
     void reset_success() throws Exception {
+        // nullable: no slice @WebMvcTest o resolver entrega null ao parâmetro Authentication
         Player resetPlayer = new Player("TestPlayer", "testplayer", "Test", "Player", "test@example.com", "hash");
-        when(playerService.reset(eq(playerId))).thenReturn(resetPlayer);
+        resetPlayer.credit(500); // saldo 1500: prova que o que sai é o DTO do service, não um valor fixo
+        when(playerService.reset(eq(playerId), nullable(Authentication.class))).thenReturn(resetPlayer);
 
-        mockMvc.perform(post("/api/players/%s/reset".formatted(playerId)))
+        mockMvc.perform(post("/api/players/%s/reset".formatted(playerId))
+                        .with(user("testplayer").roles("PLAYER")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.playerId").value(resetPlayer.getId().toString()))
                 .andExpect(jsonPath("$.name").value("TestPlayer"))
-                .andExpect(jsonPath("$.balance").value(1000))
+                .andExpect(jsonPath("$.balance").value(1500)) // o stub devolve o jogador com 500 creditados
                 .andExpect(jsonPath("$.stats.wins").value(0))
                 .andExpect(jsonPath("$.stats.losses").value(0))
                 .andExpect(jsonPath("$.stats.pushes").value(0))

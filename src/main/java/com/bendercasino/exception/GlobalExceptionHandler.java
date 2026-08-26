@@ -70,6 +70,12 @@ public class GlobalExceptionHandler {
         return build(401, "INVALID_CREDENTIALS", ex.getMessage(), req.getRequestURI());
     }
 
+    @ExceptionHandler(ForbiddenResetException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbiddenReset(ForbiddenResetException ex, HttpServletRequest req) {
+        return build(403, "FORBIDDEN_RESET", ex.getMessage(), req.getRequestURI());
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest req) {

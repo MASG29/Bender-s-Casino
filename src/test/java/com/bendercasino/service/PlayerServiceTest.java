@@ -1,5 +1,6 @@
 package com.bendercasino.service;
 
+import com.bendercasino.exception.ForbiddenResetException;
 import com.bendercasino.exception.InvalidCredentialsException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.GameSession;
@@ -9,8 +10,12 @@ import com.bendercasino.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -170,7 +175,7 @@ class PlayerServiceTest {
     }
 
     @Test
-    @DisplayName("reset restores balance to 1000 and all counters to 0")
+    @DisplayName("reset restores balance to 1000 and all counters to 0 when done by the owner")
     void reset_mutatedPlayer_restoresDefaults() {
         Player player = playerRepository.save(new Player("Amy", "amy", "Amy", "Wong", "amy@example.com", "hash"));
         UUID id = player.getId();
@@ -179,7 +184,7 @@ class PlayerServiceTest {
         player.registerWin();
         player.registerBlackjack();
 
-        Player resetPlayer = service.reset(id);
+        Player resetPlayer = service.reset(id, authFor("amy"));
 
         assertThat(resetPlayer.getBalance()).isEqualTo(1000);
         assertThat(resetPlayer.getConsecutiveWins()).isZero();
@@ -203,7 +208,7 @@ class PlayerServiceTest {
         sessionRepository.save(new GameSession(id, "deck-1", "blackjack", 100));
         assertThat(sessionRepository.findByPlayerId(id)).isPresent();
 
-        service.reset(id);
+        service.reset(id, authFor("zoidberg"));
 
         assertThat(sessionRepository.findByPlayerId(id)).isEmpty();
     }
@@ -216,7 +221,7 @@ class PlayerServiceTest {
 
         // no session created
 
-        Player resetPlayer = service.reset(id);
+        Player resetPlayer = service.reset(id, authFor("hermes"));
 
         assertThat(resetPlayer.getBalance()).isEqualTo(1000);
         assertThat(sessionRepository.findByPlayerId(id)).isEmpty();
@@ -227,7 +232,38 @@ class PlayerServiceTest {
     void reset_unknownId_throwsPlayerNotFoundException() {
         UUID unknown = UUID.randomUUID();
 
-        assertThatThrownBy(() -> service.reset(unknown))
+        assertThatThrownBy(() -> service.reset(unknown, authFor("amy")))
                 .isInstanceOf(PlayerNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("reset throws ForbiddenResetException when the authenticated player is not the owner")
+    void reset_byAnotherPlayer_throwsForbiddenResetException() {
+        Player player = playerRepository.save(new Player("Amy", "amy", "Amy", "Wong", "amy@example.com", "hash"));
+
+        player.debit(400);
+        player.registerWin();
+
+        assertThatThrownBy(() -> service.reset(player.getId(), authFor("not-amy")))
+                .isInstanceOf(ForbiddenResetException.class);
+
+        // nada foi alterado
+        var fetched = playerRepository.findById(player.getId());
+        assertThat(fetched).isPresent();
+        assertThat(fetched.get().getBalance()).isEqualTo(600);
+        assertThat(fetched.get().getTotalWins()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("reset throws ForbiddenResetException when there is no authentication at all")
+    void reset_withoutAuthentication_throwsForbiddenResetException() {
+        Player player = playerRepository.save(new Player("Amy", "amy", "Amy", "Wong", "amy@example.com", "hash"));
+
+        assertThatThrownBy(() -> service.reset(player.getId(), null))
+                .isInstanceOf(ForbiddenResetException.class);
+    }
+
+    private Authentication authFor(String username) {
+        return new UsernamePasswordAuthenticationToken(username, null, List.of());
     }
 }
