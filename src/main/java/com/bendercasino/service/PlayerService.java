@@ -8,6 +8,7 @@ import com.bendercasino.repository.PlayerRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,25 +26,33 @@ public class PlayerService {
         this.passwordEncoder   = passwordEncoder;
     }
 
-    public Player create(String name, String username, String rawPassword) {
+    public Player create(String name, String username, String firstName, String lastName, String email, String rawPassword) {
         if (playerRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("Username already taken: " + username);
         }
-        Player player = new Player(name, username, passwordEncoder.encode(rawPassword));
+        if (playerRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email already taken: " + email);
+        }
+        Player player = new Player(name, username, firstName, lastName, email, passwordEncoder.encode(rawPassword));
         return playerRepository.save(player);
     }
 
-    public boolean verifyCredentials(String username, String rawPassword) {
-        return playerRepository.findByUsername(username)
+    private Optional<Player> findByIdentifier(String identifier) {
+        return playerRepository.findByUsername(identifier)
+            .or(() -> playerRepository.findByEmail(identifier));
+    }
+
+    public boolean verifyCredentials(String identifier, String rawPassword) {
+        return findByIdentifier(identifier)
             .map(player -> passwordEncoder.matches(rawPassword, player.getPasswordHash()))
             .orElse(false);
     }
 
-    public Player login(String username, String rawPassword) {
-        if (!verifyCredentials(username, rawPassword)) {
+    public Player login(String identifier, String rawPassword) {
+        if (!verifyCredentials(identifier, rawPassword)) {
             throw new InvalidCredentialsException();
         }
-        return playerRepository.findByUsername(username).orElseThrow(InvalidCredentialsException::new);
+        return findByIdentifier(identifier).orElseThrow(InvalidCredentialsException::new);
     }
 
     public Player findById(UUID id) {

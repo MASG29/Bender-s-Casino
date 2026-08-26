@@ -74,7 +74,7 @@ class BlackjackServiceTest {
         jokeService = mock(JokeService.class);
         service = new BlackjackService(deckClient, playerRepository, sessionRepository, jokeService);
 
-        player = new Player("TestPlayer", "testplayer", "hash");
+        player = new Player("TestPlayer", "testplayer", "Test", "Player", "test@example.com", "hash");
         playerRepository.save(player);
         playerId = player.getId();
     }

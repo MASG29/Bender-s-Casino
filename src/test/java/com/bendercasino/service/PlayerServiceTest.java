@@ -49,6 +49,12 @@ class PlayerServiceTest {
                 .filter(p -> username.equals(p.getUsername()))
                 .findFirst();
         });
+        when(playerRepository.findByEmail(any(String.class))).thenAnswer(invocation -> {
+            String email = invocation.getArgument(0);
+            return store.values().stream()
+                .filter(p -> email.equals(p.getEmail()))
+                .findFirst();
+        });
         sessionRepository = new InMemoryGameSessionRepository();
         service = new PlayerService(playerRepository, sessionRepository, encoder);
     }
@@ -56,7 +62,7 @@ class PlayerServiceTest {
     @Test
     @DisplayName("create builds and persists a player with hashed password and default balance 1000")
     void create_buildsAndPersistsPlayer() {
-        Player created = service.create("Fry", "fry", "pass1234");
+        Player created = service.create("Fry", "fry", "Philip", "Fry", "fry@example.com", "pass1234");
 
         assertThat(created.getName()).isEqualTo("Fry");
         assertThat(created.getUsername()).isEqualTo("fry");
@@ -83,9 +89,19 @@ class PlayerServiceTest {
     @Test
     @DisplayName("create rejects a duplicate username")
     void create_duplicateUsername_throws() {
-        service.create("Fry", "fry", "pass1234");
+        service.create("Fry", "fry", "Philip", "Fry", "fry@example.com", "pass1234");
 
-        assertThatThrownBy(() -> service.create("Other Fry", "fry", "other-pass"))
+        assertThatThrownBy(() -> service.create("Other Fry", "fry", "Philip", "Fry", "other-fry@example.com", "other-pass"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("already taken");
+    }
+
+    @Test
+    @DisplayName("create rejects a duplicate email")
+    void create_duplicateEmail_throws() {
+        service.create("Fry", "fry", "Philip", "Fry", "fry@example.com", "pass1234");
+
+        assertThatThrownBy(() -> service.create("Other Fry", "otherfry", "Philip", "Fry", "fry@example.com", "other-pass"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("already taken");
     }
@@ -93,7 +109,7 @@ class PlayerServiceTest {
     @Test
     @DisplayName("verifyCredentials accepts the right password and rejects wrong or unknown user")
     void verifyCredentials() {
-        service.create("Leela", "leela", "turanga");
+        service.create("Leela", "leela", "Turanga", "Leela", "leela@example.com", "turanga");
 
         assertThat(service.verifyCredentials("leela", "turanga")).isTrue();
         assertThat(service.verifyCredentials("leela", "wrong")).isFalse();
@@ -103,7 +119,7 @@ class PlayerServiceTest {
     @Test
     @DisplayName("login returns the player for valid credentials")
     void login_validCredentials_returnsPlayer() {
-        Player created = service.create("Leela", "leela", "turanga");
+        Player created = service.create("Leela", "leela", "Turanga", "Leela", "leela@example.com", "turanga");
 
         Player logged = service.login("leela", "turanga");
 
@@ -112,9 +128,19 @@ class PlayerServiceTest {
     }
 
     @Test
+    @DisplayName("login accepts the player's email as identifier")
+    void login_byEmail_returnsPlayer() {
+        Player created = service.create("Leela", "leela", "Turanga", "Leela", "leela@example.com", "turanga");
+
+        Player logged = service.login("leela@example.com", "turanga");
+
+        assertThat(logged.getId()).isEqualTo(created.getId());
+    }
+
+    @Test
     @DisplayName("login throws InvalidCredentialsException for wrong password or unknown user")
     void login_badCredentials_throws() {
-        service.create("Leela", "leela", "turanga");
+        service.create("Leela", "leela", "Turanga", "Leela", "leela@example.com", "turanga");
 
         assertThatThrownBy(() -> service.login("leela", "wrong"))
                 .isInstanceOf(InvalidCredentialsException.class);
@@ -125,7 +151,7 @@ class PlayerServiceTest {
     @Test
     @DisplayName("findById returns the stored player when it exists")
     void findById_existingPlayer_returnsPlayer() {
-        Player saved = playerRepository.save(new Player("Bender", "bender", "hash"));
+        Player saved = playerRepository.save(new Player("Bender", "bender", "Bender", "Rodriguez", "bender@example.com", "hash"));
 
         Player found = service.findById(saved.getId());
 
@@ -146,7 +172,7 @@ class PlayerServiceTest {
     @Test
     @DisplayName("reset restores balance to 1000 and all counters to 0")
     void reset_mutatedPlayer_restoresDefaults() {
-        Player player = playerRepository.save(new Player("Amy", "amy", "hash"));
+        Player player = playerRepository.save(new Player("Amy", "amy", "Amy", "Wong", "amy@example.com", "hash"));
         UUID id = player.getId();
 
         player.debit(400);
@@ -170,7 +196,7 @@ class PlayerServiceTest {
     @Test
     @DisplayName("reset discards active game session if one exists")
     void reset_withActiveSession_deletesSession() {
-        Player player = playerRepository.save(new Player("Zoidberg", "zoidberg", "hash"));
+        Player player = playerRepository.save(new Player("Zoidberg", "zoidberg", "John", "Zoidberg", "zoidberg@example.com", "hash"));
         UUID id = player.getId();
 
         // create an active game session
@@ -185,7 +211,7 @@ class PlayerServiceTest {
     @Test
     @DisplayName("reset completes normally when no active session exists")
     void reset_noActiveSession_completesNormally() {
-        Player player = playerRepository.save(new Player("Hermes", "hermes", "hash"));
+        Player player = playerRepository.save(new Player("Hermes", "hermes", "Hermes", "Conrad", "hermes@example.com", "hash"));
         UUID id = player.getId();
 
         // no session created
