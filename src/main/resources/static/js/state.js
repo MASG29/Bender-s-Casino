@@ -21,7 +21,12 @@ const state = {
 
     isLoggedIn() {
         return !!sessionStorage.getItem("playerId");
+    },
+
+    updateHeader() {
+        const logoutBtn = document.getElementById("logout-btn");
+        if (!logoutBtn) return;
+        logoutBtn.style.display = this.isLoggedIn() ? "block" : "none";
     }
 }
-
 export default state;
