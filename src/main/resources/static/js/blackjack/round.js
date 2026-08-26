@@ -16,6 +16,8 @@ import { tableMarkup } from "../../js/blackjack/table-markup.js";
 
 export async function startRound() {
   let amount = 0;
+  let playerCards = 0;
+  let dealerCards = 0;
   document.querySelector("main").innerHTML = tableMarkup();
 
   const hit = document.querySelector("#bj-hit");
@@ -68,25 +70,60 @@ export async function startRound() {
 
   function renderPlayerCards() {
     playerCardsContainer.innerHTML = "";
+    let movement = {
+      left: -535,
+      top: 440,
+    };
+    let directionChange = 120;
+
     gameState.playerHand.cards.forEach((c) => {
       const cardEl = element("div", table, ["bj-card"]); // create the card
-
-      console.log(playerSlot1.getBoundingClientRect()); //debug
-      move(
-        cardEl,
-        playerSlot1.getBoundingClientRect(),
-        cardEl.getBoundingClientRect(),
-      );
-      element("p", cardEl).textContent = c.value + " of " + c.suit;
+      playerCards++;
+      move(cardEl, movement, directionChange * playerCards);
+      cardEl.style.background = `url(${c.image}) center / cover no-repeat`;
     });
   }
 
+  function addPlayerCard() {
+    let movement = {
+      left: -535,
+      top: 440,
+    };
+    let directionChange = 120;
+
+    const cardEl = element("div", table, ["bj-card"]);
+    playerCards++;
+    move(cardEl, movement, directionChange * playerCards);
+    cardEl.style.background = `url(${gameState.playerHand.cards.image}) center / cover no-repeat`;
+  }
+
   function renderDealerCards() {
-    dealerCardsContainer.innerHTML = "";
+    playerCardsContainer.innerHTML = "";
+    let movement = {
+      left: -535,
+      top: 45,
+    };
+    let directionChange = 120;
+
     gameState.dealerHand.cards.forEach((c) => {
-      const cardEl = element("div", dealerCardsContainer);
-      element("p", cardEl).textContent = c.value + " of " + c.suit;
+      const cardEl = element("div", table, ["bj-card"]); // create the card
+      dealerCards++;
+      move(cardEl, movement, directionChange * dealerCards);
+      cardEl.style.background = `url(${c.image}) center / cover no-repeat`;
     });
+  }
+
+  function addDealerCard() {
+    let movement = {
+      left: -535,
+      top: 45,
+    };
+    let directionChange = 120;
+
+    const cardEl = element("div", table, ["bj-card"]);
+    dealerCards++;
+    move(cardEl, movement, directionChange * dealerCards);
+    cardEl.style.background = `url(${gameState.dealerHand.cards.image}) center / cover no-repeat`;
   }
 
   function checkForEnd() {
@@ -119,7 +156,7 @@ export async function startRound() {
       console.error("Hit failed:", err.message);
       return;
     }
-    renderPlayerCards();
+    addPlayerCard();
     displayScores();
     checkForEnd();
   });
@@ -132,7 +169,7 @@ export async function startRound() {
       console.error("Stand failed:", err.message);
       return;
     }
-    renderDealerCards();
+    addDealerCard();
     displayScores();
     checkForEnd();
   });

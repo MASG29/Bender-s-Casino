@@ -30,7 +30,10 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 6vh;
-  min-height: 70vh;
+  height: 750px;
+  width: 1030px;
+  min-width: 1030px;
+  max-width: 1030px;
   padding: 52px 36px;
   border: 12px solid var(--steel-darker);
   border-radius: 220px / 110px;
