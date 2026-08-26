@@ -26,10 +26,9 @@ function navigate(path, firstLoad = false) {
 }
 
 function handlePopState(event) {
-    const { state } = event;
-
-    const route = state || routes.home;
-
+    
+    const { state: routeState } = event;
+    const route = routeState || routes.home;
     setCurrentRoute(route);
     launchController(route.controller);
 }
