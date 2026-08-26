@@ -128,7 +128,7 @@ async function submitLogin() {
         
 
          try {
-             const res = await fetch("/api/players/login", {
+             const res = await fetch("/api/auth/login", {
                  method : "POST",
                  headers: { "Content-Type": "application/json" },
                  body   : JSON.stringify({ identifier, password }),
@@ -170,7 +170,7 @@ async function submitLogin() {
       
 
          try {
-             const res = await fetch("/api/players", {
+             const res = await fetch("/api/auth/register", {
                  method : "POST",
                  headers: { "Content-Type": "application/json" },
                  body: JSON.stringify({
