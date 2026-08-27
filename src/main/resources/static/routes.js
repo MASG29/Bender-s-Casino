@@ -24,6 +24,11 @@ export default {
 
     ...gameRoutes,
 
+    roulette:{
+        path: "/roulette",
+        controller: "roulette",
+    },
+
     profile: {
         path: "/profile",
         controller: "profile",
