@@ -16,16 +16,20 @@ import com.bendercasino.model.Hand;
 import com.bendercasino.model.Outcome;
 import com.bendercasino.model.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
-import com.bendercasino.repository.InMemoryPlayerRepository;
+import com.bendercasino.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -36,7 +40,7 @@ import static org.mockito.Mockito.when;
 
 class BlackjackServiceTest {
 
-    private InMemoryPlayerRepository playerRepository;
+    private PlayerRepository playerRepository;
     private InMemoryGameSessionRepository sessionRepository;
     private DeckClient deckClient;
     private JokeService jokeService;
@@ -54,27 +58,36 @@ class BlackjackServiceTest {
 
     @BeforeEach
     void setUp() {
-        playerRepository = new InMemoryPlayerRepository();
+        playerRepository = mock(PlayerRepository.class);
+        Map<UUID, Player> store = new HashMap<>();
+        when(playerRepository.save(any(Player.class))).thenAnswer(invocation -> {
+            Player p = invocation.getArgument(0);
+            store.put(p.getId(), p);
+            return p;
+        });
+        when(playerRepository.findById(any(UUID.class))).thenAnswer(invocation -> {
+            UUID id = invocation.getArgument(0);
+            return Optional.ofNullable(store.get(id));
+        });
         sessionRepository = new InMemoryGameSessionRepository();
         deckClient = mock(DeckClient.class);
         jokeService = mock(JokeService.class);
         service = new BlackjackService(deckClient, playerRepository, sessionRepository, jokeService);
 
-        player = new Player("TestPlayer");
+        player = new Player("TestPlayer", "testplayer", "Test", "Player", "test@example.com", "hash");
         playerRepository.save(player);
         playerId = player.getId();
     }
 
-    // --- 1. start deals 2 cards each, neither is blackjack ---
     @Test
     @DisplayName("start deals 2 cards each, neither blackjack -> PLAYER_TURN")
     void start_dealsFourCards_noBlackjack_playerTurn() {
         var deck = new Deck("deck-1", 308);
         when(deckClient.newShuffledDeck(6)).thenReturn(deck);
         when(deckClient.draw("deck-1", 4)).thenReturn(List.of(
-                card("2", "HEARTS"),    // player card 1
+                card("2", "HEARTS"),
                 card("3", "HEARTS"),    // player card 2 = 5
-                card("9", "SPADES"),    // dealer card 1
+                card("9", "SPADES"),
                 card("9", "DIAMONDS")   // dealer card 2 = 18
         ));
 
@@ -88,16 +101,15 @@ class BlackjackServiceTest {
         assertThat(state(session).getDealerHand().value()).isEqualTo(18);
     }
 
-    // --- 2. Player blackjack, dealer not ---
     @Test
     @DisplayName("player natural blackjack, dealer not -> PLAYER_BLACKJACK, balance 1150")
     void start_playerBlackjack_only_playerBlackjack() {
         var deck = new Deck("deck-1", 308);
         when(deckClient.newShuffledDeck(6)).thenReturn(deck);
         when(deckClient.draw("deck-1", 4)).thenReturn(List.of(
-                card("ACE", "SPADES"),   // player card 1
+                card("ACE", "SPADES"),
                 card("KING", "HEARTS"),  // player card 2 -> blackjack
-                card("9", "SPADES"),     // dealer card 1
+                card("9", "SPADES"),
                 card("9", "DIAMONDS")    // dealer card 2 = 18
         ));
 
@@ -111,16 +123,15 @@ class BlackjackServiceTest {
         assertThat(session.getBet().payout()).isEqualTo(250); // 100 * 5 / 2
     }
 
-    // --- 3. Both blackjack ---
     @Test
     @DisplayName("both blackjack -> PUSH, balance 1000")
     void start_bothBlackjack_push() {
         var deck = new Deck("deck-1", 308);
         when(deckClient.newShuffledDeck(6)).thenReturn(deck);
         when(deckClient.draw("deck-1", 4)).thenReturn(List.of(
-                card("ACE", "SPADES"),   // player card 1
+                card("ACE", "SPADES"),
                 card("KING", "HEARTS"),  // player card 2 -> blackjack
-                card("ACE", "DIAMONDS"), // dealer card 1
+                card("ACE", "DIAMONDS"),
                 card("QUEEN", "CLUBS")   // dealer card 2 -> blackjack
         ));
 
@@ -133,16 +144,15 @@ class BlackjackServiceTest {
         assertThat(session.getBet().payout()).isEqualTo(100);
     }
 
-    // --- 4. Player hits and busts ---
     @Test
     @DisplayName("hit busts -> PLAYER_BUST, balance 900")
     void hit_busts_playerBust() {
         var deck = new Deck("deck-1", 308);
         when(deckClient.newShuffledDeck(6)).thenReturn(deck);
         when(deckClient.draw("deck-1", 4)).thenReturn(List.of(
-                card("10", "HEARTS"),   // player card 1
+                card("10", "HEARTS"),
                 card("9", "CLUBS"),     // player card 2 = 19
-                card("6", "SPADES"),    // dealer card 1
+                card("6", "SPADES"),
                 card("5", "DIAMONDS")   // dealer card 2 = 11
         ));
         // Player hits: draws KING -> 29 (bust)
@@ -158,16 +168,15 @@ class BlackjackServiceTest {
         assertThat(state(session).getPlayerHand().isBusted()).isTrue();
     }
 
-    // --- 5. stand: dealer draws exactly one card to reach 17 ---
     @Test
     @DisplayName("stand dealer draws one to 17 -> PLAYER_WIN, balance 1100")
     void stand_dealerDrawsOneTo17_playerWin() {
         var deck = new Deck("deck-1", 308);
         when(deckClient.newShuffledDeck(6)).thenReturn(deck);
         when(deckClient.draw("deck-1", 4)).thenReturn(List.of(
-                card("10", "SPADES"),  // player card 1
+                card("10", "SPADES"),
                 card("9", "HEARTS"),   // player card 2 = 19
-                card("6", "HEARTS"),   // dealer card 1
+                card("6", "HEARTS"),
                 card("5", "DIAMONDS")  // dealer card 2 = 11
         ));
         // Dealer draws one card: 6 -> 17
@@ -184,16 +193,15 @@ class BlackjackServiceTest {
         verify(deckClient, times(1)).draw("deck-1", 1);
     }
 
-    // --- 6. stand: dealer busts ---
     @Test
     @DisplayName("stand dealer busts -> DEALER_BUST, balance 1100")
     void stand_dealerBusts_dealerBust() {
         var deck = new Deck("deck-1", 308);
         when(deckClient.newShuffledDeck(6)).thenReturn(deck);
         when(deckClient.draw("deck-1", 4)).thenReturn(List.of(
-                card("10", "SPADES"),  // player card 1
+                card("10", "SPADES"),
                 card("7", "HEARTS"),   // player card 2 = 17
-                card("6", "CLUBS"),    // dealer card 1
+                card("6", "CLUBS"),
                 card("6", "DIAMONDS")  // dealer card 2 = 12
         ));
         // Dealer draws KING -> 22 (bust)
@@ -209,16 +217,15 @@ class BlackjackServiceTest {
         assertThat(session.getBet().payout()).isEqualTo(200);
     }
 
-    // --- 7. stand: equal totals (push) ---
     @Test
     @DisplayName("stand equal totals -> PUSH, balance 1000")
     void stand_equalTotals_push() {
         var deck = new Deck("deck-1", 308);
         when(deckClient.newShuffledDeck(6)).thenReturn(deck);
         when(deckClient.draw("deck-1", 4)).thenReturn(List.of(
-                card("10", "SPADES"),  // player card 1
+                card("10", "SPADES"),
                 card("9", "HEARTS"),   // player card 2 = 19
-                card("10", "DIAMONDS"),// dealer card 1
+                card("10", "DIAMONDS"),
                 card("9", "CLUBS")     // dealer card 2 = 19 (already >= 17, no draw)
         ));
 
@@ -232,16 +239,15 @@ class BlackjackServiceTest {
         assertThat(session.getBet().payout()).isEqualTo(100);
     }
 
-    // --- 8. stand: dealer ends higher without busting ---
     @Test
     @DisplayName("stand dealer higher -> DEALER_WIN, balance 900")
     void stand_dealerHigher_dealerWin() {
         var deck = new Deck("deck-1", 308);
         when(deckClient.newShuffledDeck(6)).thenReturn(deck);
         when(deckClient.draw("deck-1", 4)).thenReturn(List.of(
-                card("10", "SPADES"),  // player card 1
+                card("10", "SPADES"),
                 card("7", "HEARTS"),   // player card 2 = 17
-                card("10", "DIAMONDS"),// dealer card 1
+                card("10", "DIAMONDS"),
                 card("9", "CLUBS")     // dealer card 2 = 19 (already >= 17, no draw)
         ));
 
@@ -255,7 +261,6 @@ class BlackjackServiceTest {
         assertThat(session.getBet().payout()).isEqualTo(0);
     }
 
-    // --- 9. start with bet = 0 ---
     @Test
     @DisplayName("start bet=0 -> InvalidBetException, no deck interaction")
     void start_betZero_invalidBetException() {
@@ -265,7 +270,6 @@ class BlackjackServiceTest {
         verifyNoInteractions(deckClient);
     }
 
-    // --- 10. start with bet > balance ---
     @Test
     @DisplayName("start bet > balance -> InsufficientBalanceException, no deck interaction")
     void start_betExceedsBalance_insufficientBalanceException() {
@@ -275,7 +279,6 @@ class BlackjackServiceTest {
         verifyNoInteractions(deckClient);
     }
 
-    // --- 11. start for non-existent player ---
     @Test
     @DisplayName("start unknown player -> PlayerNotFoundException")
     void start_unknownPlayer_playerNotFoundException() {
@@ -285,7 +288,6 @@ class BlackjackServiceTest {
                 .isInstanceOf(PlayerNotFoundException.class);
     }
 
-    // --- 12. start twice for same player with unfinished game ---
     @Test
     @DisplayName("start twice unfinished -> InvalidGameStateException on second, no deck interaction")
     void start_twiceUnfinished_invalidGameStateException() {
@@ -302,11 +304,8 @@ class BlackjackServiceTest {
 
         assertThatThrownBy(() -> service.start(playerId, 100))
                 .isInstanceOf(InvalidGameStateException.class);
-
-        // Only one call to newShuffledDeck and draw (for the first start)
     }
 
-    // --- 13. hit after game finished ---
     @Test
     @DisplayName("hit after finished -> InvalidGameStateException")
     void hit_afterFinished_invalidGameStateException() {
@@ -327,7 +326,6 @@ class BlackjackServiceTest {
                 .isInstanceOf(InvalidGameStateException.class);
     }
 
-    // --- 14. getState for player with no session ---
     @Test
     @DisplayName("getState no session -> GameNotFoundException")
     void getState_noSession_gameNotFoundException() {

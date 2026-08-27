@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 class SpaForwardController {
 
-    // Catch-all para rotas do SPA: exclui "api" (rotas REST) e qualquer segmento com ponto
-    // (assets estáticos como .css, .js, .png, favicon.ico).
+    // excludes "api" and any segment with a dot, so static assets (.css, .js, favicon.ico) fall through
     @RequestMapping("/{path:^(?!api$)[^.]*}")
     String forward() {
         return "forward:/index.html";
