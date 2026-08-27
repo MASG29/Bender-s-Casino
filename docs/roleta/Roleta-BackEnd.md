@@ -1,6 +1,6 @@
 # Roleta MVP — Back-end (R)
 
-**Back-end: Marco.** Branch: `feat/roleta`.
+**Back-end: Marco.** Branch: `feat/roleta-backend`.
 
 **MVP é só preto ou vermelho.** Sem apostas em números, sem dúzias, sem colunas, sem split.
 Uma aposta, dois resultados possíveis, paga 1:1.

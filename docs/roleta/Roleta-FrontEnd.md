@@ -1,6 +1,6 @@
 # Roleta MVP — Front-end (R-F)
 
-**Front-end: Diogo** (o Marco fica com o back-end da Roleta). Branch: `feat/roleta`.
+**Front-end: Diogo** (o Marco fica com o back-end da Roleta). Branch: `feat/roleta` (back-end do Marco está em `feat/roleta-backend`).
 
 | # | Tarefa | Detalhe | Depende de |
 |---|--------|---------|------------|
