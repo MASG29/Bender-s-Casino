@@ -25,6 +25,12 @@ public class GlobalExceptionHandler {
         return build(404, "GAME_NOT_FOUND", ex.getMessage(), req.getRequestURI());
     }
 
+    @ExceptionHandler(UnknownGameException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleUnknownGame(UnknownGameException ex, HttpServletRequest req) {
+        return build(404, "UNKNOWN_GAME", ex.getMessage(), req.getRequestURI());
+    }
+
     @ExceptionHandler(InvalidBetException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidBet(InvalidBetException ex, HttpServletRequest req) {
@@ -56,6 +62,18 @@ public class GlobalExceptionHandler {
                 .map(e -> e.getField() + ": " + e.getDefaultMessage())
                 .findFirst().orElse("Validation error");
         return build(400, "VALIDATION_ERROR", msg, req.getRequestURI());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleInvalidCredentials(InvalidCredentialsException ex, HttpServletRequest req) {
+        return build(401, "INVALID_CREDENTIALS", ex.getMessage(), req.getRequestURI());
+    }
+
+    @ExceptionHandler(ForbiddenResetException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbiddenReset(ForbiddenResetException ex, HttpServletRequest req) {
+        return build(403, "FORBIDDEN_RESET", ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

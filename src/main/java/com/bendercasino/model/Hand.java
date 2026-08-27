@@ -17,8 +17,6 @@ public class Hand {
         return Collections.unmodifiableList(cards);
     }
 
-    // --- delegam para HandValueCalculator ---
-
     public int value() {
         return com.bendercasino.service.HandValueCalculator.value(cards);
     }
@@ -27,9 +25,6 @@ public class Hand {
         return com.bendercasino.service.HandValueCalculator.isSoft(cards);
     }
 
-    /**
-     * Blackjack natural: exactamente 2 cartas com valor total 21.
-     */
     public boolean isBlackjack() {
         return cards.size() == 2 && value() == 21;
     }
