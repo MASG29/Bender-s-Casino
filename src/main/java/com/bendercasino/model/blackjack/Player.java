@@ -1,4 +1,4 @@
-package com.bendercasino.model;
+package com.bendercasino.model.blackjack;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

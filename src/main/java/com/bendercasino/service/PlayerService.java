@@ -3,7 +3,7 @@ package com.bendercasino.service;
 import com.bendercasino.exception.ForbiddenResetException;
 import com.bendercasino.exception.InvalidCredentialsException;
 import com.bendercasino.exception.PlayerNotFoundException;
-import com.bendercasino.model.Player;
+import com.bendercasino.model.blackjack.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
 import com.bendercasino.repository.PlayerRepository;
 import org.springframework.security.core.Authentication;

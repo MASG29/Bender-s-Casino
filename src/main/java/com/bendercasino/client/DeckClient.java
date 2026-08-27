@@ -1,6 +1,6 @@
 package com.bendercasino.client;
 
-import com.bendercasino.model.Card;
+import com.bendercasino.model.blackjack.Card;
 import com.bendercasino.model.Deck;
 
 import java.util.List;

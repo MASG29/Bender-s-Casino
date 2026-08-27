@@ -1,22 +1,16 @@
 package com.bendercasino.controller;
 
-import com.bendercasino.dto.GameStateResponse;
-import com.bendercasino.dto.JokeRequest;
-import com.bendercasino.dto.JokeResponse;
-import com.bendercasino.dto.PlayerActionRequest;
-import com.bendercasino.dto.StartGameRequest;
-import com.bendercasino.model.Bet;
-import com.bendercasino.model.BlackjackState;
+import com.bendercasino.model.blackjack.BlackjackState;
 import com.bendercasino.model.GameSession;
-import com.bendercasino.model.GameStatus;
-import com.bendercasino.model.Hand;
+import com.bendercasino.model.blackjack.GameStatus;
+import com.bendercasino.model.blackjack.Hand;
 import com.bendercasino.model.JokeTrigger;
-import com.bendercasino.model.Outcome;
-import com.bendercasino.model.Player;
+import com.bendercasino.model.blackjack.Card;
+import com.bendercasino.model.blackjack.Outcome;
+import com.bendercasino.model.blackjack.Player;
 import com.bendercasino.service.BlackjackService;
 import com.bendercasino.service.JokeService;
 import com.bendercasino.service.PlayerService;
-import com.bendercasino.util.CardMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,12 +60,12 @@ class BlackjackControllerTest {
         playerId = player.getId();
 
         playerHand = new Hand();
-        playerHand.add(new com.bendercasino.model.Card("AH", "ACE", "HEARTS", ""));
-        playerHand.add(new com.bendercasino.model.Card("KH", "KING", "HEARTS", ""));
+        playerHand.add(new Card("AH", "ACE", "HEARTS", ""));
+        playerHand.add(new Card("KH", "KING", "HEARTS", ""));
 
         dealerHand = new Hand();
-        dealerHand.add(new com.bendercasino.model.Card("9S", "9", "SPADES", ""));
-        dealerHand.add(new com.bendercasino.model.Card("9D", "9", "DIAMONDS", ""));
+        dealerHand.add(new Card("9S", "9", "SPADES", ""));
+        dealerHand.add(new Card("9D", "9", "DIAMONDS", ""));
 
         session = new GameSession(playerId, "deck-1", "blackjack", 100);
         BlackjackState state = new BlackjackState();

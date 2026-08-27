@@ -1,4 +1,4 @@
-package com.bendercasino.model;
+package com.bendercasino.model.blackjack;
 
 import java.util.ArrayList;
 import java.util.Collections;

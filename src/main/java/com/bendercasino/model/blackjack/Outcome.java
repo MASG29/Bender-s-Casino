@@ -1,4 +1,4 @@
-package com.bendercasino.model;
+package com.bendercasino.model.blackjack;
 
 public enum Outcome {
     PLAYER_BLACKJACK,

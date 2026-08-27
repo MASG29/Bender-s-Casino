@@ -1,6 +1,6 @@
 package com.bendercasino.repository;
 
-import com.bendercasino.model.Player;
+import com.bendercasino.model.blackjack.Player;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
