@@ -62,7 +62,7 @@ class BlackjackControllerTest {
     @BeforeEach
     void setUp() {
         playerId = UUID.randomUUID();
-        player = new Player("TestPlayer");
+        player = new Player("TestPlayer", "testplayer", "Test", "Player", "test@example.com", "hash");
         playerId = player.getId();
 
         playerHand = new Hand();
@@ -83,7 +83,6 @@ class BlackjackControllerTest {
         session.setStatus(GameStatus.PLAYER_TURN);
     }
 
-    // --- POST /api/blackjack/start ---
 
     @Test
     @DisplayName("POST /start returns 200 with GameStateResponse on success")
@@ -134,7 +133,6 @@ class BlackjackControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // --- POST /api/blackjack/hit ---
 
     @Test
     @DisplayName("POST /hit returns 200 with GameStateResponse on success")
@@ -167,7 +165,6 @@ class BlackjackControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // --- POST /api/blackjack/stand ---
 
     @Test
     @DisplayName("POST /stand returns 200 with GameStateResponse on success")
@@ -203,7 +200,6 @@ class BlackjackControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // --- GET /api/blackjack/state/{playerId} ---
 
     @Test
     @DisplayName("GET /state/{playerId} returns 200 with GameStateResponse on success")
@@ -230,7 +226,6 @@ class BlackjackControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // --- POST /api/blackjack/joke ---
 
     @Test
     @DisplayName("POST /joke returns 200 with JokeResponse on success")

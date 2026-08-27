@@ -14,7 +14,7 @@ import com.bendercasino.model.GameStatus;
 import com.bendercasino.model.Outcome;
 import com.bendercasino.model.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
-import com.bendercasino.repository.InMemoryPlayerRepository;
+import com.bendercasino.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,12 +24,12 @@ import java.util.UUID;
 public class BlackjackService implements GameService {
 
     private final DeckClient deckClient;
-    private final InMemoryPlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
     private final InMemoryGameSessionRepository sessionRepository;
     private final JokeService jokeService;
 
     public BlackjackService(DeckClient deckClient,
-                            InMemoryPlayerRepository playerRepository,
+                            PlayerRepository playerRepository,
                             InMemoryGameSessionRepository sessionRepository,
                             JokeService jokeService) {
         this.deckClient = deckClient;

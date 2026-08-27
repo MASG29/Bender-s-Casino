@@ -16,6 +16,7 @@
       <a href="/lobby">Lobby</a>
       <a href="/blackjack">Table</a>
       <a href="/profile">Profile</a>
+      <a href="#" id="logout-btn" style="display: none;">Leave (And create my own casino)</a>
     </nav>
   </header>
 
@@ -30,5 +31,21 @@
     router.start();
   </script>
 
+  <script type="module">
+    import state from "/js/state.js";
+
+    const logoutBtn = document.getElementById("logout-btn");
+
+    if (state.isLoggedIn()) {
+      logoutBtn.style.display = "block";
+    }
+
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      state.clearPlayer();
+      window.location.href = "/";
+    });
+  </script>
+  
 </body>
 </html>
