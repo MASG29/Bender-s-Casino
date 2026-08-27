@@ -8,11 +8,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Os 12 casos de aceitação da secção 9.3 do PLANO-MVP.
- * ESCREVER ESTES TESTES PRIMEIRO — RED → GREEN → COMMIT.
- * Só depois preencher HandValueCalculator.
- */
 class HandValueCalculatorTest {
 
     private static Card card(String value, String suit) {
@@ -40,7 +35,6 @@ class HandValueCalculatorTest {
     void aceAndKingIsBlackjack() {
         var cards = List.of(card("ACE", "SPADES"), card("KING", "HEARTS"));
         assertThat(HandValueCalculator.value(cards)).isEqualTo(21);
-        // isBlackjack e verificado em Hand (2 cartas + value==21); aqui confirmamos o valor
     }
 
     @Test @DisplayName("A+A+9 = 21 (classico)")
@@ -81,7 +75,6 @@ class HandValueCalculatorTest {
     void busted() {
         var cards = List.of(card("KING", "SPADES"), card("QUEEN", "HEARTS"), card("2", "CLUBS"));
         assertThat(HandValueCalculator.value(cards)).isEqualTo(22);
-        // isBusted e verificado em Hand; aqui confirmamos o valor
     }
 
     @Test @DisplayName("5+5+5+5+A = 21")
@@ -96,6 +89,5 @@ class HandValueCalculatorTest {
     void twentyOneInThreeCardsIsNotBlackjack() {
         var cards = List.of(card("10", "SPADES"), card("9", "HEARTS"), card("2", "CLUBS"));
         assertThat(HandValueCalculator.value(cards)).isEqualTo(21);
-        // blackjack natural requer exactamente 2 cartas — verificado em Hand.isBlackjack()
     }
 }
