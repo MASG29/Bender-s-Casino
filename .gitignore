@@ -11,6 +11,9 @@ target/
 # OS
 .DS_Store
 
+# H2 database files
+data/
+
 # Notas pessoais (não partilhadas com a equipa)
 docs/Marco-Progresso.md
 
