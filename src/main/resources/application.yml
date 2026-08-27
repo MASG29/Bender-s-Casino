@@ -4,6 +4,17 @@ spring:
       connect-timeout: 2s
       read-timeout: 3s
 
+  datasource:
+    url: jdbc:h2:file:./data/bendercasino
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
 deckofcards:
   mode: api                       # api | memory  (--deckofcards.mode=memory na demo sem rede)
   base-url: https://deckofcardsapi.com/api/deck

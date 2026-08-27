@@ -1,59 +1,56 @@
-const CHIPS = [
-    { value: 1, image: "/assets/Coins/1dollar.coin.png" },
-    { value: 5, image: "/assets/Coins/5dollarcoin.png" },
-    { value: 10, image: "/assets/Coins/10dollarcoin.png" },
-    { value: 25, image: "/assets/Coins/25dollarcoin.png" },
-    { value: 50, image: "/assets/Coins/50dollarcoin.png" },
-    { value: 100, image: "/assets/Coins/100dollarcoin.png" },
-];
+import { element, button, stylizedButton } from "../../js/constants/element.js";
+import {
+  getState,
+  startGame,
+  playerHit,
+  playerStand,
+} from "../../js/services/blackjack-service.js";
+import { CHIPS } from "../../js/blackjack/chips.js";
+import { tableMarkup } from "../../js/blackjack/table-markup.js";
+import router from "../../router.js";
+import { startRound } from "../../js/blackjack/round.js";
 
 export function init() {
-    document.querySelector("main").innerHTML = `
-        <section class="bj">
-            <h2>Blackjack</h2>
+  const main = document.querySelector("main");
 
-            <div class="bj-floor">
-                <div class="bj-chips">
-                    ${CHIPS.map(chip => `
-                        <button class="bj-chip" type="button" data-chip="${chip.value}" aria-label="Bet ${chip.value}">
-                            <img src="${chip.image}" alt="${chip.value} dollar chip">
-                        </button>
-                    `).join("")}
-                </div>
-
-                <div class="bj-table">
-                    <div class="bj-deck" id="bj-deck">
-                        <div class="bj-deck-card"></div>
-                        <div class="bj-deck-card"></div>
-                        <div class="bj-deck-card"></div>
-                        <div class="bj-deck-card"></div>
-                        <div class="bj-deck-card"></div>
-                    </div>
-
-                    <div class="bj-seat bj-dealer">
-                        <p class="bj-seat-label">Dealer</p>
-                        <div class="bj-hand" id="dealer-hand">
-                            <div class="bj-slot"></div>
-                            <div class="bj-slot"></div>
-                        </div>
-                        <p class="bj-score" id="dealer-score">—</p>
-                    </div>
-
-                    <div class="bj-seat bj-player">
-                        <p class="bj-score" id="player-score">—</p>
-                        <div class="bj-hand" id="player-hand">
-                            <div class="bj-slot"></div>
-                            <div class="bj-slot"></div>
-                        </div>
-                        <p class="bj-seat-label">You</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="blackjack-ui">
-                <button type="button" id="bj-hit"><span class="button_top">Hit</span></button>
-                <button type="button" id="bj-stand"><span class="button_top">Stand</span></button>
-            </div>
-        </section>
+  // No player session -> the API can't work (playerId would be null).
+  // Send them to the home screen to create a player first.
+  if (!sessionStorage.getItem("playerId")) {
+    main.innerHTML = `
+      <section class="join">
+        <h2>No player yet</h2>
+        <p>Create a player before sitting at the table.</p>
+        <a id="go-home" href="/" class="btn">Go back</a>
+      </section>
     `;
+    document.querySelector("#go-home").addEventListener("click", (e) => {
+      e.preventDefault();
+      router.navigate("/");
+    });
+    return;
+  }
+
+  // No player session -> the API can't work (playerId would be null).
+  // Send them to the home screen to create a player first.
+  if (!sessionStorage.getItem("playerId")) {
+    main.innerHTML = `
+      <section class="join">
+        <h2>No player yet</h2>
+        <p>Create a player before sitting at the table.</p>
+        <a id="go-home" href="/" class="btn">Go back</a>
+      </section>
+    `;
+    document.querySelector("#go-home").addEventListener("click", (e) => {
+      e.preventDefault();
+      router.navigate("/");
+    });
+    return;
+  }
+
+  const start = stylizedButton(main, "Start");
+
+  start.addEventListener("click", async () => {
+    main.removeChild(start);
+    await startRound();
+  });
 }
