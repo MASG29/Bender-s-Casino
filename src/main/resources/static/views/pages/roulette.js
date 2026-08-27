@@ -41,15 +41,11 @@ export function init() {
                     <div class="roulette-bets">
                         <p class="roulette-bets-title">Choose your bet</p>
                         <div class="bet-options">
-                            <button class="bet-opt" data-bet="red">🔴 Red</button>
-                            <button class="bet-opt" data-bet="black">⚫ Black</button>
-                            <button class="bet-opt" data-bet="even">Even</button>
-                            <button class="bet-opt" data-bet="odd">Odd</button>
-                            <button class="bet-opt" data-bet="1-18">1-18</button>
-                            <button class="bet-opt" data-bet="19-36">19-36</button>
+                            <button class="bet-opt" data-colour="RED">🔴 Red</button>
+                            <button class="bet-opt" data-colour="BLACK">⚫ Black</button>
                         </div>
-                    </div>
-
+                    
+                        </div>
                     <p class="roulette-bet-selected" id="bet-selected">No bet selected</p>
                     <p class="modal-error" id="roulette-error"></p>
                 </div>
@@ -88,15 +84,15 @@ function runIntroAnimation() {
 
 // game UI
 
-let selectedBet = null;
+let selectedColour = null;
 
 function setupGame() {
     document.querySelectorAll(".bet-opt").forEach(btn => {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".bet-opt").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
-            selectedBet = btn.dataset.bet;
-            document.getElementById("bet-selected").textContent = `Bet: ${selectedBet}`;
+            selectedColour = btn.dataset.colour; // "RED" | "BLACK"
+            document.getElementById("bet-selected").textContent = `Bet: ${selectedColour}`;
             document.getElementById("roulette-error").textContent = "";
         });
     });
@@ -111,8 +107,8 @@ async function onSpinClick() {
 
     errorEl.textContent = "";
 
-    if (!selectedBet) {
-        errorEl.textContent = "Choose a bet first.";
+    if (!selectedColour) {
+        errorEl.textContent = "Choose a red or black first.";
         return;
     }
     if (!amount || amount <= 0) {
@@ -129,10 +125,12 @@ async function onSpinClick() {
     spinBtn.textContent = "Spinning...";
 
     const wheel = document.getElementById("wheel-img");
+    wheel.classList.remove("spinning");
+    void wheel.offsetWidth;
     wheel.classList.add("spinning");
 
     try {
-        const result = await callRouletteApi(player.playerId, amount, selectedBet);
+        const result = await callRouletteApi(player.playerId, amount, selectedColour);
 
         await wait(2000)
 
@@ -141,7 +139,7 @@ async function onSpinClick() {
         spinBtn.textContent = "SPIN";
 
         showResult(result);
-        updateBalance(result.newBalance);
+        updateBalance(result.balance);
     
     }catch (err) {
 
@@ -153,66 +151,53 @@ async function onSpinClick() {
     }
 }
 
-//MOCK
-
-async function callRouletteApi(playerId, betAmount, betType) {
-    // MOCK — só para testar frontend. Apaga quando o backend existir.
-    await wait(500);
-
-    const number = Math.floor(Math.random() * 37);
-    const red = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-
-    let won = false;
-    switch (betType) {
-        case "red":   won = red.includes(number); break;
-        case "black": won = number > 0 && !red.includes(number); break;
-        case "even":  won = number > 0 && number % 2 === 0; break;
-        case "odd":   won = number > 0 && number % 2 !== 0; break;
-        case "1-18":  won = number >= 1 && number <= 18; break;
-        case "19-36": won = number >= 19 && number <= 36; break;
-    }
-
-    const payout = won ? betAmount * 2 : -betAmount;
-    const current = parseInt(sessionStorage.getItem("balance") || "0", 10);
-    const newBalance = current + payout;
-
-    return { number, won, payout, newBalance };
-}
 
 
 
 
-/*async function callRouletteApi(playerId, betAmount, betType) {
-    const response = await fetch(`${API_BASE_URL}games/roulette/start`, {
+async function callRouletteApi(playerId, betAmount, colour) {
+    const response = await fetch(`${API_BASE_URL}roulette/spin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             playerId: playerId,
             bet: betAmount,
-            betType: betType
+            colour: colour   // "RED" ou "BLACK"
         })
     });
 
     if (!response.ok) {
-        const msg = await response.text();
-        throw new Error(msg || "Spin failed");
+        let msg = "Spin failed";
+        try {
+            const text = await response.text();
+            if (text) msg = text;
+        } catch (_) {}
+        throw new Error(msg);
     }
 
     return response.json();
-}*/
+}
 
 function showResult(result) {
     const resultEl = document.getElementById("roulette-result");
-    const won = result.won;
-    const payout = result.payout;
+    const colourLabel = result.colour === "GREEN"
+        ? "🟢 GREEN (0 — house wins)"
+        : result.colour === "RED"
+            ? "🔴 RED"
+            : "⚫ BLACK";
 
-    resultEl.textContent = `${result.number} — ${won ? `+${payout}` : payout} chips`;
-    resultEl.style.color = won ? "#00C896" : "#c0392b";
+    if (result.won) {
+        resultEl.textContent = `${result.number} ${colourLabel} — +${result.payout} chips`;
+        resultEl.style.color = "#00C896";
+    } else {
+        resultEl.textContent = `${result.number} ${colourLabel} — you lose`;
+        resultEl.style.color = "#c0392b";
+    }
 }
 
-function updateBalance(newBalance) {
-    sessionStorage.setItem("balance", newBalance);
-    document.getElementById("balance-display").textContent = `${newBalance} chips`;
+function updateBalance(balance) {
+    sessionStorage.setItem("balance", String(balance));
+    document.getElementById("balance-display").textContent = `${balance} chips`;
 }
 
 function wait(ms) {
