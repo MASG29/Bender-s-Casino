@@ -82,7 +82,7 @@ function runIntroAnimation() {
     setTimeout(() => {
         intro.style.display = "none";
         game.style.display = "flex";
-        game.classList.add("fade.in");
+        game.classList.add("fade-in");
     }, 3000)
 }
 
@@ -101,7 +101,7 @@ function setupGame() {
         });
     });
 
-    document.getElementById("spin.btn").addEventListener("click", onSpinClick);
+    document.getElementById("spin-btn").addEventListener("click", onSpinClick);
 }
 
 async function onSpinClick() {
@@ -138,7 +138,7 @@ async function onSpinClick() {
 
         wheel.classList.remove("spinning");
         spinBtn.disabled = false;
-        spinBtn.textContentxt = "SPIN";
+        spinBtn.textContent = "SPIN";
 
         showResult(result);
         updateBalance(result.newBalance);

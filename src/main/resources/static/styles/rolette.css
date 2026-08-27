@@ -1,0 +1,114 @@
+/* ROULETTE */
+.roulette-page { width: 100%; min-height: calc(100vh - 70px); }
+
+/* intro */
+.roulette-intro {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.intro-table {
+    position: absolute;
+    width: 90%;
+    max-width: 900px;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1.5s ease;
+}
+.intro-wheel {
+    position: absolute;
+    width: 50%;
+    max-width: 500px;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+.fade-in  { opacity: 1 !important; }
+.zoom-out { transform: scale(1.4) !important; opacity: 0 !important; }
+
+/* game UI */
+.roulette-game {
+    display: flex;
+    gap: 4rem;
+    padding: 4vh 6vw;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    opacity: 0;
+    transition: opacity .8s ease;
+}
+.roulette-left {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+.wheel-spin {
+    width: clamp(220px, 35vw, 400px);
+    border-radius: 50%;
+}
+.spinning {
+    animation: spin-wheel 2s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes spin-wheel {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(1440deg); }
+}
+.roulette-spin-btn {
+    width: 160px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+}
+.roulette-result {
+    font-size: 1.1rem;
+    font-weight: 700;
+    min-height: 1.5em;
+}
+
+/* right panel */
+.roulette-right {
+    flex: 1 1 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.roulette-balance {
+    display: flex;
+    justify-content: space-between;
+    font-size: .9rem;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--steel-dark);
+    padding-bottom: 10px;
+}
+.roulette-bets-title {
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--steel);
+    margin-bottom: 10px;
+}
+.bet-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+.bet-opt {
+    padding: 10px;
+    background: var(--panel);
+    border: 1px solid var(--steel-dark);
+    color: var(--text);
+    font-family: inherit;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+}
+.bet-opt:hover  { background: var(--steel-dark); }
+.bet-opt.active { border-color: var(--steel-light); background: var(--steel-dark); }
+.roulette-bet-selected {
+    font-size: .85rem;
+    color: var(--steel-light);
+}
