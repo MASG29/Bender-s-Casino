@@ -36,7 +36,6 @@
     display: block;
     user-select: none;
     pointer-events: none;
-    /* mostra mais a parte de baixo (tapete de apostas) */
     object-fit: cover;
     object-position: center 70%;
     max-height: 58vh;
@@ -144,7 +143,7 @@
 }
 
 .wheel-spin {
-    width: clamp(180px, 40vw, 280px);
+    width: clamp(220px, 50vw, 420px);
     border-radius: 50%;
     display: block;
     will-change: transform;
