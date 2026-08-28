@@ -34,9 +34,14 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public PlayerResponse register(@Valid @RequestBody CreatePlayerRequest request) {
+    public PlayerResponse register(@Valid @RequestBody CreatePlayerRequest request,
+                                   HttpServletRequest httpRequest,
+                                   HttpServletResponse httpResponse) {
         Player player = playerService.create(request.name(), request.username(), request.firstName(),
                 request.lastName(), request.email(), request.password());
+        // register doubles as login: the frontend treats a successful signup as an
+        // authenticated session, so it must actually be one, not just a created row.
+        authenticate(player, httpRequest, httpResponse);
         return toDto(player);
     }
 
@@ -45,14 +50,16 @@ public class AuthController {
                                 HttpServletRequest httpRequest,
                                 HttpServletResponse httpResponse) {
         Player player = playerService.login(loginRequest.identifier(), loginRequest.password());
+        authenticate(player, httpRequest, httpResponse);
+        return toDto(player);
+    }
 
+    private void authenticate(Player player, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         // no formLogin filter runs here, so build and persist the auth context by hand
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 player.getUsername(), null, AuthorityUtils.createAuthorityList("ROLE_PLAYER"));
         SecurityContextHolder.getContext().setAuthentication(auth);
         securityContextRepository.saveContext(SecurityContextHolder.getContext(), httpRequest, httpResponse);
-
-        return toDto(player);
     }
 
     @PostMapping("/logout")
