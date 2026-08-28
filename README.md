@@ -14,8 +14,8 @@ A Blackjack-themed single-page application inspired by Bender, the wisecracking 
 
 - **Back-end:** Java 21, Spring Boot, Maven
 - **Front-end:** HTML, CSS, JavaScript (vanilla SPA using the History API — no framework)
-- **Architecture:** REST API consumed by the SPA, MVCS-style layering (Model / Service / Controller + DTOs)
-- **Data:** in-memory storage on the service layer (no database)
+- **Architecture:** REST API consumed by the SPA, MVCS-style layering (Model / Service / Controller + DTOs). The game core is generic (`GameSession` + `GameService`) behind `/api/games/{game}/...`, with `/api/blackjack` kept as a stable alias for the current front end.
+- **Data:** in-memory storage on the service layer (no database yet — login/persistence is in progress, see below)
 
 ## External API
 
@@ -46,6 +46,13 @@ To run the back-end tests:
 ```bash
 ./mvnw test
 ```
+
+## Status
+
+Blackjack is the finished MVP. The project is now in Fase 2: extracting a game-agnostic core so
+Roleta, Peixinho, Slots, Video Poker and a login system can be built on top of it without each
+one duplicating the table/session code. See [docs/AGORA.md](docs/AGORA.md) for what's currently
+being worked on and by whom, and [docs/Fase2-Jogos.md](docs/Fase2-Jogos.md) for the full breakdown.
 
 ## Project management and collaboration tools
 
