@@ -1,4 +1,5 @@
-package com.bendercasino.dto;
+import com.bendercasino.dto.CardDto;
+import com.bendercasino.dto.PeixinhoStateResponse;
 
 import java.util.List;
 
