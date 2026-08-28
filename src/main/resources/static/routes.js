@@ -1,5 +1,6 @@
 const games = [
     { id: "blackjack", label: "Blackjack", live: true },
+    { id: "peixinho", label: "Peixinho", live: false },
 ];
 
 const gameRoutes = Object.fromEntries(
