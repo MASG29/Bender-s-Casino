@@ -1,95 +1,69 @@
 import state from "/js/state.js";
 import { API_BASE_URL } from "/js/constants/utils.js";
 
+const EUROPEAN_ORDER = [
+    0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11,
+    30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18,
+    29, 7, 28, 12, 35, 3, 26
+];
+const SECTOR = 360 / 37;
+
+const WHEEL_OFFSET = 0;
+
+/** @type {"RED"|"BLACK"|null} */
+let selectedColour = null;
+
 export function init() {
     const main = document.querySelector("main");
+    const balance = state.getPlayer().balance ?? 0;
 
     main.innerHTML = `
         <div class="roulette-page">
 
-            <!-- Intro -->
-            <div class="roulette-intro" id="roulette-intro">
-                <img class="intro-table" id="intro-table"
-                     src="/assets/roulette/rouletteTable.png"
-                     alt="Roulette Table" />
-                <img class="intro-wheel" id="intro-wheel"
+            <!-- VISTA 1: MESA (apostas apenas black ou red depois mudamos) -->
+            <div class="table-view" id="table-view">
+                <div class="roulette-balance">
+                    <span>Balance</span>
+                    <span id="balance-display">${balance} chips</span>
+                </div>
+
+                <div class="table-img-wrap">
+                    <img src="/assets/roulette/rouletteTable.png" alt="Roulette table" />
+                    <button type="button" class="bet-zone zone-red" data-colour="RED" aria-label="Bet Red"></button>
+                    <button type="button" class="bet-zone zone-black" data-colour="BLACK" aria-label="Bet Black"></button>
+                </div>
+
+                <div class="roulette-bet-area">
+                    <label for="bet-amount">Bet amount</label>
+                    <input id="bet-amount" class="modal-input" type="number" min="1" placeholder="0" />
+                </div>
+
+                <p class="roulette-bet-selected" id="bet-selected">No bet selected</p>
+                <p class="modal-error" id="roulette-error"></p>
+
+                <button class="btn roulette-spin-btn" id="spin-btn">SPIN</button>
+            </div>
+
+            <!-- VISTA 2: ROLETA (depois do spin) -->
+            <div class="wheel-view" id="wheel-view">
+                <div class="wheel-pointer"></div>
+                <img class="wheel-spin" id="wheel-img"
                      src="/assets/roulette/roulette.png"
-                     alt="Roulette Wheel" />
+                     alt="Roulette wheel" />
+                <p class="roulette-result" id="roulette-result"></p>
+                <button class="btn" id="back-to-table-btn">Nova aposta</button>
             </div>
 
-            <!-- game UI hidden  -->
-            <div class="roulette-game" id="roulette-game" style="display:none;">
-                <div class="roulette-left">
-                    <img class="wheel-spin" id="wheel-img"
-                         src="/assets/roulette/roulette.png"
-                         alt="Roulette Wheel" />
-                    <button class="btn roulette-spin-btn" id="spin-btn">SPIN</button>
-                    <p class="roulette-result" id="roulette-result"></p>
-                </div>
-
-                <div class="roulette-right">
-                    <div class="roulette-balance">
-                        <span>Balance:</span>
-                        <span id="balance-display">${state.getPlayer().balance} chips</span>
-                    </div>
-
-                    <div class="roulette-bet-area">
-                        <label>Bet amount</label>
-                        <input id="bet-amount" class="modal-input" type="number" min="1" placeholder="0" />
-                    </div>
-
-                    <div class="roulette-bets">
-                        <p class="roulette-bets-title">Choose your bet</p>
-                        <div class="bet-options">
-                            <button class="bet-opt" data-colour="RED">🔴 Red</button>
-                            <button class="bet-opt" data-colour="BLACK">⚫ Black</button>
-                        </div>
-                    
-                        </div>
-                    <p class="roulette-bet-selected" id="bet-selected">No bet selected</p>
-                    <p class="modal-error" id="roulette-error"></p>
-                </div>
-            </div>
         </div>
     `;
 
-    runIntroAnimation();
     setupGame();
 }
 
-//enter animation
-
-function runIntroAnimation() {
-    
-    const intro = document.getElementById("roulette-intro");
-    const table = document.getElementById("intro-table");
-    const wheel = document.getElementById("intro-wheel");
-    const game  = document.getElementById("roulette-game");
-
-    setTimeout(() => {
-        table.classList.add("fade-in");
-    }, 100);
-
-    setTimeout(() =>{
-        table.classList.add("zoom-out");
-        wheel.classList.add("fade-in");
-    }, 1500);
-
-    setTimeout(() => {
-        intro.style.display = "none";
-        game.style.display = "flex";
-        game.classList.add("fade-in");
-    }, 3000)
-}
-
-// game UI
-
-let selectedColour = null;
-
 function setupGame() {
-    document.querySelectorAll(".bet-opt").forEach(btn => {
+    document.querySelectorAll(".bet-zone").forEach(btn => {
         btn.addEventListener("click", () => {
-            document.querySelectorAll(".bet-opt").forEach(b => b.classList.remove("active"));
+            document.querySelectorAll(".bet-zone").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             selectedColour = btn.dataset.colour; // "RED" | "BLACK"
             document.getElementById("bet-selected").textContent = `Bet: ${selectedColour}`;
@@ -98,17 +72,18 @@ function setupGame() {
     });
 
     document.getElementById("spin-btn").addEventListener("click", onSpinClick);
+    document.getElementById("back-to-table-btn").addEventListener("click", showTableView);
 }
 
 async function onSpinClick() {
     const errorEl = document.getElementById("roulette-error");
-    const amount  = parseInt(document.getElementById("bet-amount").value, 10);
-    const player  = state.getPlayer();
+    const amount = parseInt(document.getElementById("bet-amount").value, 10);
+    const player = state.getPlayer();
 
     errorEl.textContent = "";
 
     if (!selectedColour) {
-        errorEl.textContent = "Choose a red or black first.";
+        errorEl.textContent = "Choose Red or Black on the table.";
         return;
     }
     if (!amount || amount <= 0) {
@@ -119,41 +94,32 @@ async function onSpinClick() {
         errorEl.textContent = "Not enough chips.";
         return;
     }
+    if (!player.playerId) {
+        errorEl.textContent = "Not logged in.";
+        return;
+    }
 
     const spinBtn = document.getElementById("spin-btn");
     spinBtn.disabled = true;
     spinBtn.textContent = "Spinning...";
 
-    const wheel = document.getElementById("wheel-img");
-    wheel.classList.remove("spinning");
-    void wheel.offsetWidth;
-    wheel.classList.add("spinning");
-
     try {
         const result = await callRouletteApi(player.playerId, amount, selectedColour);
 
-        await wait(2000)
+        showWheelView();
+        spinWheelTo(result.number);
 
-        wheel.classList.remove("spinning");
-        spinBtn.disabled = false;
-        spinBtn.textContent = "SPIN";
+        await wait(4200);
 
         showResult(result);
         updateBalance(result.balance);
-    
-    }catch (err) {
-
-        wheel.classList.remove("spinning");
+    } catch (err) {
+        errorEl.textContent = err.message || "Something went wrong.";
+    } finally {
         spinBtn.disabled = false;
         spinBtn.textContent = "SPIN";
-        errorEl.textContent = err.message || "Something went wrong.";
-
     }
 }
-
-
-
-
 
 async function callRouletteApi(playerId, betAmount, colour) {
     const response = await fetch(`${API_BASE_URL}roulette/spin`, {
@@ -162,7 +128,7 @@ async function callRouletteApi(playerId, betAmount, colour) {
         body: JSON.stringify({
             playerId: playerId,
             bet: betAmount,
-            colour: colour   // "RED" ou "BLACK"
+            colour: colour
         })
     });
 
@@ -171,20 +137,52 @@ async function callRouletteApi(playerId, betAmount, colour) {
         try {
             const text = await response.text();
             if (text) msg = text;
-        } catch (_) {}
+        } catch (_) { /* ignore */ }
         throw new Error(msg);
     }
 
     return response.json();
 }
 
+function angleForNumber(n) {
+    const index = EUROPEAN_ORDER.indexOf(n);
+    if (index < 0) return 0;
+    return index * SECTOR + WHEEL_OFFSET;
+}
+
+function spinWheelTo(number) {
+    const wheel = document.getElementById("wheel-img");
+    const baseTurns = 5;
+    const targetAngle = angleForNumber(number);
+    const finalDeg = baseTurns * 360 + (360 - targetAngle);
+
+    wheel.style.transition = "none";
+    wheel.style.transform = "rotate(0deg)";
+    void wheel.offsetWidth;
+
+    wheel.style.transition = "transform 4s cubic-bezier(0.12, 0.8, 0.2, 1)";
+    wheel.style.transform = `rotate(${finalDeg}deg)`;
+}
+
+function showWheelView() {
+    document.getElementById("table-view").style.display = "none";
+    const wheelView = document.getElementById("wheel-view");
+    wheelView.style.display = "flex";
+    document.getElementById("roulette-result").textContent = "";
+}
+
+function showTableView() {
+    document.getElementById("wheel-view").style.display = "none";
+    document.getElementById("table-view").style.display = "flex";
+    document.getElementById("roulette-error").textContent = "";
+}
+
 function showResult(result) {
     const resultEl = document.getElementById("roulette-result");
-    const colourLabel = result.colour === "GREEN"
-        ? "🟢 GREEN (0 — house wins)"
-        : result.colour === "RED"
-            ? "🔴 RED"
-            : "⚫ BLACK";
+    const colourLabel =
+        result.colour === "GREEN" ? "🟢 GREEN (0 — house wins)"
+        : result.colour === "RED" ? "🔴 RED"
+        : "⚫ BLACK";
 
     if (result.won) {
         resultEl.textContent = `${result.number} ${colourLabel} — +${result.payout} chips`;
