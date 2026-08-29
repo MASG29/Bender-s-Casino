@@ -39,6 +39,10 @@ public class PeixinhoBot {
             }
         }
 
+        if (askableValues.isEmpty()) {
+            UUID chosenOpponent = opponentIds.get(random.nextInt(opponentIds.size()));
+            return new BotDecision(chosenOpponent, "__FISH__");
+        }
 
         String chosenValue    = askableValues.get(random.nextInt(askableValues.size()));
         UUID   chosenOpponent = opponentIds.get(random.nextInt(opponentIds.size()));

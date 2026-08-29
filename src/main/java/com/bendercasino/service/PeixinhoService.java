@@ -4,11 +4,14 @@ import com.bendercasino.client.DeckClient;
 import com.bendercasino.dto.AskResultResponse;
 import com.bendercasino.dto.PeixinhoStateResponse;
 import com.bendercasino.exception.GameNotFoundException;
+import com.bendercasino.exception.InsufficientBalanceException;
 import com.bendercasino.exception.InvalidGameStateException;
+import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.Card;
 import com.bendercasino.model.PeixinhoSession;
+import com.bendercasino.model.Player;
+import com.bendercasino.repository.PlayerRepository;
 import com.bendercasino.repository.InMemoryPeixinhoRepository;
-import com.bendercasino.repository.InMemoryPlayerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,12 +21,12 @@ public class PeixinhoService {
 
     private final DeckClient deckClient;
     private final InMemoryPeixinhoRepository sessionRepository;
-    private final InMemoryPlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
     private final PeixinhoBot bot;
 
     public PeixinhoService(DeckClient deckClient,
                            InMemoryPeixinhoRepository sessionRepository,
-                           InMemoryPlayerRepository playerRepository,
+                           PlayerRepository playerRepository,
                            PeixinhoBot bot) {
         this.deckClient        = deckClient;
         this.sessionRepository = sessionRepository;
@@ -33,33 +36,33 @@ public class PeixinhoService {
 
 
     public PeixinhoStateResponse start(UUID playerId, int bet) {
-
         if (sessionRepository.findByPlayerId(playerId).isPresent()) {
             throw new InvalidGameStateException("Game is already started.");
         }
 
-        UUID botId = UUID.randomUUID();
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException(playerId));
+        if (!player.canAfford(bet)) {
+            throw new InsufficientBalanceException(player.getName(), player.getBalance(), bet);
+        }
+        player.debit(bet);
+        playerRepository.save(player);
 
+        UUID botId = UUID.randomUUID();
         var deck = deckClient.newShuffledDeck(1);
         List<Card> allCards  = deckClient.draw(deck.deckId(), 14);
         List<Card> playerHand = new ArrayList<>(allCards.subList(0, 7));
         List<Card> botHand    = new ArrayList<>(allCards.subList(7, 14));
         List<Card> lagoa      = new ArrayList<>(deckClient.draw(deck.deckId(), 52 - 14));
-
         Map<UUID, List<Card>> hands = new HashMap<>();
         hands.put(playerId, playerHand);
         hands.put(botId, botHand);
-
         Map<UUID, Integer> bets = Map.of(playerId, bet, botId, 0);
-
         List<UUID> order = List.of(playerId, botId);
-
         PeixinhoSession session = new PeixinhoSession(order, hands, lagoa, bets);
         sessionRepository.save(playerId, session);
-
         checkAndLowerBooks(session, playerId);
         checkAndLowerBooks(session, botId);
-
         return toStateResponse(session, playerId);
     }
 
@@ -119,6 +122,17 @@ public class PeixinhoService {
 
         if (PeixinhoRules.isGameOver(session.getBooks().size())) {
             session.setStatus("FINISHED");
+            Map<UUID, Integer> bookCounts = new HashMap<>();
+            session.getPlayerOrder().forEach(id ->
+                    bookCounts.put(id, PeixinhoRules.countBooks(session.getBooks(), id)));
+            UUID winnerId = PeixinhoRules.winner(bookCounts);
+            if (winnerId.equals(playerId)) {
+                Player winner = playerRepository.findById(playerId)
+                        .orElseThrow(() -> new PlayerNotFoundException(playerId));
+                int totalPot = session.getBets().values().stream().mapToInt(Integer::intValue).sum();
+                winner.credit(totalPot);
+                playerRepository.save(winner);
+            }
         }
 
         sessionRepository.save(playerId, session);
@@ -154,6 +168,17 @@ public class PeixinhoService {
                     session.getBooks(),
                     session.getHistory()
             );
+
+            if ("__FISH__".equals(decision.cardValue())) {
+                if (!session.getDeck().isEmpty()) {
+                    Card drawn = session.getDeck().remove(0);
+                    botHand.add(drawn);
+                    checkAndLowerBooks(session, botId);
+                }
+                session.nextTurn();
+                botTurn = false;
+                continue;
+            }
 
             List<Card> targetHand  = session.getHands().get(decision.targetId());
             List<Card> transferred = PeixinhoRules.cardsOfValue(targetHand, decision.cardValue());
