@@ -1,4 +1,7 @@
-export function init() {
+import { getPlayerById } from "../../js/services/player-service.js"
+
+
+export async function init() {
     document.querySelector("main").innerHTML = `
         <section class="profile">
             <h2>Profile</h2>
@@ -26,4 +29,21 @@ export function init() {
             <button class="btn" type="button" id="profile-reset">Reset</button>
         </section>
     `;
+
+    const statWins = document.querySelector("#stat-wins");
+    const statLosses = document.querySelector("#stat-losses");
+    const name = document.querySelector("#profile-name");
+    const balance = document.querySelector("#profile-balance");
+
+
+    const player = await getPlayerById(sessionStorage.getItem("playerId"));
+
+    console.log(player);
+
+    statWins.textContent = player.stats.wins;
+    statLosses.textContent = player.stats.losses;
+    name.textContent = player.name;
+    balance.textContent = player.balance;
+
+
 }

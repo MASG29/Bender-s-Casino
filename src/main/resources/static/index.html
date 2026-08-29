@@ -3,25 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bender's Casino</title>
+  <title>Bending Odds Casino</title>
   <link rel="stylesheet" href="/styles/style.css">
   <link rel="stylesheet" href="/styles/table.css">
+  <link rel="stylesheet" href="/styles/peixinho.css">
 </head>
 <body>
 
   <header class="site-header">
-    <p class="logo">Bender's Casino</p>
+    <p class="logo">Bending Odds</p>
     <nav class="nav">
       <a href="/">Home</a>
       <a href="/lobby">Lobby</a>
+      <a href="/blackjack">Table</a>
       <a href="/profile">Profile</a>
+      <a href="#" id="logout-btn" style="display: none;">Leave (And create my own casino)</a>
     </nav>
   </header>
 
   <main></main>
 
   <footer class="site-footer">
-    <p>Bender's Casino</p>
+    <p>Bending Odds Casino</p>
   </footer>
 
   <script type="module">
@@ -29,5 +32,21 @@
     router.start();
   </script>
 
+  <script type="module">
+    import state from "/js/state.js";
+
+    const logoutBtn = document.getElementById("logout-btn");
+
+    if (state.isLoggedIn()) {
+      logoutBtn.style.display = "block";
+    }
+
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      state.clearPlayer();
+      window.location.href = "/";
+    });
+  </script>
+  
 </body>
 </html>

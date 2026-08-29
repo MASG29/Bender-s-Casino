@@ -1,11 +1,27 @@
 package com.bendercasino.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.util.UUID;
 
+@Entity
+@Table(name = "players")
 public class Player {
 
-    private final UUID id;
-    private final String name;
+    @Id
+    private UUID id;
+    private String name;
+    @Column(nullable = false)
+    private String username;
+    @Column(unique = false)
+    private String firstName;
+    private String lastName;
+    @Column(nullable = false)
+    private String email;
+    private String passwordHash;
     private int balance;
 
     private int consecutiveWins;
@@ -18,10 +34,18 @@ public class Player {
     private int totalPushes;
     private int totalBlackjacks;
 
-    public Player(String name) {
-        this.id      = UUID.randomUUID();
-        this.name    = name;
-        this.balance = 1000;
+    public Player(String name, String username, String firstName, String lastName, String email, String passwordHash) {
+        this.id           = UUID.randomUUID();
+        this.name         = name;
+        this.username     = username;
+        this.firstName    = firstName;
+        this.lastName     = lastName;
+        this.email        = email;
+        this.passwordHash = passwordHash;
+        this.balance      = 1000;
+    }
+
+    protected Player() {
     }
 
     public void debit(int amount) {
@@ -78,9 +102,14 @@ public class Player {
         totalBlackjacks       = 0;
     }
 
-    // --- getters ---
-
     public UUID getId()                   { return id; }
+
+    public String getUsername()           { return username; }
+    public String getFirstName()          { return firstName; }
+    public String getLastName()           { return lastName; }
+    public String getEmail()              { return email; }
+    public String getPasswordHash()       { return passwordHash; }
+
     public String getName()               { return name; }
     public int getBalance()               { return balance; }
     public int getConsecutiveWins()       { return consecutiveWins; }

@@ -1,5 +1,18 @@
-export default {
+const games = [
+    { id: "blackjack", label: "Blackjack", live: true },
+    { id: "peixinho", label: "Peixinho", live: false },
+];
 
+const gameRoutes = Object.fromEntries(
+    games.map((game) => [
+        game.id,
+        { path: `/${game.id}`, controller: game.id, label: game.label, live: game.live },
+    ]),
+);
+
+export const gamesList = games;
+
+export default {
     home: {
         path: "/",
         controller: "home",
@@ -10,10 +23,7 @@ export default {
         controller: "lobby",
     },
 
-    blackjack: {
-        path: "/blackjack",
-        controller: "blackjack",
-    },
+    ...gameRoutes,
 
     profile: {
         path: "/profile",

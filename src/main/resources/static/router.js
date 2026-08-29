@@ -1,11 +1,34 @@
-
 import routes from "./routes.js";
+import state from "/js/state.js";
+
+const PROTECTED = ["/lobby", "/profile", "/blackjack", "/roulette", "/peixinho"];
+
+function navigate(path, firstLoad = false) {
+    if (path == routes.currentPath.path) return;
+
+    if (PROTECTED.includes(path) && !state.isLoggedIn()) {
+        path = "/";
+    }
+
+    const routeKey = Object.keys(routes).find(
+        (key) => routes[key].path === path,
+    );
+
+    const route = routes[routeKey] || routes.home;
+
+    setCurrentRoute(route);
+
+    firstLoad
+        ? history.replaceState(route, "", route.path)
+        : history.pushState(route, "", route.path);
+
+    launchController(route.controller);
+}
 
 function handlePopState(event) {
-    const { state } = event;
-
-    const route = state || routes.home;
-
+    
+    const { state: routeState } = event;
+    const route = routeState || routes.home;
     setCurrentRoute(route);
     launchController(route.controller);
 }
@@ -35,26 +58,6 @@ async function launchController(controllerName) {
 function setCurrentRoute(route) {
     routes.currentPath.path = route.path;
     routes.currentPath.controller = route.controller;
-}
-
-function navigate(path, firstLoad = false) {
-    if (path == routes.currentPath.path) {
-        return;
-    }
-
-    const routeKey = Object.keys(routes).find(
-        (key) => routes[key].path === path,
-    );
-
-    const route = routes[routeKey] || routes.home;
-
-    setCurrentRoute(route);
-
-    firstLoad
-        ? history.replaceState(route, "", route.path)
-        : history.pushState(route, "", route.path);
-
-    launchController(route.controller);
 }
 
 function start() {

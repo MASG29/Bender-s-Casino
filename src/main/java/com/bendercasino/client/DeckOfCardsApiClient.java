@@ -19,9 +19,7 @@ public class DeckOfCardsApiClient implements DeckClient {
 
     private final RestClient restClient;
 
-    public DeckOfCardsApiClient(RestClient.Builder builder
-                                 /* @Value("${deckofcards.base-url}") String baseUrl */) {
-        // TODO — config RestClient based in base-url and timeouts
+    public DeckOfCardsApiClient(RestClient.Builder builder) {
         this.restClient = builder.build();
     }
 
@@ -47,7 +45,6 @@ public class DeckOfCardsApiClient implements DeckClient {
 
     @Override
     public List<Card> draw(String deckId, int count) {
-        // TODO — GET /{deckId}/draw/?count={count}
         try {
             DrawResponse response = restClient
                     .get()
