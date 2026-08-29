@@ -7,36 +7,49 @@ import java.util.List;
 
 public class SlotResult {
 
-    private Outcome outcome;
     private List<Symbol> symbol;
+    private Outcome outcome;
 
-    public SlotResult(Outcome outcome, Symbol[] symbol) {
-        this.outcome = outcome;
+    public SlotResult(Symbol[] symbol) {
         this.symbol = new ArrayList<>();
         this.symbol.addAll(Arrays.asList(symbol));
     }
 
-    public Symbol getSymbol() {
-        Symbol matchedSymb;
+    public SymbolFrequency getFrequency() {
+
         int freq1 = Collections.frequency(symbol, symbol.get(0));
         int freq2 = Collections.frequency(symbol, symbol.get(1));
 
         if (freq1 == 3) {
-            return symbol.get(0);
+            return new SymbolFrequency(3, symbol.get(0));
         }
-        else if (freq1 == 2 || freq2 == 2) {
-            if (freq1 > freq2) {
-               return symbol.get(0);
-            }
-            else {
-                return symbol.get(1);
-            }
+        else if (freq1 == 2) {
+            return new SymbolFrequency(2 , symbol.get(0));
         }
-        return Symbol.NONE;
+        else if (freq2 == 2) {
+            return new SymbolFrequency(2 , symbol.get(1));
+        }
+        return new SymbolFrequency(1 , Symbol.NONE);
+
+    }
+
+    public List<Symbol> getSymbols() {
+        return symbol;
+    }
+
+    public Outcome getOutcome() {
+        return outcome;
     }
 
     public Double getMultiplier() {
-        Double multiplier = getSymbol().getValue();
-        return multiplier * outcome.getMultiplier();
+        SymbolFrequency sf = getFrequency();
+        outcome = sf.getOutcome();
+        Double mult = sf.getOutcome().getMultiplier();
+        Double sym = sf.getSymbol().getValue();
+
+
+        return mult * sym;
     }
+
+
 }
