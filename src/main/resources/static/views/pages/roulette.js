@@ -12,6 +12,7 @@ const WHEEL_OFFSET = 0;
 
 /** @type {"RED"|"BLACK"|null} */
 let selectedColour = null;
+let currentBet = 0;
 
 export function init() {
     const main = document.querySelector("main");
@@ -34,8 +35,39 @@ export function init() {
                 </div>
 
                 <div class="roulette-bet-area">
-                    <label for="bet-amount">Bet amount</label>
-                    <input id="bet-amount" class="modal-input" type="number" min="1" placeholder="0" />
+                    <p class="bet-area-label">Choose your chips</p>
+                    <div class="chip-tray">
+                        <button class="chip" data-value="1">
+                            <img src="/assets/Coins/1dollar.coin.png" alt="1" />
+                            <span>1</span>
+                        </button>
+                        <button class="chip" data-value="5">
+                            <img src="/assets/Coins/5dollarcoin.png" alt="5" />
+                            <span>5</span>
+                        </button>
+                        <button class="chip" data-value="10">
+                            <img src="/assets/Coins/10dollarcoin.png" alt="10" />
+                            <span>10</span>
+                        </button>
+                        <button class="chip" data-value="25">
+                            <img src="/assets/Coins/25dollarcoin.png" alt="25" />
+                            <span>25</span>
+                        </button>
+                        <button class="chip" data-value="50">
+                            <img src="/assets/Coins/50dollarcoin.png" alt="50" />
+                            <span>50</span>
+                        </button>
+                        <button class="chip" data-value="100">
+                            <img src="/assets/Coins/100dollarcoin.png" alt="100" />
+                            <span>100</span>
+                        </button>
+                    </div>
+                    <div class="bet-display">
+                        <span class="bet-display-label">Bet:</span>
+                        <span id="bet-amount-display">0</span>
+                        <span class="bet-display-label">chips</span>
+                        <button class="btn-clear-bet" id="clear-bet-btn">✕ Clear</button>
+                    </div>
                 </div>
 
                 <p class="roulette-bet-selected" id="bet-selected">No bet selected</p>
@@ -65,10 +97,29 @@ function setupGame() {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".bet-zone").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
-            selectedColour = btn.dataset.colour; // "RED" | "BLACK"
+            selectedColour = btn.dataset.colour;
             document.getElementById("bet-selected").textContent = `Bet: ${selectedColour}`;
             document.getElementById("roulette-error").textContent = "";
         });
+    });
+
+    document.querySelectorAll(".chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            const value = parseInt(chip.dataset.value, 10);
+            const player = state.getPlayer();
+            if (currentBet + value > parseInt(player.balance, 10)) {
+                document.getElementById("roulette-error").textContent = "Not enough chips.";
+                return;
+            }
+            currentBet += value;
+            document.getElementById("bet-amount-display").textContent = currentBet;
+            document.getElementById("roulette-error").textContent = "";
+        });
+    });
+
+    document.getElementById("clear-bet-btn").addEventListener("click", () => {
+        currentBet = 0;
+        document.getElementById("bet-amount-display").textContent = 0;
     });
 
     document.getElementById("spin-btn").addEventListener("click", onSpinClick);
@@ -77,7 +128,7 @@ function setupGame() {
 
 async function onSpinClick() {
     const errorEl = document.getElementById("roulette-error");
-    const amount = parseInt(document.getElementById("bet-amount").value, 10);
+    const amount = currentBet;
     const player = state.getPlayer();
 
     errorEl.textContent = "";
@@ -87,11 +138,7 @@ async function onSpinClick() {
         return;
     }
     if (!amount || amount <= 0) {
-        errorEl.textContent = "Enter a valid amount.";
-        return;
-    }
-    if (amount > parseInt(player.balance, 10)) {
-        errorEl.textContent = "Not enough chips.";
+        errorEl.textContent = "Place a bet first.";
         return;
     }
     if (!player.playerId) {
@@ -113,6 +160,8 @@ async function onSpinClick() {
 
     showResult(result);
     updateBalance(result.balance);
+    currentBet = 0;
+    document.getElementById("bet-amount-display").textContent = 0;
 } catch (err) {
    
     showTableView();

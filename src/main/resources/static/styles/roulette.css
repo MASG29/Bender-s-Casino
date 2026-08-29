@@ -61,6 +61,45 @@
     transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
 
+.bet-area-label {
+    font-size: 0.78rem;
+    color: var(--steel);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+}
+
+.bet-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    justify-content: center;
+}
+
+.bet-display-label {
+    color: var(--steel);
+    font-weight: 400;
+    font-size: 0.85rem;
+}
+
+.btn-clear-bet {
+    background: transparent;
+    border: 1px solid var(--steel-dark);
+    color: var(--steel);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-clear-bet:hover {
+    color: #c0392b;
+    border-color: #c0392b;
+}
+
 .bet-zone:hover {
     border-color: rgba(255, 255, 255, 0.85);
     background: rgba(255, 255, 255, 0.08);
@@ -175,4 +214,44 @@
     font-weight: 700;
     min-height: 1.5em;
     text-align: center;
+}
+
+.chip-tray {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s;
+    padding: 4px;
+}
+
+.chip:hover {
+    transform: translateY(-4px);
+}
+
+.chip:active {
+    transform: scale(0.92);
+}
+
+.chip img {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.chip span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--steel-light);
 }
