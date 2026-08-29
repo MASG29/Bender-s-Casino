@@ -104,21 +104,24 @@ async function onSpinClick() {
     spinBtn.textContent = "Spinning...";
 
     try {
-        const result = await callRouletteApi(player.playerId, amount, selectedColour);
+    const result = await callRouletteApi(player.playerId, amount, selectedColour);
 
-        showWheelView();
-        spinWheelTo(result.number);
+    await transitionToWheel();
 
-        await wait(4200);
+    spinWheelTo(result.number);
+    await wait(4200);
 
-        showResult(result);
-        updateBalance(result.balance);
-    } catch (err) {
-        errorEl.textContent = err.message || "Something went wrong.";
-    } finally {
-        spinBtn.disabled = false;
-        spinBtn.textContent = "SPIN";
-    }
+    showResult(result);
+    updateBalance(result.balance);
+} catch (err) {
+   
+    showTableView();
+    errorEl.textContent = err.message || "Something went wrong.";
+} finally {
+
+    spinBtn.disabled = false;
+    spinBtn.textContent = "SPIN";
+}
 }
 
 async function callRouletteApi(playerId, betAmount, colour) {
@@ -164,16 +167,39 @@ function spinWheelTo(number) {
     wheel.style.transform = `rotate(${finalDeg}deg)`;
 }
 
-function showWheelView() {
-    document.getElementById("table-view").style.display = "none";
+async function transitionToWheel() {
+    const tableView = document.getElementById("table-view");
     const wheelView = document.getElementById("wheel-view");
-    wheelView.style.display = "flex";
+
     document.getElementById("roulette-result").textContent = "";
+
+    
+    tableView.classList.add("zoom-fade-out");
+    await wait(800);
+
+    
+    tableView.style.display = "none";
+    tableView.classList.remove("zoom-fade-out");
+
+    wheelView.style.display = "flex";
+    wheelView.classList.add("visible");
+    
+    wheelView.classList.remove("fade-zoom-in");
+    void wheelView.offsetWidth;
+
+    wheelView.classList.add("fade-zoom-in");
+    await wait(800);
 }
 
 function showTableView() {
-    document.getElementById("wheel-view").style.display = "none";
-    document.getElementById("table-view").style.display = "flex";
+    const tableView = document.getElementById("table-view");
+    const wheelView = document.getElementById("wheel-view");
+
+    wheelView.classList.remove("fade-zoom-in", "visible");
+    wheelView.style.display = "none";
+
+    tableView.style.display = "flex";
+    tableView.classList.remove("zoom-fade-out");
     document.getElementById("roulette-error").textContent = "";
 }
 

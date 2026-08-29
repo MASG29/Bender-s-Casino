@@ -18,6 +18,14 @@
     gap: 1rem;
     width: 100%;
     max-width: 900px;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    transform-origin: center center;
+}
+
+.table-view.zoom-fade-out {
+    opacity: 0;
+    transform: scale(1.25); /* zoom in + fade out */
+    pointer-events: none;
 }
 
 .table-img-wrap {
@@ -65,17 +73,17 @@
 }
 
 .zone-red {
-    left: 36%;
-    top: 78%;
-    width: 7%;
-    height: 10%;
+    left: 38%;
+    top:68%;
+    width: 5%;
+    height: 6%;
 }
 
 .zone-black {
-    left: 45%;
-    top: 78%;
-    width: 7%;
-    height: 10%;
+    left: 47%;
+    top: 68%;
+    width: 5%;
+    height: 6%;
 }
 
 .roulette-balance {
@@ -130,6 +138,19 @@
     align-items: center;
     gap: 1.25rem;
     position: relative;
+    opacity: 0;
+    transform: scale(1.35);
+    transform-origin: center center;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.wheel-view.visible {
+    display: flex;
+}
+
+.wheel-view.fade-zoom-in {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .wheel-pointer {
