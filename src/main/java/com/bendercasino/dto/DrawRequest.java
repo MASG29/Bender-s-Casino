@@ -1,4 +1,5 @@
 package com.bendercasino.dto;
 
-public class DrawRequest {
-}
+import java.util.List;
+
+public record DrawRequest(List<Integer> held) {}

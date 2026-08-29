@@ -1,4 +1,6 @@
 package com.bendercasino.dto;
 
-public class DealResponse {
-}
+import java.util.List;
+import java.util.UUID;
+
+public record DealResponse(UUID handId, List<CardDto> cards) {}
