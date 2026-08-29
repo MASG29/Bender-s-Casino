@@ -13,6 +13,7 @@ import com.bendercasino.model.Player;
 import com.bendercasino.repository.PlayerRepository;
 import com.bendercasino.repository.InMemoryPeixinhoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -34,7 +35,7 @@ public class PeixinhoService {
         this.bot               = bot;
     }
 
-
+    @Transactional
     public PeixinhoStateResponse start(UUID playerId, int bet) {
         if (sessionRepository.findByPlayerId(playerId).isPresent()) {
             throw new InvalidGameStateException("Game is already started.");
