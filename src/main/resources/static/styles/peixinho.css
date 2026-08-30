@@ -30,6 +30,34 @@
   font-size: 0.82rem;
 }
 
+.px-loading,
+.px-error {
+  max-width: 1180px;
+  margin: 8vh auto;
+  padding: 0 4vw;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.px-error {
+  color: #e7a6a3;
+}
+
+.px-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 auto 22px;
+  padding: 13px 18px;
+  border: 1px solid currentColor;
+  font-size: 0.78rem;
+}
+
+.px-feedback-received { color: #a9d4b5; background: rgba(59, 116, 75, 0.2); }
+.px-feedback-again { color: #e3d49a; background: rgba(125, 104, 37, 0.2); }
+.px-feedback-pass { color: #e7a6a3; background: rgba(126, 48, 45, 0.2); }
+
 .px-table {
   display: flex;
   flex-direction: column;
