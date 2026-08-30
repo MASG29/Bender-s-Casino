@@ -3,7 +3,7 @@ package com.bendercasino.service;
 import com.bendercasino.exception.InsufficientBalanceException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.GameSession;
-import com.bendercasino.model.blackjack.Player;
+import com.bendercasino.model.Player;
 import com.bendercasino.model.slots.*;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
 import com.bendercasino.repository.PlayerRepository;
@@ -16,11 +16,8 @@ import java.util.UUID;
 public class SlotsService {
 
     private Slot slot;
-    private Integer betAmount;
     private PlayerRepository pr;
     private InMemoryGameSessionRepository sessionRepository;
-    private JokeService jokeService;
-
 
     public SlotsService() {
         this.slot = new Slot();
@@ -53,11 +50,6 @@ public class SlotsService {
         }
 
         return new SlotResult(symbols);
-    }
-
-    @Autowired
-    public void setJokeService(JokeService jokeService) {
-        this.jokeService = jokeService;
     }
 
     @Autowired

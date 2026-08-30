@@ -1,8 +1,5 @@
 package com.bendercasino.model;
 
-import com.bendercasino.model.blackjack.Bet;
-import com.bendercasino.model.blackjack.GameStatus;
-
 import java.util.UUID;
 
 public class GameSession {

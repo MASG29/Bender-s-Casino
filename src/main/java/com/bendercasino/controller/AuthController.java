@@ -3,7 +3,7 @@ package com.bendercasino.controller;
 import com.bendercasino.dto.CreatePlayerRequest;
 import com.bendercasino.dto.LoginRequest;
 import com.bendercasino.dto.PlayerResponse;
-import com.bendercasino.model.blackjack.Player;
+import com.bendercasino.model.Player;
 import com.bendercasino.service.PlayerService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

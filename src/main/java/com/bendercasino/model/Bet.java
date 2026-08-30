@@ -1,4 +1,4 @@
-package com.bendercasino.model.blackjack;
+package com.bendercasino.model;
 
 
 public record Bet(int amount, int payout) {

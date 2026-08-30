@@ -1,7 +1,7 @@
 package com.bendercasino.client;
 
 import com.bendercasino.exception.DeckApiException;
-import com.bendercasino.model.blackjack.Card;
+import com.bendercasino.model.Card;
 import com.bendercasino.model.Deck;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

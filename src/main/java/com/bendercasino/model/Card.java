@@ -1,4 +1,4 @@
-package com.bendercasino.model.blackjack;
+package com.bendercasino.model;
 
 
 public record Card(String code, String value, String suit, String image) {

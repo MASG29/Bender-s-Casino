@@ -11,9 +11,11 @@ public class Slot {
 
 
     public Slot() {
-        multipliers =  new ArrayList<>();
-        for (Symbol multiplier : Symbol.values()) {
-            multipliers.add(multiplier);
+        multipliers = new ArrayList<>();
+        for (Symbol symbol : Symbol.values()) {
+            if (symbol != Symbol.NONE) {
+                multipliers.add(symbol);
+            }
         }
     }
 

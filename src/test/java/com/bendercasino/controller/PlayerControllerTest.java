@@ -1,6 +1,6 @@
 package com.bendercasino.controller;
 
-import com.bendercasino.model.blackjack.Player;
+import com.bendercasino.model.Player;
 import com.bendercasino.service.PlayerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

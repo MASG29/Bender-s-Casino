@@ -1,4 +1,4 @@
-package com.bendercasino.model.blackjack;
+package com.bendercasino.model;
 
 public enum GameStatus {
     PLAYER_TURN,

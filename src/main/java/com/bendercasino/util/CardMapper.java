@@ -3,8 +3,8 @@ package com.bendercasino.util;
 import com.bendercasino.client.dto.ApiCard;
 import com.bendercasino.dto.CardDto;
 import com.bendercasino.dto.HandDto;
-import com.bendercasino.model.blackjack.Card;
-import com.bendercasino.model.blackjack.Hand;
+import com.bendercasino.model.Card;
+import com.bendercasino.model.Hand;
 import java.util.List;
 
 public class CardMapper {
