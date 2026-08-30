@@ -1,10 +1,10 @@
-package com.bendercasino.controller;
+package com.bendercasino.controller.peixinho;
 
-import com.bendercasino.dto.AskCardRequest;
-import com.bendercasino.dto.AskResultResponse;
-import com.bendercasino.dto.PeixinhoStateResponse;
-import com.bendercasino.dto.StartPeixinhoRequest;
-import com.bendercasino.service.PeixinhoService;
+import com.bendercasino.dto.peixinho.AskCardRequest;
+import com.bendercasino.dto.peixinho.AskResultResponse;
+import com.bendercasino.dto.peixinho.PeixinhoStateResponse;
+import com.bendercasino.dto.peixinho.StartPeixinhoRequest;
+import com.bendercasino.service.peixinho.PeixinhoService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 

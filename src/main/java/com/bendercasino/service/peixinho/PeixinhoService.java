@@ -1,18 +1,18 @@
-package com.bendercasino.service;
+package com.bendercasino.service.peixinho;
 
 import com.bendercasino.client.DeckClient;
-import com.bendercasino.dto.AskResultResponse;
-import com.bendercasino.dto.BotAskDto;
-import com.bendercasino.dto.PeixinhoStateResponse;
+import com.bendercasino.dto.peixinho.AskResultResponse;
+import com.bendercasino.dto.peixinho.BotAskDto;
+import com.bendercasino.dto.peixinho.PeixinhoStateResponse;
 import com.bendercasino.exception.GameNotFoundException;
 import com.bendercasino.exception.InsufficientBalanceException;
 import com.bendercasino.exception.InvalidGameStateException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.Card;
-import com.bendercasino.model.PeixinhoSession;
+import com.bendercasino.model.peixinho.PeixinhoSession;
 import com.bendercasino.model.Player;
 import com.bendercasino.repository.PlayerRepository;
-import com.bendercasino.repository.InMemoryPeixinhoRepository;
+import com.bendercasino.repository.peixinho.InMemoryPeixinhoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -242,7 +242,7 @@ public class PeixinhoService {
         for (String value : values) {
             if (PeixinhoRules.isBook(hand, value)) {
                 hand.removeIf(c -> c.value().equals(value));
-                session.addBook(new com.bendercasino.dto.BookDto(playerId, value));
+                session.addBook(new com.bendercasino.dto.peixinho.BookDto(playerId, value));
                 formed = true;
             }
         }

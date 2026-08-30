@@ -1,14 +1,14 @@
-package com.bendercasino.service;
+package com.bendercasino.service.peixinho;
 
 import com.bendercasino.client.DeckClient;
-import com.bendercasino.dto.BookDto;
+import com.bendercasino.dto.peixinho.BookDto;
 import com.bendercasino.exception.InsufficientBalanceException;
 import com.bendercasino.exception.InvalidGameStateException;
 import com.bendercasino.model.Card;
 import com.bendercasino.model.Deck;
-import com.bendercasino.model.PeixinhoSession;
+import com.bendercasino.model.peixinho.PeixinhoSession;
 import com.bendercasino.model.Player;
-import com.bendercasino.repository.InMemoryPeixinhoRepository;
+import com.bendercasino.repository.peixinho.InMemoryPeixinhoRepository;
 import com.bendercasino.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

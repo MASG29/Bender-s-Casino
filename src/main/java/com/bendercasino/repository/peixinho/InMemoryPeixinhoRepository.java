@@ -1,6 +1,6 @@
-package com.bendercasino.repository;
+package com.bendercasino.repository.peixinho;
 
-import com.bendercasino.model.PeixinhoSession;
+import com.bendercasino.model.peixinho.PeixinhoSession;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;

@@ -1,7 +1,8 @@
-package com.bendercasino.model;
+package com.bendercasino.model.peixinho;
 
-import com.bendercasino.dto.BookDto;
-import com.bendercasino.service.PeixinhoBot;
+import com.bendercasino.dto.peixinho.BookDto;
+import com.bendercasino.model.Card;
+import com.bendercasino.service.peixinho.PeixinhoBot;
 
 import java.util.*;
 

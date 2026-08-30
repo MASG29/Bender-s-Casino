@@ -1,4 +1,4 @@
-package com.bendercasino.dto;
+package com.bendercasino.dto.peixinho;
 
 import java.util.UUID;
 

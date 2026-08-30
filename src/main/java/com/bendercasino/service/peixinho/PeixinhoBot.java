@@ -1,6 +1,6 @@
-package com.bendercasino.service;
+package com.bendercasino.service.peixinho;
 
-import com.bendercasino.dto.BookDto;
+import com.bendercasino.dto.peixinho.BookDto;
 import com.bendercasino.model.Card;
 import org.springframework.stereotype.Component;
 
