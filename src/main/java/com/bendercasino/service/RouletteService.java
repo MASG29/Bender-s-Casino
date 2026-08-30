@@ -3,6 +3,7 @@ package com.bendercasino.service;
 import com.bendercasino.exception.InsufficientBalanceException;
 import com.bendercasino.exception.InvalidBetException;
 import com.bendercasino.exception.PlayerNotFoundException;
+import com.bendercasino.model.BetType;
 import com.bendercasino.model.Colour;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
@@ -30,7 +31,7 @@ public class RouletteService implements GameService {
         this.random = random;
     }
 
-    public GameSession spin(UUID playerId, int bet, Colour betColour) {
+    public GameSession spin(UUID playerId, int bet, BetType betType) {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
 
@@ -46,7 +47,7 @@ public class RouletteService implements GameService {
 
         int spunNumber = random.nextInt(37);
         Colour spunColour = RoulettePayout.colourOf(spunNumber);
-        int payout = RoulettePayout.payout(bet, betColour, spunNumber);
+        int payout = RoulettePayout.payout(bet, betType, spunNumber);
         boolean won = payout > 0;
 
         player.credit(payout);
@@ -54,7 +55,7 @@ public class RouletteService implements GameService {
 
         GameSession session = new GameSession(playerId, null, "roleta", bet);
         session.setStatus(GameStatus.FINISHED);
-        session.setState(new RouletteState(spunNumber, spunColour, betColour, won, payout));
+        session.setState(new RouletteState(spunNumber, spunColour, betType, won, payout));
         sessionRepository.save(session);
 
         return session;
@@ -63,7 +64,7 @@ public class RouletteService implements GameService {
     @Override
     public GameSession start(UUID playerId, int bet) {
         throw new UnsupportedOperationException(
-                "Roulette does not support start(playerId, bet); use spin(playerId, bet, betColour) instead");
+                "Roulette does not support start(playerId, bet); use spin(playerId, bet, betType) instead");
     }
 
     @Override

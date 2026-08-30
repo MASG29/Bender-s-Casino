@@ -1,5 +1,6 @@
 package com.bendercasino.service;
 
+import com.bendercasino.model.BetType;
 import com.bendercasino.model.Colour;
 
 import java.util.Set;
@@ -22,10 +23,21 @@ public class RoulettePayout {
         return RED_NUMBERS.contains(number) ? Colour.RED : Colour.BLACK;
     }
 
-    public static int payout(int bet, Colour betColour, int spunNumber) {
-        if (betColour == Colour.GREEN) {
-            throw new IllegalArgumentException("Cannot bet on green");
+    public static int payout(int bet, BetType betType, int spunNumber) {
+        return wins(betType, spunNumber) ? bet * 2 : 0;
+    }
+
+    private static boolean wins(BetType betType, int spunNumber) {
+        if (spunNumber == 0) {
+            return false;
         }
-        return colourOf(spunNumber) == betColour ? bet * 2 : 0;
+        return switch (betType) {
+            case RED -> colourOf(spunNumber) == Colour.RED;
+            case BLACK -> colourOf(spunNumber) == Colour.BLACK;
+            case ODD -> spunNumber % 2 != 0;
+            case EVEN -> spunNumber % 2 == 0;
+            case LOW -> spunNumber >= 1 && spunNumber <= 18;
+            case HIGH -> spunNumber >= 19 && spunNumber <= 36;
+        };
     }
 }

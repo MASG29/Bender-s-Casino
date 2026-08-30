@@ -3,6 +3,7 @@ package com.bendercasino.service;
 import com.bendercasino.exception.InsufficientBalanceException;
 import com.bendercasino.exception.InvalidBetException;
 import com.bendercasino.exception.PlayerNotFoundException;
+import com.bendercasino.model.BetType;
 import com.bendercasino.model.Colour;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
@@ -66,7 +67,7 @@ class RouletteServiceTest {
     void winningRedBet_paysDouble() {
         when(random.nextInt(37)).thenReturn(1); // 1 e vermelho
 
-        GameSession session = service.spin(playerId, 100, Colour.RED);
+        GameSession session = service.spin(playerId, 100, BetType.RED);
 
         assertThat(player.getBalance()).isEqualTo(1000 - 100 + 200);
         assertThat(session.getStatus()).isEqualTo(GameStatus.FINISHED);
@@ -74,7 +75,7 @@ class RouletteServiceTest {
         assertThat(state.won()).isTrue();
         assertThat(state.number()).isEqualTo(1);
         assertThat(state.colour()).isEqualTo(Colour.RED);
-        assertThat(state.betColour()).isEqualTo(Colour.RED);
+        assertThat(state.betType()).isEqualTo(BetType.RED);
         assertThat(state.payout()).isEqualTo(200);
     }
 
@@ -83,7 +84,7 @@ class RouletteServiceTest {
     void losingRedBet_paysNothing() {
         when(random.nextInt(37)).thenReturn(2); // 2 e preto
 
-        GameSession session = service.spin(playerId, 100, Colour.RED);
+        GameSession session = service.spin(playerId, 100, BetType.RED);
 
         assertThat(player.getBalance()).isEqualTo(1000 - 100);
         RouletteState state = (RouletteState) session.getState();
@@ -96,7 +97,7 @@ class RouletteServiceTest {
     void zeroAlwaysLoses() {
         when(random.nextInt(37)).thenReturn(0);
 
-        GameSession session = service.spin(playerId, 100, Colour.RED);
+        GameSession session = service.spin(playerId, 100, BetType.RED);
 
         assertThat(player.getBalance()).isEqualTo(1000 - 100);
         RouletteState state = (RouletteState) session.getState();
@@ -105,9 +106,58 @@ class RouletteServiceTest {
     }
 
     @Test
+    @DisplayName("aposta impar, sai numero impar, ganha 1:1")
+    void winningOddBet_paysDouble() {
+        when(random.nextInt(37)).thenReturn(3);
+
+        GameSession session = service.spin(playerId, 100, BetType.ODD);
+
+        assertThat(player.getBalance()).isEqualTo(1000 - 100 + 200);
+        RouletteState state = (RouletteState) session.getState();
+        assertThat(state.won()).isTrue();
+        assertThat(state.betType()).isEqualTo(BetType.ODD);
+    }
+
+    @Test
+    @DisplayName("aposta par, sai numero impar, perde")
+    void losingEvenBet_paysNothing() {
+        when(random.nextInt(37)).thenReturn(3);
+
+        GameSession session = service.spin(playerId, 100, BetType.EVEN);
+
+        assertThat(player.getBalance()).isEqualTo(1000 - 100);
+        RouletteState state = (RouletteState) session.getState();
+        assertThat(state.won()).isFalse();
+    }
+
+    @Test
+    @DisplayName("aposta 1 a 18, sai numero nesse intervalo, ganha 1:1")
+    void winningLowBet_paysDouble() {
+        when(random.nextInt(37)).thenReturn(10);
+
+        GameSession session = service.spin(playerId, 100, BetType.LOW);
+
+        assertThat(player.getBalance()).isEqualTo(1000 - 100 + 200);
+        RouletteState state = (RouletteState) session.getState();
+        assertThat(state.won()).isTrue();
+    }
+
+    @Test
+    @DisplayName("aposta 19 a 36, sai numero fora do intervalo, perde")
+    void losingHighBet_paysNothing() {
+        when(random.nextInt(37)).thenReturn(10);
+
+        GameSession session = service.spin(playerId, 100, BetType.HIGH);
+
+        assertThat(player.getBalance()).isEqualTo(1000 - 100);
+        RouletteState state = (RouletteState) session.getState();
+        assertThat(state.won()).isFalse();
+    }
+
+    @Test
     @DisplayName("saldo insuficiente lanca InsufficientBalanceException e nao debita")
     void insufficientBalance_throwsAndDoesNotDebit() {
-        assertThatThrownBy(() -> service.spin(playerId, 10_000, Colour.RED))
+        assertThatThrownBy(() -> service.spin(playerId, 10_000, BetType.RED))
                 .isInstanceOf(InsufficientBalanceException.class);
 
         assertThat(player.getBalance()).isEqualTo(1000);
@@ -117,7 +167,7 @@ class RouletteServiceTest {
     @Test
     @DisplayName("aposta invalida (<= 0) lanca InvalidBetException")
     void invalidBet_throws() {
-        assertThatThrownBy(() -> service.spin(playerId, 0, Colour.RED))
+        assertThatThrownBy(() -> service.spin(playerId, 0, BetType.RED))
                 .isInstanceOf(InvalidBetException.class);
     }
 
@@ -126,7 +176,7 @@ class RouletteServiceTest {
     void unknownPlayer_throws() {
         UUID unknown = UUID.randomUUID();
 
-        assertThatThrownBy(() -> service.spin(unknown, 100, Colour.RED))
+        assertThatThrownBy(() -> service.spin(unknown, 100, BetType.RED))
                 .isInstanceOf(PlayerNotFoundException.class);
     }
 }

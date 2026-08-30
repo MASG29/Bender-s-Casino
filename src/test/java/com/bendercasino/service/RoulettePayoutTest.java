@@ -1,5 +1,6 @@
 package com.bendercasino.service;
 
+import com.bendercasino.model.BetType;
 import com.bendercasino.model.Colour;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,32 +49,76 @@ class RoulettePayoutTest {
 
     @Test @DisplayName("aposta vermelho, sai vermelho, paga 1:1 (devolve o dobro)")
     void winningRedBetPaysDouble() {
-        assertThat(RoulettePayout.payout(100, Colour.RED, 1)).isEqualTo(200);
+        assertThat(RoulettePayout.payout(100, BetType.RED, 1)).isEqualTo(200);
     }
 
     @Test @DisplayName("aposta preto, sai preto, paga 1:1 (devolve o dobro)")
     void winningBlackBetPaysDouble() {
-        assertThat(RoulettePayout.payout(100, Colour.BLACK, 2)).isEqualTo(200);
+        assertThat(RoulettePayout.payout(100, BetType.BLACK, 2)).isEqualTo(200);
     }
 
     @Test @DisplayName("aposta vermelho, sai preto, perde tudo")
     void losingBetPaysNothing() {
-        assertThat(RoulettePayout.payout(100, Colour.RED, 2)).isEqualTo(0);
+        assertThat(RoulettePayout.payout(100, BetType.RED, 2)).isEqualTo(0);
     }
 
     @Test @DisplayName("aposta vermelho, sai zero, perde tudo (vantagem da casa)")
     void zeroAlwaysLoses() {
-        assertThat(RoulettePayout.payout(100, Colour.RED, 0)).isEqualTo(0);
+        assertThat(RoulettePayout.payout(100, BetType.RED, 0)).isEqualTo(0);
     }
 
     @Test @DisplayName("aposta preto, sai zero, perde tudo (vantagem da casa)")
     void zeroAlwaysLosesForBlackToo() {
-        assertThat(RoulettePayout.payout(100, Colour.BLACK, 0)).isEqualTo(0);
+        assertThat(RoulettePayout.payout(100, BetType.BLACK, 0)).isEqualTo(0);
     }
 
-    @Test @DisplayName("apostar em verde nao e permitido")
-    void greenBetThrows() {
-        assertThatThrownBy(() -> RoulettePayout.payout(100, Colour.GREEN, 1))
-                .isInstanceOf(IllegalArgumentException.class);
+    @Test @DisplayName("aposta impar, sai numero impar, paga 1:1")
+    void winningOddBetPaysDouble() {
+        assertThat(RoulettePayout.payout(100, BetType.ODD, 3)).isEqualTo(200);
+    }
+
+    @Test @DisplayName("aposta impar, sai numero par, perde tudo")
+    void losingOddBetPaysNothing() {
+        assertThat(RoulettePayout.payout(100, BetType.ODD, 4)).isEqualTo(0);
+    }
+
+    @Test @DisplayName("aposta par, sai numero par, paga 1:1")
+    void winningEvenBetPaysDouble() {
+        assertThat(RoulettePayout.payout(100, BetType.EVEN, 4)).isEqualTo(200);
+    }
+
+    @Test @DisplayName("aposta par, sai numero impar, perde tudo")
+    void losingEvenBetPaysNothing() {
+        assertThat(RoulettePayout.payout(100, BetType.EVEN, 3)).isEqualTo(0);
+    }
+
+    @Test @DisplayName("zero nao conta nem como par nem como impar")
+    void zeroLosesOddAndEvenBets() {
+        assertThat(RoulettePayout.payout(100, BetType.ODD, 0)).isEqualTo(0);
+        assertThat(RoulettePayout.payout(100, BetType.EVEN, 0)).isEqualTo(0);
+    }
+
+    @Test @DisplayName("aposta 1 a 18, sai numero nesse intervalo, paga 1:1")
+    void winningLowBetPaysDouble() {
+        assertThat(RoulettePayout.payout(100, BetType.LOW, 1)).isEqualTo(200);
+        assertThat(RoulettePayout.payout(100, BetType.LOW, 18)).isEqualTo(200);
+    }
+
+    @Test @DisplayName("aposta 1 a 18, sai numero fora do intervalo, perde tudo")
+    void losingLowBetPaysNothing() {
+        assertThat(RoulettePayout.payout(100, BetType.LOW, 19)).isEqualTo(0);
+        assertThat(RoulettePayout.payout(100, BetType.LOW, 0)).isEqualTo(0);
+    }
+
+    @Test @DisplayName("aposta 19 a 36, sai numero nesse intervalo, paga 1:1")
+    void winningHighBetPaysDouble() {
+        assertThat(RoulettePayout.payout(100, BetType.HIGH, 19)).isEqualTo(200);
+        assertThat(RoulettePayout.payout(100, BetType.HIGH, 36)).isEqualTo(200);
+    }
+
+    @Test @DisplayName("aposta 19 a 36, sai numero fora do intervalo, perde tudo")
+    void losingHighBetPaysNothing() {
+        assertThat(RoulettePayout.payout(100, BetType.HIGH, 18)).isEqualTo(0);
+        assertThat(RoulettePayout.payout(100, BetType.HIGH, 0)).isEqualTo(0);
     }
 }
