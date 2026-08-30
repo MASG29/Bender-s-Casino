@@ -1,0 +1,26 @@
+# Nota: este ficheiro substitui (shadow) o application.yml principal no
+# classpath de testes, por isso tem de repetir também a configuração de
+# deckofcards. O que muda é só a base de dados: H2 em memória, para os
+# testes de contexto completo não tocarem no ficheiro de dados real.
+spring:
+  http:
+    clients:
+      connect-timeout: 2s
+      read-timeout: 3s
+
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+
+deckofcards:
+  mode: api                       # api | memory  (--deckofcards.mode=memory na demo sem rede)
+  base-url: https://deckofcardsapi.com/api/deck
+  deck-count: 6
+  reshuffle-threshold: 15
