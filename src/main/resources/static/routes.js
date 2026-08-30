@@ -1,11 +1,17 @@
 const games = [
     { id: "blackjack", label: "Blackjack", live: true },
+    { id: "roulette", label: "Roulette", live: true },
 ];
 
 const gameRoutes = Object.fromEntries(
     games.map((game) => [
         game.id,
-        { path: `/${game.id}`, controller: game.id, label: game.label, live: game.live },
+        {
+            path: `/${game.id}`,
+            controller: game.id,
+            label: game.label,
+            live: game.live
+        },
     ]),
 );
 
@@ -33,4 +39,4 @@ export default {
         path: "",
         controller: "",
     },
-}
+};
