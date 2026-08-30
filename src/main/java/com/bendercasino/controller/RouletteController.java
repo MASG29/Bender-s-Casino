@@ -28,7 +28,7 @@ public class RouletteController {
 
     @PostMapping("/spin")
     public RouletteSpinResponse spin(@Valid @RequestBody RouletteSpinRequest request) {
-        GameSession session = rouletteService.spin(request.playerId(), request.bet(), request.colour());
+        GameSession session = rouletteService.spin(request.playerId(), request.bet(), request.betType());
         RouletteState state = (RouletteState) session.getState();
         Player player = playerRepository.findById(request.playerId())
                 .orElseThrow(() -> new PlayerNotFoundException(request.playerId()));

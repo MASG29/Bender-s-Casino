@@ -30,35 +30,35 @@ public class RouletteService implements GameService {
         this.random = random;
     }
 
-    public GameSession spin(UUID playerId, int bet, Colour betColour) {
-        Player player = playerRepository.findById(playerId)
-                .orElseThrow(() -> new PlayerNotFoundException(playerId));
+    public GameSession spin(UUID playerId, int bet, Colour betType) {
+    Player player = playerRepository.findById(playerId)
+            .orElseThrow(() -> new PlayerNotFoundException(playerId));
 
-        if (bet <= 0) {
-            throw new InvalidBetException(bet);
-        }
-
-        if (!player.canAfford(bet)) {
-            throw new InsufficientBalanceException(player.getName(), player.getBalance(), bet);
-        }
-
-        player.debit(bet);
-
-        int spunNumber = random.nextInt(37);
-        Colour spunColour = RoulettePayout.colourOf(spunNumber);
-        int payout = RoulettePayout.payout(bet, betColour, spunNumber);
-        boolean won = payout > 0;
-
-        player.credit(payout);
-        playerRepository.save(player);
-
-        GameSession session = new GameSession(playerId, null, "roleta", bet);
-        session.setStatus(GameStatus.FINISHED);
-        session.setState(new RouletteState(spunNumber, spunColour, betColour, won, payout));
-        sessionRepository.save(session);
-
-        return session;
+    if (bet <= 0) {
+        throw new InvalidBetException(bet);
     }
+
+    if (!player.canAfford(bet)) {
+        throw new InsufficientBalanceException(player.getName(), player.getBalance(), bet);
+    }
+
+    player.debit(bet);
+
+    int spunNumber = random.nextInt(37);
+    Colour spunColour = RoulettePayout.colourOf(spunNumber);
+    int payout = RoulettePayout.payout(bet, betType, spunNumber);
+    boolean won = payout > 0;
+
+    player.credit(payout);
+    playerRepository.save(player);
+
+    GameSession session = new GameSession(playerId, null, "roleta", bet);
+    session.setStatus(GameStatus.FINISHED);
+    session.setState(new RouletteState(spunNumber, spunColour, betType, won, payout));
+    sessionRepository.save(session);
+
+    return session;
+}
 
     @Override
     public GameSession start(UUID playerId, int bet) {

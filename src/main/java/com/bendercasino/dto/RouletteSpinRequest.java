@@ -8,4 +8,4 @@ import java.util.UUID;
 public record RouletteSpinRequest(
         @NotNull UUID playerId,
         @Positive int bet,
-        @NotNull Colour colour) {}
+        @NotNull Colour betType) {}

@@ -22,10 +22,19 @@ public class RoulettePayout {
         return RED_NUMBERS.contains(number) ? Colour.RED : Colour.BLACK;
     }
 
-    public static int payout(int bet, Colour betColour, int spunNumber) {
-        if (betColour == Colour.GREEN) {
-            throw new IllegalArgumentException("Cannot bet on green");
-        }
-        return colourOf(spunNumber) == betColour ? bet * 2 : 0;
+    public static boolean wins(Colour betType, int spunNumber) {
+        return switch (betType) {
+            case RED   -> colourOf(spunNumber) == Colour.RED;
+            case BLACK -> colourOf(spunNumber) == Colour.BLACK;
+            case ODD   -> spunNumber != 0 && spunNumber % 2 != 0;
+            case EVEN  -> spunNumber != 0 && spunNumber % 2 == 0;
+            case LOW   -> spunNumber >= 1 && spunNumber <= 18;
+            case HIGH  -> spunNumber >= 19 && spunNumber <= 36;
+            case GREEN -> throw new IllegalArgumentException("Cannot bet on green");
+        };
+    }
+
+    public static int payout(int bet, Colour betType, int spunNumber) {
+        return wins(betType, spunNumber) ? bet * 2 : 0;
     }
 }
