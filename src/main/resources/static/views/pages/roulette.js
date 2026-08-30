@@ -10,8 +10,9 @@ const SECTOR = 360 / 37;
 
 const WHEEL_OFFSET = 0;
 
-/** @type {"RED"|"BLACK"|null} */
-let selectedColour = null;
+/** @type {"RED"|"BLACK"|"ODD"|"EVEN"|"LOW"|"HIGH"|null} */
+
+let selectedBetType = null;
 let currentBet = 0;
 
 export function init() {
@@ -30,8 +31,12 @@ export function init() {
 
                 <div class="table-img-wrap">
                     <img src="/assets/roulette/rouletteTable.png" alt="Roulette table" />
-                    <button type="button" class="bet-zone zone-red" data-colour="RED" aria-label="Bet Red"></button>
-                    <button type="button" class="bet-zone zone-black" data-colour="BLACK" aria-label="Bet Black"></button>
+                    <button type="button" class="bet-zone zone-red"   data-bettype="RED"   aria-label="Bet Red"></button>
+                    <button type="button" class="bet-zone zone-black" data-bettype="BLACK" aria-label="Bet Black"></button>
+                    <button type="button" class="bet-zone zone-odd"   data-bettype="ODD"   aria-label="Bet Odd"></button>
+                    <button type="button" class="bet-zone zone-even"  data-bettype="EVEN"  aria-label="Bet Even"></button>
+                    <button type="button" class="bet-zone zone-low"   data-bettype="LOW"   aria-label="Bet 1 to 18"></button>
+                    <button type="button" class="bet-zone zone-high"  data-bettype="HIGH"  aria-label="Bet 19 to 36"></button>
                 </div>
 
                 <div class="roulette-bet-area">
@@ -97,8 +102,9 @@ function setupGame() {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".bet-zone").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
-            selectedColour = btn.dataset.colour;
-            document.getElementById("bet-selected").textContent = `Bet: ${selectedColour}`;
+            selectedBetType = btn.dataset.bettype;
+            const labels = { RED: "Red", BLACK: "Black", ODD: "Odd", EVEN: "Even", LOW: "1 to 18", HIGH: "19 to 36" };
+            document.getElementById("bet-selected").textContent = `Bet: ${labels[selectedBetType]}`;
             document.getElementById("roulette-error").textContent = "";
         });
     });
@@ -133,8 +139,8 @@ async function onSpinClick() {
 
     errorEl.textContent = "";
 
-    if (!selectedColour) {
-        errorEl.textContent = "Choose Red or Black on the table.";
+    if (!selectedBetType) {
+        errorEl.textContent = "Choose bet type on the table.";
         return;
     }
     if (!amount || amount <= 0) {
@@ -151,7 +157,7 @@ async function onSpinClick() {
     spinBtn.textContent = "Spinning...";
 
     try {
-    const result = await callRouletteApi(player.playerId, amount, selectedColour);
+    const result = await callRouletteApi(player.playerId, amount, selectedBetType);
 
     await transitionToWheel();
 
@@ -173,14 +179,14 @@ async function onSpinClick() {
 }
 }
 
-async function callRouletteApi(playerId, betAmount, colour) {
+async function callRouletteApi(playerId, betAmount, betType) {
     const response = await fetch(`${API_BASE_URL}roulette/spin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             playerId: playerId,
             bet: betAmount,
-            colour: colour
+            betType: betType
         })
     });
 

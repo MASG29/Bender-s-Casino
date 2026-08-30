@@ -111,18 +111,46 @@
     background: rgba(255, 255, 255, 0.12);
 }
 
-.zone-red {
-    left: 38%;
-    top:68%;
-    width: 5%;
-    height: 6%;
+.zone-red   { 
+    left: 38%; 
+    top: 68%; 
+    width: 5%; 
+    height: 6%; 
 }
 
-.zone-black {
-    left: 47%;
-    top: 68%;
-    width: 5%;
-    height: 6%;
+.zone-black { 
+    left: 47%; 
+    top: 68%; 
+    width: 5%; 
+    height: 6%; 
+}
+
+.zone-odd   { 
+    left: 56%; 
+    top: 68%; 
+    width: 5%; 
+    height: 6%; 
+}
+
+.zone-even  { 
+    left: 65%; 
+    top: 68%; 
+    width: 5%; 
+    height: 6%; 
+}
+
+.zone-low   { 
+    left: 20%; 
+    top: 55%; 
+    width: 7%; 
+    height: 6%; 
+}
+
+.zone-high  { 
+    left: 74%; 
+    top: 55%; 
+    width: 7%; 
+    height: 6%; 
 }
 
 .roulette-balance {
