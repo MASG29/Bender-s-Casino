@@ -1,14 +1,16 @@
-package com.bendercasino.service;
+package com.bendercasino.service.roleta;
+
+import com.bendercasino.model.roleta.BetType;
+import com.bendercasino.model.roleta.Colour;
+import com.bendercasino.model.roleta.RouletteState;
+import com.bendercasino.service.GameService;
 
 import com.bendercasino.exception.InsufficientBalanceException;
 import com.bendercasino.exception.InvalidBetException;
 import com.bendercasino.exception.PlayerNotFoundException;
-import com.bendercasino.model.BetType;
-import com.bendercasino.model.Colour;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
 import com.bendercasino.model.Player;
-import com.bendercasino.model.RouletteState;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
 import com.bendercasino.repository.PlayerRepository;
 import org.springframework.stereotype.Service;

@@ -1,14 +1,15 @@
-package com.bendercasino.controller;
+package com.bendercasino.controller.roleta;
+
+import com.bendercasino.model.roleta.BetType;
+import com.bendercasino.model.roleta.Colour;
+import com.bendercasino.model.roleta.RouletteState;
+import com.bendercasino.service.roleta.RouletteService;
 
 import com.bendercasino.exception.InsufficientBalanceException;
-import com.bendercasino.model.BetType;
-import com.bendercasino.model.Colour;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
 import com.bendercasino.model.Player;
-import com.bendercasino.model.RouletteState;
 import com.bendercasino.repository.PlayerRepository;
-import com.bendercasino.service.RouletteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

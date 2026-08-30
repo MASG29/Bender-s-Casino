@@ -1,4 +1,4 @@
-package com.bendercasino.model;
+package com.bendercasino.model.roleta;
 
 public enum BetType {
     RED,

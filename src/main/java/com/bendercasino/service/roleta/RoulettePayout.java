@@ -1,7 +1,8 @@
-package com.bendercasino.service;
+package com.bendercasino.service.roleta;
 
-import com.bendercasino.model.BetType;
-import com.bendercasino.model.Colour;
+import com.bendercasino.model.roleta.BetType;
+import com.bendercasino.model.roleta.Colour;
+
 
 import java.util.Set;
 

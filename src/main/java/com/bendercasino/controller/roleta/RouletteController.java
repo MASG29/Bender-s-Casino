@@ -1,13 +1,14 @@
-package com.bendercasino.controller;
+package com.bendercasino.controller.roleta;
 
-import com.bendercasino.dto.RouletteSpinRequest;
-import com.bendercasino.dto.RouletteSpinResponse;
+import com.bendercasino.dto.roleta.RouletteSpinRequest;
+import com.bendercasino.dto.roleta.RouletteSpinResponse;
+import com.bendercasino.model.roleta.RouletteState;
+import com.bendercasino.service.roleta.RouletteService;
+
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.Player;
-import com.bendercasino.model.RouletteState;
 import com.bendercasino.repository.PlayerRepository;
-import com.bendercasino.service.RouletteService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

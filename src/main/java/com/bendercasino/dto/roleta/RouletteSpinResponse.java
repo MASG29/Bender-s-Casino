@@ -1,6 +1,7 @@
-package com.bendercasino.dto;
+package com.bendercasino.dto.roleta;
 
-import com.bendercasino.model.Colour;
+import com.bendercasino.model.roleta.Colour;
+
 
 public record RouletteSpinResponse(
         int number,
