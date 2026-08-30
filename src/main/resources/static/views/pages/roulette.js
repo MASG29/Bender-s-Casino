@@ -212,7 +212,7 @@ function spinWheelTo(number) {
     const wheel = document.getElementById("wheel-img");
     const baseTurns = 5;
     const targetAngle = angleForNumber(number);
-    const finalDeg = baseTurns * 360 + (360 - targetAngle);
+    const finalDeg = baseTurns * 360 - targetAngle;
 
     wheel.style.transition = "none";
     wheel.style.transform = "rotate(0deg)";
