@@ -323,64 +323,63 @@ button:active .button_top {
 
 /* posição inicial: em cima do baralho, virada para baixo */
 .card {
-    /* substituída por carta, com a URL vinda da API */
-    --card-img: none;
+  /* substituída por carta, com a URL vinda da API */
+  --card-img: none;
 
-    position: absolute;
-    top: var(--deck-top, 0);
-    left: var(--deck-left, 0);
-    width: 70px;
-    height: 100px;
-    transform-style: preserve-3d;
-    transition: transform 0.5s ease-out;
+  position: absolute;
+  top: var(--deck-top, 0);
+  left: var(--deck-left, 0);
+  width: 70px;
+  height: 100px;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease-out;
 }
 .card.dealt {
-    /* posição final: o slot de destino */
-    top: var(--slot-top);
-    left: var(--slot-left);
+  /* posição final: o slot de destino */
+  top: var(--slot-top);
+  left: var(--slot-left);
 }
 /* efeito de virar a carta (face para baixo -> face para cima) */
 .card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.4s ease-in-out;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease-in-out;
 }
 .card.face-up .card-inner {
-    transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
-.card-front, .card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border-radius: 6px;
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 6px;
 }
 .card-back {
-    background: url("/assets/Cards.Back/red.card.png") center/cover;
+  background: url("/assets/Cards.Back/red.card.png") center/cover;
 }
 
 .card-front {
-    background-color: #f5f4ef;
-    background-image: var(--card-img);
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    transform: rotateY(180deg);
+  background-color: #f5f4ef;
+  background-image: var(--card-img);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform: rotateY(180deg);
 }
 
 /* ---------- footer ---------- */
 
 .site-footer {
-    padding: 26px 5vw;
-    text-align: center;
-    border-top: 3px solid var(--steel-dark);
-    color: var(--text-dim);
-    font-size: 0.72rem;
+  padding: 26px 5vw;
+  text-align: center;
+  border-top: 3px solid var(--steel-dark);
+  color: var(--text-dim);
+  font-size: 0.72rem;
 }
-
-
 
 .modal-backdrop {
   position: fixed;
@@ -390,11 +389,11 @@ button:active .button_top {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(10,10,10,0.85);
+  background: rgba(10, 10, 10, 0.85);
   backdrop-filter: blur(4px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity .25s;
+  transition: opacity 0.25s;
 }
 .modal-backdrop.open {
   opacity: 1;
@@ -408,8 +407,8 @@ button:active .button_top {
   border: 1px solid var(--steel-dark);
   padding: 40px 36px 36px;
   transform: translateY(16px);
-  transition: transform .25s;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  transition: transform 0.25s;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
 }
 .modal-backdrop.open .modal-box {
   transform: translateY(0);
@@ -426,36 +425,51 @@ button:active .button_top {
 }
 
 .modal-tabs {
-    display: flex;
-    gap: 0;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--steel-dark);
+  display: flex;
+  gap: 0;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--steel-dark);
 }
 .modal-tab {
-    flex: 1;
-    padding: 10px;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--text-dim);
-    font-family: inherit;
-    font-size: 0.82rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    transition: color .15s, border-color .15s;
-    margin-bottom: -1px;
+  flex: 1;
+  padding: 10px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+  margin-bottom: -1px;
 }
-.modal-tab:hover { color: var(--text); }
+.modal-tab:hover {
+  color: var(--text);
+}
 .modal-tab.active {
-    color: var(--text);
-    border-bottom-color: var(--steel-light);
+  color: var(--text);
+  border-bottom-color: var(--steel-light);
 }
 
-.modal-close:hover { color: var(--text); }
-.modal-title { font-size: 1.5rem; color: var(--text); margin-bottom: 8px; }
-.modal-hint  { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 22px; line-height: 1.6; }
+.modal-close:hover {
+  color: var(--text);
+}
+.modal-title {
+  font-size: 1.5rem;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.modal-hint {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  margin-bottom: 22px;
+  line-height: 1.6;
+}
 .modal-input {
   width: 100%;
   background: var(--bg);
@@ -465,11 +479,20 @@ button:active .button_top {
   font-size: 1rem;
   padding: 12px 14px;
   outline: none;
-  transition: border-color .15s;
+  transition: border-color 0.15s;
 }
-.modal-input:focus { border-color: var(--steel-light); }
-.modal-input::placeholder { color: var(--steel); }
-.modal-error { min-height: 1.2em; font-size: 0.78rem; color: #c0392b; margin-top: 8px; }
+.modal-input:focus {
+  border-color: var(--steel-light);
+}
+.modal-input::placeholder {
+  color: var(--steel);
+}
+.modal-error {
+  min-height: 1.2em;
+  font-size: 0.78rem;
+  color: #c0392b;
+  margin-top: 8px;
+}
 .modal-submit {
   width: 100%;
   margin-top: 20px;
@@ -484,7 +507,68 @@ button:active .button_top {
   border: 2px solid #0d0d0d;
   border-radius: 0;
   cursor: pointer;
-  transition: background .15s, transform .15s;
+  transition:
+    background 0.15s,
+    transform 0.15s;
 }
-.modal-submit:hover:not(:disabled) { background: var(--steel-lighter); transform: translateY(-1px); }
-.modal-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.modal-submit:hover:not(:disabled) {
+  background: var(--steel-lighter);
+  transform: translateY(-1px);
+}
+.modal-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Video poker */
+
+.vp-table {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 800px;
+  gap: 6vh;
+  padding: 52px 36px;
+  border: 12px solid var(--steel-darker);
+  border-radius: 220px / 110px;
+  background: radial-gradient(
+    ellipse at 50% 38%,
+    #1f5c3d 0%,
+    #163f2b 62%,
+    #0e2b1d 100%
+  );
+  box-shadow:
+    inset 0 0 90px rgba(0, 0, 0, 0.55),
+    0 12px 34px rgba(0, 0, 0, 0.5);
+}
+
+.payouts-table {
+  border: 3px solid white;
+}
+
+.payouts-table tr :nth-child(1) {
+  width: 40%;
+}
+
+#card-slot-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+#buttonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.lower-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 40px;
+}
