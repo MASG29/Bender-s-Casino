@@ -130,8 +130,9 @@ public class PeixinhoService {
             if (winnerId.equals(playerId)) {
                 Player winner = playerRepository.findById(playerId)
                         .orElseThrow(() -> new PlayerNotFoundException(playerId));
-                int totalPot = session.getBets().values().stream().mapToInt(Integer::intValue).sum();
-                winner.credit(totalPot);
+                int payout = session.getBets().get(playerId)
+                        * PeixinhoRules.countBooks(session.getBooks(), playerId);
+                winner.credit(payout);
                 playerRepository.save(winner);
             }
         }
