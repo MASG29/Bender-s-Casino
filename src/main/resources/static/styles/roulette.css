@@ -195,10 +195,16 @@
 }
 
 .wheel-spin {
-    width: clamp(220px, 50vw, 420px);
+    width: clamp(280px, 65vw, 560px);
     border-radius: 50%;
     display: block;
     will-change: transform;
+}
+
+.wheel-view.zoom-fade-out {
+    opacity: 0;
+    transform: scale(1.25);
+    pointer-events: none;
 }
 
 .roulette-result {
@@ -246,4 +252,19 @@
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--steel-light);
+}
+
+.table-view.fade-zoom-in {
+    animation: fadeZoomIn 0.8s ease forwards;
+}
+
+@keyframes fadeZoomIn {
+    from {
+        opacity: 0;
+        transform: scale(1.25);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }

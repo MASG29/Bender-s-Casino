@@ -250,12 +250,21 @@ function showTableView() {
     const tableView = document.getElementById("table-view");
     const wheelView = document.getElementById("wheel-view");
 
-    wheelView.classList.remove("fade-zoom-in", "visible");
-    wheelView.style.display = "none";
+    wheelView.classList.add("zoom-fade-out");
 
-    tableView.style.display = "flex";
-    tableView.classList.remove("zoom-fade-out");
-    document.getElementById("roulette-error").textContent = "";
+    setTimeout(() => {
+        wheelView.classList.remove("fade-zoom-in", "visible", "zoom-fade-out");
+        wheelView.style.display = "none";
+
+        tableView.style.display = "flex";
+        tableView.classList.remove("zoom-fade-out");
+        document.getElementById("roulette-error").textContent = "";
+
+        tableView.classList.add("fade-zoom-in");
+        setTimeout(() => {
+            tableView.classList.remove("fade-zoom-in");
+        }, 800);
+    }, 800);
 }
 
 function showResult(result) {
