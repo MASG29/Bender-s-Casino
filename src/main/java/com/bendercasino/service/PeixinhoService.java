@@ -2,6 +2,7 @@ package com.bendercasino.service;
 
 import com.bendercasino.client.DeckClient;
 import com.bendercasino.dto.AskResultResponse;
+import com.bendercasino.dto.BotAskDto;
 import com.bendercasino.dto.PeixinhoStateResponse;
 import com.bendercasino.exception.GameNotFoundException;
 import com.bendercasino.exception.InsufficientBalanceException;
@@ -37,9 +38,12 @@ public class PeixinhoService {
 
     @Transactional
     public PeixinhoStateResponse start(UUID playerId, int bet) {
-        if (sessionRepository.findByPlayerId(playerId).isPresent()) {
-            throw new InvalidGameStateException("Game is already started.");
-        }
+        sessionRepository.findByPlayerId(playerId).ifPresent(existing -> {
+            if (!"FINISHED".equals(existing.getStatus())) {
+                throw new InvalidGameStateException("Game is already started.");
+            }
+            sessionRepository.deleteByPlayerId(playerId);
+        });
 
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
@@ -91,6 +95,7 @@ public class PeixinhoService {
         boolean formedBook      = false;
         boolean drewFromDeck    = false;
         Card drawnCard          = null;
+        BotAskDto botAsk        = null;
 
         session.addHistory(new PeixinhoBot.AskHistoryEntry(playerId, targetId, cardValue));
 
@@ -112,12 +117,12 @@ public class PeixinhoService {
                 } else {
                     session.setLastAction("Fish. Pass.");
                     session.nextTurn();
-                    runBotTurn(session, playerId);
+                    botAsk = runBotTurn(session, playerId);
                 }
             } else {
                 session.setLastAction("Ho no is empty. Pass.");
                 session.nextTurn();
-                runBotTurn(session, playerId);
+                botAsk = runBotTurn(session, playerId);
             }
         }
 
@@ -137,6 +142,13 @@ public class PeixinhoService {
             }
         }
 
+        if (!session.getStatus().equals("FINISHED")) {
+            boolean allHandsEmpty = session.getHands().values().stream().allMatch(List::isEmpty);
+            if (session.getDeck().isEmpty() && allHandsEmpty) {
+                session.setStatus("FINISHED");
+            }
+        }
+
         sessionRepository.save(playerId, session);
 
         return new AskResultResponse(
@@ -148,21 +160,26 @@ public class PeixinhoService {
                         drawnCard.code(), drawnCard.value(), drawnCard.suit(), drawnCard.image()) : null,
                 formedBook,
                 session.getLastAction(),
-                toStateResponse(session, playerId)
+                toStateResponse(session, playerId),
+                botAsk
         );
     }
 
-    private void runBotTurn(PeixinhoSession session, UUID humanPlayerId) {
+    private BotAskDto runBotTurn(PeixinhoSession session, UUID humanPlayerId) {
         UUID botId = session.getPlayerOrder().stream()
                 .filter(id -> !id.equals(humanPlayerId))
                 .findFirst().orElse(null);
 
-        if (botId == null || !session.currentPlayerId().equals(botId)) return;
+        if (botId == null || !session.currentPlayerId().equals(botId)) return null;
 
         boolean botTurn = true;
+        BotAskDto lastBotAsk = null;
         while (botTurn && !PeixinhoRules.isGameOver(session.getBooks().size())) {
             List<Card> botHand = session.getHands().get(botId);
-            if (botHand.isEmpty()) break;
+            if (botHand.isEmpty()) {
+                session.nextTurn();
+                break;
+            }
 
             PeixinhoBot.BotDecision decision = bot.decide(
                     botHand,
@@ -172,11 +189,13 @@ public class PeixinhoService {
             );
 
             if ("__FISH__".equals(decision.cardValue())) {
+                boolean formedBook = false;
                 if (!session.getDeck().isEmpty()) {
                     Card drawn = session.getDeck().remove(0);
                     botHand.add(drawn);
-                    checkAndLowerBooks(session, botId);
+                    formedBook = checkAndLowerBooks(session, botId);
                 }
+                lastBotAsk = new BotAskDto(botId, null, false, true, formedBook);
                 session.nextTurn();
                 botTurn = false;
                 continue;
@@ -191,24 +210,28 @@ public class PeixinhoService {
             if (!transferred.isEmpty()) {
                 targetHand.removeAll(transferred);
                 botHand.addAll(transferred);
-                checkAndLowerBooks(session, botId);
+                boolean formedBook = checkAndLowerBooks(session, botId);
+                lastBotAsk = new BotAskDto(botId, decision.cardValue(), true, false, formedBook);
 
             } else {
 
                 if (!session.getDeck().isEmpty()) {
                     Card drawn = session.getDeck().remove(0);
                     botHand.add(drawn);
-                    checkAndLowerBooks(session, botId);
+                    boolean formedBook = checkAndLowerBooks(session, botId);
+                    lastBotAsk = new BotAskDto(botId, decision.cardValue(), false, false, formedBook);
                     if (!drawn.value().equals(decision.cardValue())) {
                         session.nextTurn();
                         botTurn = false;
                     }
                 } else {
+                    lastBotAsk = new BotAskDto(botId, decision.cardValue(), false, false, false);
                     session.nextTurn();
                     botTurn = false;
                 }
             }
         }
+        return lastBotAsk;
     }
 
     private boolean checkAndLowerBooks(PeixinhoSession session, UUID playerId) {

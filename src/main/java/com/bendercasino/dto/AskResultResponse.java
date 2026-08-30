@@ -9,5 +9,6 @@ public record AskResultResponse(
         CardDto drawnCard,
         boolean formedBook,
         String message,
-        PeixinhoStateResponse gameState
+        PeixinhoStateResponse gameState,
+        BotAskDto botAsk
 ) {}

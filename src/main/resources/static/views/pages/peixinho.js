@@ -4,7 +4,10 @@ import { API_BASE_URL } from "../../js/constants/utils.js";
 
 const VALUE_LABELS = { ACE: "Ás", JACK: "Valete", QUEEN: "Dama", KING: "Rei" };
 const CARD_BACK_IMAGE = "/assets/Cards.Back/red.card.png";
+const BET_STORAGE_KEY = "peixinhoBet";
 let feedbackTimer;
+let botFeedbackTimer;
+let currentBet = Number(sessionStorage.getItem(BET_STORAGE_KEY)) || 0;
 
 async function api(path, options = {}) {
     const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -37,6 +40,11 @@ function opponentEntries(state, playerId) {
 
 function bookCount(state, playerId) {
     return state.books.filter((book) => book.playerId === playerId).length;
+}
+
+function rememberBet(bet) {
+    currentBet = bet;
+    sessionStorage.setItem(BET_STORAGE_KEY, String(bet));
 }
 
 function requestOptions(hand) {
@@ -72,25 +80,21 @@ function feedbackKind(result) {
     return { className: "px-feedback-pass", title: "Foste à pesca", detail: "Não calhou — passaste a vez." };
 }
 
-function showFeedback(main, result, cardValue) {
+function showFeedbackModal(main, className, title, details, message) {
     clearTimeout(feedbackTimer);
     document.querySelector(".px-feedback-backdrop")?.remove();
 
-    const kind = feedbackKind(result);
     const backdrop = document.createElement("div");
     backdrop.className = "modal-backdrop px-feedback-backdrop open";
     backdrop.innerHTML = `
-        <section class="modal-box px-feedback-modal ${kind.className}" role="dialog" aria-modal="true" aria-labelledby="px-feedback-title">
+        <section class="modal-box px-feedback-modal ${className}" role="dialog" aria-modal="true" aria-labelledby="px-feedback-title">
             <button class="modal-close" type="button" aria-label="Fechar resultado">×</button>
             <p class="px-label">Resultado da jogada</p>
-            <h2 id="px-feedback-title" class="modal-title">${kind.title}</h2>
+            <h2 id="px-feedback-title" class="modal-title">${title}</h2>
             <dl class="px-feedback-details">
-                <div><dt>Jogador</dt><dd>Tu</dd></div>
-                <div><dt>Pedido</dt><dd>${VALUE_LABELS[cardValue] || cardValue}</dd></div>
-                <div><dt>Resultado</dt><dd>${kind.detail}</dd></div>
-                <div><dt>Conjunto</dt><dd>${result.formedBook ? "Formaste um conjunto." : "Nenhum conjunto formado."}</dd></div>
+                ${details}
             </dl>
-            <p class="modal-hint">${result.message}</p>
+            ${message ? `<p class="modal-hint">${message}</p>` : ""}
         </section>
     `;
 
@@ -109,9 +113,93 @@ function showFeedback(main, result, cardValue) {
     feedbackTimer = setTimeout(close, 4500);
 }
 
+function showFeedback(main, result, cardValue) {
+    clearTimeout(botFeedbackTimer);
+    const kind = feedbackKind(result);
+    showFeedbackModal(main, kind.className, kind.title, `
+        <div><dt>Jogador</dt><dd>Tu</dd></div>
+        <div><dt>Pedido</dt><dd>${VALUE_LABELS[cardValue] || cardValue}</dd></div>
+        <div><dt>Resultado</dt><dd>${kind.detail}</dd></div>
+        <div><dt>Conjunto</dt><dd>${result.formedBook ? "Formaste um conjunto." : "Nenhum conjunto formado."}</dd></div>
+    `, result.message);
+}
+
+function showBotFeedback(main, botAsk) {
+    const details = botAsk.fished
+        ? `
+            <div><dt>Jogador</dt><dd>Bot</dd></div>
+            <div><dt>Resultado</dt><dd>O bot foi pescar ao monte.</dd></div>
+            <div><dt>Conjunto</dt><dd>${botAsk.formedBook ? "Formou um conjunto." : "Nenhum conjunto formado."}</dd></div>
+        `
+        : `
+            <div><dt>Jogador</dt><dd>Bot</dd></div>
+            <div><dt>Pedido</dt><dd>${VALUE_LABELS[botAsk.cardValue] || botAsk.cardValue}</dd></div>
+            <div><dt>Resultado</dt><dd>${botAsk.gotCards ? "Recebeu cartas." : "Não recebeu cartas."}</dd></div>
+            <div><dt>Conjunto</dt><dd>${botAsk.formedBook ? "Formou um conjunto." : "Nenhum conjunto formado."}</dd></div>
+        `;
+    showFeedbackModal(main, "px-feedback-bot", "Jogada do bot", details);
+}
+
+function scheduleBotFeedback(main, botAsk, delay = 4700) {
+    clearTimeout(botFeedbackTimer);
+    botFeedbackTimer = setTimeout(() => showBotFeedback(main, botAsk), delay);
+}
+
+function renderGameResult(main, state, playerId, opponents) {
+    const playerBooks = bookCount(state, playerId);
+    const opponentBooks = state.books.length - playerBooks;
+    const playerWon = playerBooks > opponentBooks;
+    const payout = currentBet * playerBooks;
+    const betLabel = currentBet > 0 ? currentBet : "a mesma aposta";
+
+    clearTimeout(feedbackTimer);
+    clearTimeout(botFeedbackTimer);
+    document.querySelector(".px-feedback-backdrop")?.remove();
+    main.innerHTML = `
+        <section class="px-result-screen" aria-labelledby="px-result-title">
+            <section class="modal-box px-game-result ${playerWon ? "px-game-result-win" : "px-game-result-loss"}">
+                <p class="px-label">Partida terminada</p>
+                <h1 id="px-result-title" class="modal-title">${playerWon ? "Ganhaste!" : "Perdeste"}</h1>
+                <p class="px-result-summary">${playerWon
+        ? `Ganharam-se <strong>${payout}</strong> créditos.`
+        : `Apostaste <strong>${currentBet}</strong> créditos.`}</p>
+                <div class="px-final-books" aria-label="Contagem final de conjuntos">
+                    <div><span>Tu</span><strong>${playerBooks}</strong><small>conjuntos</small></div>
+                    <div><span>${opponents.length === 1 ? "Bot" : "Adversários"}</span><strong>${opponentBooks}</strong><small>conjuntos</small></div>
+                </div>
+                <div class="px-result-actions">
+                    <button id="px-play-again" class="px-button" type="button" ${currentBet > 0 ? "" : "disabled"}>Apostar ${betLabel} outra vez</button>
+                    <button id="px-new-bet" class="px-button px-button-secondary" type="button">Nova aposta</button>
+                </div>
+                <p id="px-result-error" class="px-error" role="alert"></p>
+            </section>
+        </section>
+    `;
+
+    document.querySelector("#px-new-bet").addEventListener("click", () => renderBetScreen(main, playerId));
+    document.querySelector("#px-play-again").addEventListener("click", async () => {
+        const playAgain = document.querySelector("#px-play-again");
+        playAgain.disabled = true;
+        try {
+            const nextState = await api("peixinho/start", {
+                method: "POST",
+                body: JSON.stringify({ playerId, bet: currentBet }),
+            });
+            renderGame(main, nextState);
+        } catch (error) {
+            document.querySelector("#px-result-error").textContent = error.message;
+            playAgain.disabled = false;
+        }
+    });
+}
+
 function renderGame(main, state) {
     const playerId = sessionStorage.getItem("playerId");
     const opponents = opponentEntries(state, playerId);
+    if (state.status === "FINISHED") {
+        renderGameResult(main, state, playerId, opponents);
+        return;
+    }
     const canAsk = state.status === "PLAYING"
         && state.currentPlayerId === playerId
         && opponents.length > 0
@@ -189,7 +277,10 @@ function renderGame(main, state) {
                     body: JSON.stringify({ playerId, targetId: opponents[0][0], cardValue }),
                 });
                 renderGame(main, result.gameState);
-                showFeedback(main, result, cardValue);
+                if (result.gameState.status !== "FINISHED") showFeedback(main, result, cardValue);
+                if (result.botAsk) {
+                    scheduleBotFeedback(main, result.botAsk, result.gameState.status === "FINISHED" ? 0 : 4700);
+                }
             } catch (error) {
                 renderError(main, state, error);
             }
@@ -199,6 +290,9 @@ function renderGame(main, state) {
 
 function renderBetScreen(main, playerId) {
     let bet = 0;
+    clearTimeout(feedbackTimer);
+    clearTimeout(botFeedbackTimer);
+    document.querySelector(".px-feedback-backdrop")?.remove();
     main.innerHTML = `
         <section class="px-bet-screen" aria-labelledby="px-bet-title">
             <p class="px-kicker">Peixinho</p>
@@ -229,6 +323,7 @@ function renderBetScreen(main, playerId) {
     start.addEventListener("click", async () => {
         start.disabled = true;
         try {
+            rememberBet(bet);
             const state = await api("peixinho/start", {
                 method: "POST",
                 body: JSON.stringify({ playerId, bet }),
