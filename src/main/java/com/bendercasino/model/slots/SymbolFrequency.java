@@ -1,7 +1,5 @@
 package com.bendercasino.model.slots;
 
-import java.security.spec.EdDSAParameterSpec;
-
 public class SymbolFrequency {
     private int count;
     private Symbol symbol;
