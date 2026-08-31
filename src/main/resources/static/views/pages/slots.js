@@ -2,6 +2,7 @@ import router from "../../router.js";
 import state from "/js/state.js";
 import { CHIPS } from "../../js/blackjack/chips.js";
 import { roll } from "../../js/services/slots-service.js";
+import { initTutorial } from "../../js/tutorial.js";
 
 const SYMBOL_IMAGES = {
     CHERRY: "/assets/SlotsImages/Cherry.png?v=3",
@@ -80,6 +81,19 @@ export function init() {
         });
         return;
     }
+
+    initTutorial({
+        game: "slots",
+        title: "How to play Slots",
+        body: `
+          <ul>
+            <li>Pick your chips to set a bet.</li>
+            <li>Pull the lever to spin the three reels.</li>
+            <li>Matching symbols across the payline win a payout.</li>
+            <li>Rarer symbols pay more — check the paytable for values.</li>
+          </ul>
+        `,
+    });
 
     main.innerHTML = `
         <section class="slots">

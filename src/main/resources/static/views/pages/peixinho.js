@@ -1,6 +1,7 @@
 import router from "../../router.js";
 import { CHIPS } from "../../js/blackjack/chips.js";
 import { API_BASE_URL } from "../../js/constants/utils.js";
+import { initTutorial } from "../../js/tutorial.js";
 
 const VALUE_LABELS = { ACE: "Ás", JACK: "Valete", QUEEN: "Dama", KING: "Rei" };
 const VALUE_ORDER = ["ACE", "2", "3", "4", "5", "6", "7", "8", "9", "10", "JACK", "QUEEN", "KING"];
@@ -364,6 +365,20 @@ async function loadExistingGame(playerId) {
 export function init() {
     const main = document.querySelector("main");
     const playerId = sessionStorage.getItem("playerId");
+
+    initTutorial({
+        game: "peixinho",
+        title: "How to play Peixinho (Go Fish)",
+        body: `
+          <ul>
+            <li>Ask an opponent for a card rank you're holding.</li>
+            <li>If they have it, they hand over every card of that rank.</li>
+            <li>If not, you draw ("go fish") from the deck.</li>
+            <li>Collect four of a kind to close a set.</li>
+            <li>Whoever closes the most sets wins.</li>
+          </ul>
+        `,
+    });
 
     if (!playerId) {
         main.innerHTML = `

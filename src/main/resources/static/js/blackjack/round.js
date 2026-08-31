@@ -13,12 +13,27 @@ import {
 } from "../../js/services/blackjack-service.js";
 import { CHIPS } from "../../js/blackjack/chips.js";
 import { tableMarkup } from "../../js/blackjack/table-markup.js";
+import { initTutorial } from "../../js/tutorial.js";
 
 export async function startRound() {
   let amount = 0;
   let playerCards = 0;
   let dealerCards = 0;
   document.querySelector("main").innerHTML = tableMarkup();
+
+  initTutorial({
+    game: "blackjack",
+    title: "How to play Blackjack",
+    body: `
+      <ul>
+        <li>Pick your chips to set a bet, then hit "Start".</li>
+        <li>"Hit" draws another card; "Stand" ends your turn.</li>
+        <li>Get closer to 21 than the dealer without going over.</li>
+        <li>A 21 with your first two cards is a Blackjack and pays extra.</li>
+        <li>The dealer must keep drawing until reaching 17 or more.</li>
+      </ul>
+    `,
+  });
 
   const hit = document.querySelector("#bj-hit");
   const stand = document.querySelector("#bj-stand");
