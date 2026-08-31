@@ -2,11 +2,13 @@ import router from "../../router.js";
 import { gamesList } from "../../routes.js";
 
 function tableCard(game) {
-    const meta = game.live ? "Open" : "Coming soon";
+    const meta = game.live ? "Open · Sit down" : "Coming soon";
     const statusClass = game.live ? "table-live" : "table-soon";
 
     return [
-        `                <a class="table ${statusClass}" href="/${game.id}" data-table="${game.id}">`,
+        `                <a class="table ${statusClass} table-${game.id}" href="/${game.id}" data-table="${game.id}">`,
+        `                    <span class="table-glow"></span>`,
+        `                    <span class="table-icon"><img src="/assets/icons/${game.id}.svg" alt="" /></span>`,
         `                    <span class="table-game">${game.label}</span>`,
         `                    <span class="table-meta">${meta}</span>`,
         `                </a>`,

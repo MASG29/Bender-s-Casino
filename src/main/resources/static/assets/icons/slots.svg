@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect x="18" y="24" width="84" height="66" rx="10" fill="#3a1f4d" stroke="#c9a24b" stroke-width="3"/>
+  <g font-family="Georgia, serif" font-size="26" font-weight="700" text-anchor="middle">
+    <rect x="26" y="38" width="20" height="38" rx="4" fill="#f4f1e8"/>
+    <text x="36" y="63" fill="#c0392b">7</text>
+    <rect x="50" y="38" width="20" height="38" rx="4" fill="#f4f1e8"/>
+    <text x="60" y="63" fill="#c9a24b">★</text>
+    <rect x="74" y="38" width="20" height="38" rx="4" fill="#f4f1e8"/>
+    <text x="84" y="63" fill="#c0392b">7</text>
+  </g>
+  <circle cx="108" cy="56" r="6" fill="#c9a24b"/>
+  <rect x="105" y="56" width="6" height="26" rx="3" fill="#c9a24b"/>
+</svg>

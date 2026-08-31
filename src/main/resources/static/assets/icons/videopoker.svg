@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <g stroke="#161616" stroke-width="2">
+    <rect transform="translate(30 68) rotate(-22)" x="-15" y="-22" width="30" height="44" rx="5" fill="#f4f1e8"/>
+    <rect transform="translate(48 74) rotate(-11)" x="-15" y="-22" width="30" height="44" rx="5" fill="#f4f1e8"/>
+    <rect transform="translate(66 76)"              x="-15" y="-22" width="30" height="44" rx="5" fill="#f4f1e8"/>
+    <rect transform="translate(84 74) rotate(11)"   x="-15" y="-22" width="30" height="44" rx="5" fill="#f4f1e8"/>
+    <rect transform="translate(102 68) rotate(22)"  x="-15" y="-22" width="30" height="44" rx="5" fill="#f4f1e8"/>
+  </g>
+  <g font-family="Georgia, serif" font-size="13" font-weight="700" fill="#c0392b">
+    <text transform="translate(30 68) rotate(-22) translate(-8 -8)">A</text>
+    <text transform="translate(66 76) translate(-6 -8)">K</text>
+  </g>
+  <g font-family="Georgia, serif" font-size="13" font-weight="700" fill="#161616">
+    <text transform="translate(48 74) rotate(-11) translate(-6 -8)">Q</text>
+    <text transform="translate(84 74) rotate(11) translate(-6 -8)">J</text>
+    <text transform="translate(102 68) rotate(22) translate(-8 -8)">10</text>
+  </g>
+</svg>
