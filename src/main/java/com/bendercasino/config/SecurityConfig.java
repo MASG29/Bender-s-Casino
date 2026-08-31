@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index.html", "/favicon.ico", "/assets/**", "/styles/**",
                                  "/js/**", "/views/**", "/*.js", "/*.css", "/*.png", "/*.ico",
                                  "/error", "/{path:[^.]*}", "/{path:[^.]*}/{subpath:[^.]*}").permitAll()
-                .requestMatchers("/api/games/**", "/api/players/**", "/api/blackjack/**", "/api/roulette/**", "/api/peixinho/**", "/api/videopoker/**").authenticated()
+                .requestMatchers("/api/games/**", "/api/players/**", "/api/blackjack/**", "/api/roulette/**", "/api/peixinho/**", "/api/slots/**", "/api/videopoker/**").authenticated()
                 .anyRequest().denyAll())
             .exceptionHandling(ex -> ex
                 // no formLogin configured, so fall back to plain 401 instead of a redirect

@@ -6,7 +6,6 @@ import com.bendercasino.exception.InsufficientBalanceException;
 import com.bendercasino.exception.InvalidBetException;
 import com.bendercasino.exception.InvalidGameStateException;
 import com.bendercasino.exception.PlayerNotFoundException;
-import com.bendercasino.model.Bet;
 import com.bendercasino.model.BlackjackState;
 import com.bendercasino.model.Card;
 import com.bendercasino.model.GameSession;
