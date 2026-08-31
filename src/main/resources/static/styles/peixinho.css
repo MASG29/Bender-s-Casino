@@ -292,7 +292,7 @@
   border: 1px solid var(--gold-dim, #8a6f31);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
   pointer-events: none;
-  animation: pxFloatIn 0.35s ease, pxFloatOut 0.4s ease 2.6s forwards;
+  animation: pxFloatIn 0.35s ease, pxFloatOut 0.4s ease 3.4s forwards;
 }
 .px-float-fish {
   border-color: rgba(180, 52, 47, 0.6);
@@ -444,43 +444,6 @@
   margin: 0;
   text-align: right;
 }
-
-/* ---------- floating move result ---------- */
-
-.px-feedback-modal {
-  max-width: 480px;
-  pointer-events: auto;
-}
-
-.px-feedback-backdrop {
-  pointer-events: none;
-}
-
-.px-feedback-modal .modal-title {
-  margin-bottom: 20px;
-}
-
-.px-feedback-details {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.px-feedback-details div {
-  display: grid;
-  grid-template-columns: 94px 1fr;
-  gap: 14px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--steel-dark);
-  font-size: 0.78rem;
-}
-
-.px-feedback-details dt { color: var(--text-dim); }
-.px-feedback-details dd { margin: 0; color: var(--text); }
-.px-feedback-received .modal-title { color: var(--steel-lighter); }
-.px-feedback-again .modal-title { color: var(--steel-light); }
-.px-feedback-pass .modal-title { color: var(--text-dim); }
-.px-feedback-bot .modal-title { color: var(--steel); }
 
 @media (max-width: 900px) {
   .px-opponents { grid-template-columns: repeat(2, minmax(0, 1fr)); }

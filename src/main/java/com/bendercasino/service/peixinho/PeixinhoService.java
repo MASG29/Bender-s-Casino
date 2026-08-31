@@ -195,7 +195,7 @@ public class PeixinhoService {
                     botHand.add(drawn);
                     formedBook = checkAndLowerBooks(session, botId);
                 }
-                lastBotAsk = new BotAskDto(botId, null, false, true, formedBook);
+                lastBotAsk = new BotAskDto(botId, null, false, 0, true, false, formedBook);
                 session.nextTurn();
                 botTurn = false;
                 continue;
@@ -211,7 +211,7 @@ public class PeixinhoService {
                 targetHand.removeAll(transferred);
                 botHand.addAll(transferred);
                 boolean formedBook = checkAndLowerBooks(session, botId);
-                lastBotAsk = new BotAskDto(botId, decision.cardValue(), true, false, formedBook);
+                lastBotAsk = new BotAskDto(botId, decision.cardValue(), true, transferred.size(), false, false, formedBook);
 
             } else {
 
@@ -219,13 +219,14 @@ public class PeixinhoService {
                     Card drawn = session.getDeck().remove(0);
                     botHand.add(drawn);
                     boolean formedBook = checkAndLowerBooks(session, botId);
-                    lastBotAsk = new BotAskDto(botId, decision.cardValue(), false, false, formedBook);
-                    if (!drawn.value().equals(decision.cardValue())) {
+                    boolean caughtAskedCard = drawn.value().equals(decision.cardValue());
+                    lastBotAsk = new BotAskDto(botId, decision.cardValue(), false, 0, true, caughtAskedCard, formedBook);
+                    if (!caughtAskedCard) {
                         session.nextTurn();
                         botTurn = false;
                     }
                 } else {
-                    lastBotAsk = new BotAskDto(botId, decision.cardValue(), false, false, false);
+                    lastBotAsk = new BotAskDto(botId, decision.cardValue(), false, 0, true, false, false);
                     session.nextTurn();
                     botTurn = false;
                 }
