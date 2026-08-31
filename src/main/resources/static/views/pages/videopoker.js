@@ -45,6 +45,7 @@ ${payout.payout.map((el) => `<td>${el}</td>`).join("")}
               </div>
                 <div class="lower-button-container">
                     <p class="amount">Bet amount: 0</p>
+                    <button type="button" class="btn-clear-bet" id="vp-clear-bet">✕ Clear</button>
                 </div>
             </div>
         </div>
@@ -79,6 +80,12 @@ ${payout.payout.map((el) => `<td>${el}</td>`).join("")}
       currentBetAmount += Number(chip.dataset.chip);
       amountEl.textContent = "Bet amount: " + currentBetAmount;
     });
+  });
+
+  document.querySelector("#vp-clear-bet").addEventListener("click", () => {
+    if (handId !== null) return; // can't change bet mid-hand
+    currentBetAmount = 0;
+    amountEl.textContent = "Bet amount: " + currentBetAmount;
   });
 
   bet.addEventListener("click", async () => {

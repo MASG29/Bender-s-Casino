@@ -1,7 +1,7 @@
-import routes from "./routes.js";
+import routes, { gamesList } from "./routes.js";
 import state from "/js/state.js";
 
-const PROTECTED = ["/lobby", "/profile", "/blackjack", "/roulette", "/peixinho"];
+const PROTECTED = ["/lobby", "/profile", ...gamesList.map((game) => `/${game.id}`)];
 
 function navigate(path, firstLoad = false) {
     if (path == routes.currentPath.path) return;
@@ -58,6 +58,14 @@ async function launchController(controllerName) {
 function setCurrentRoute(route) {
     routes.currentPath.path = route.path;
     routes.currentPath.controller = route.controller;
+    updateTableLink(route.path);
+}
+
+function updateTableLink(path) {
+    const tableLink = document.getElementById("table-link");
+    if (!tableLink) return;
+    const isGameRoute = gamesList.some((game) => `/${game.id}` === path);
+    tableLink.setAttribute("href", isGameRoute ? path : "/lobby");
 }
 
 function start() {

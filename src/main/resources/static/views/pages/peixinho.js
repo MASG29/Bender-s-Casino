@@ -23,8 +23,11 @@ async function api(path, options = {}) {
     return body;
 }
 
-function visibleCardMarkup(card) {
-    return `<li class="px-card px-card-visible" aria-label="Carta ${card.code}"
+function visibleCardMarkup(card, askable) {
+    const askableAttrs = askable
+        ? `role="button" tabindex="0" data-ask-value="${card.value}" aria-label="Pedir cartas de ${VALUE_LABELS[card.value] || card.value}"`
+        : `aria-label="Carta ${card.code}"`;
+    return `<li class="px-card px-card-visible ${askable ? "px-card-askable" : ""}" ${askableAttrs}
         style="background: url('${card.image}') center / cover no-repeat"></li>`;
 }
 
@@ -47,13 +50,6 @@ function rememberBet(bet) {
     sessionStorage.setItem(BET_STORAGE_KEY, String(bet));
 }
 
-function requestOptions(hand) {
-    const values = [...new Set(hand.map((card) => card.value))];
-    return values.map((value) =>
-        `<option value="${value}">${VALUE_LABELS[value] || value}</option>`,
-    ).join("");
-}
-
 function opponentMarkup(state, opponents) {
     return opponents.map(([id, handSize], index) => `
         <section class="px-zone px-opponent-zone" aria-label="Bot ${index + 1}">
@@ -72,12 +68,31 @@ function opponentMarkup(state, opponents) {
     `).join("");
 }
 
-function feedbackKind(result) {
-    if (result.gotCards) return { className: "px-feedback-received", title: "Recebeste cartas", detail: "Jogas outra vez." };
-    if (result.drewFromDeck && /play again/i.test(result.message)) {
-        return { className: "px-feedback-again", title: "Foste à pesca", detail: "Calhou o valor pedido — jogas outra vez." };
+function showFloatingText(main, text, className = "", delay = 0) {
+    setTimeout(() => {
+        const toast = document.createElement("div");
+        toast.className = `px-float-toast ${className}`;
+        toast.textContent = text;
+        main.append(toast);
+        toast.addEventListener("animationend", () => toast.remove());
+        setTimeout(() => toast.remove(), 3200);
+    }, delay);
+}
+
+function showAskFeedback(main, result, cardValue, playerId) {
+    const label = VALUE_LABELS[cardValue] || cardValue;
+    if (result.gotCards) {
+        const count = result.cardsReceived.length;
+        const plural = count === 1 ? "carta" : "cartas";
+        showFloatingText(main, `O adversário tinha ${count} ${plural} da carta ${label}`, "px-float-received");
+    } else {
+        showFloatingText(main, "Vai Pescar", "px-float-fish");
     }
-    return { className: "px-feedback-pass", title: "Foste à pesca", detail: "Não calhou — passaste a vez." };
+
+    if (result.formedBook) {
+        const books = bookCount(result.gameState, playerId);
+        showFloatingText(main, `Peixinho - ${books}`, "px-float-book", 1600);
+    }
 }
 
 function showFeedbackModal(main, className, title, details, message) {
@@ -111,17 +126,6 @@ function showFeedbackModal(main, className, title, details, message) {
     main.append(backdrop);
     setTimeout(() => document.addEventListener("click", closeOnOutside, { once: true }), 0);
     feedbackTimer = setTimeout(close, 4500);
-}
-
-function showFeedback(main, result, cardValue) {
-    clearTimeout(botFeedbackTimer);
-    const kind = feedbackKind(result);
-    showFeedbackModal(main, kind.className, kind.title, `
-        <div><dt>Jogador</dt><dd>Tu</dd></div>
-        <div><dt>Pedido</dt><dd>${VALUE_LABELS[cardValue] || cardValue}</dd></div>
-        <div><dt>Resultado</dt><dd>${kind.detail}</dd></div>
-        <div><dt>Conjunto</dt><dd>${result.formedBook ? "Formaste um conjunto." : "Nenhum conjunto formado."}</dd></div>
-    `, result.message);
 }
 
 function showBotFeedback(main, botAsk) {
@@ -246,7 +250,7 @@ function renderGame(main, state) {
                         <span class="px-count">${state.playerHand.length} cartas</span>
                     </div>
                     <ul class="px-hand px-visible-hand" aria-label="A tua mão">
-                        ${state.playerHand.map(visibleCardMarkup).join("")}
+                        ${state.playerHand.map((card) => visibleCardMarkup(card, canAsk)).join("")}
                     </ul>
                 </section>
             </div>
@@ -256,34 +260,40 @@ function renderGame(main, state) {
                     <p class="px-label">${canAsk ? "A tua vez" : "Vez do adversário"}</p>
                     <h2 id="px-request-title">Pedir carta</h2>
                 </div>
-                <div class="px-request-controls">
-                    <label for="px-card-value">Valor</label>
-                    <select id="px-card-value" ${canAsk ? "" : "disabled"}>${requestOptions(state.playerHand)}</select>
-                    <button class="px-button" id="px-ask" type="button" ${canAsk ? "" : "disabled"}>Pedir carta</button>
-                </div>
-                <p class="px-coming-soon">Só podes pedir valores que já tens na mão.</p>
+                <p class="px-coming-soon">${canAsk ? "Clica numa carta da tua mão para pedires esse valor." : "Aguarda a tua vez."}</p>
             </section>
         </section>
     `;
 
     if (canAsk) {
-        document.querySelector("#px-ask").addEventListener("click", async () => {
-            const button = document.querySelector("#px-ask");
-            const cardValue = document.querySelector("#px-card-value").value;
-            button.disabled = true;
+        const askCard = async (cardValue) => {
+            document.querySelectorAll(".px-card-askable").forEach((card) => {
+                card.setAttribute("tabindex", "-1");
+                card.classList.remove("px-card-askable");
+            });
             try {
                 const result = await api("peixinho/ask", {
                     method: "POST",
                     body: JSON.stringify({ playerId, targetId: opponents[0][0], cardValue }),
                 });
                 renderGame(main, result.gameState);
-                if (result.gameState.status !== "FINISHED") showFeedback(main, result, cardValue);
+                if (result.gameState.status !== "FINISHED") showAskFeedback(main, result, cardValue, playerId);
                 if (result.botAsk) {
                     scheduleBotFeedback(main, result.botAsk, result.gameState.status === "FINISHED" ? 0 : 4700);
                 }
             } catch (error) {
                 renderError(main, state, error);
             }
+        };
+
+        document.querySelectorAll(".px-card-askable").forEach((card) => {
+            card.addEventListener("click", () => askCard(card.dataset.askValue));
+            card.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    askCard(card.dataset.askValue);
+                }
+            });
         });
     }
 }
@@ -305,7 +315,7 @@ function renderBetScreen(main, playerId) {
                     </button>
                 `).join("")}
             </div>
-            <p class="px-bet-total">Aposta: <strong id="px-bet-amount">0</strong></p>
+            <p class="px-bet-total">Aposta: <strong id="px-bet-amount">0</strong> <button type="button" class="btn-clear-bet" id="px-clear-bet">✕ Clear</button></p>
             <button id="px-start" class="px-button" type="button" disabled>Sentar à mesa</button>
             <p id="px-bet-error" class="px-error" role="alert"></p>
         </section>
@@ -319,6 +329,11 @@ function renderBetScreen(main, playerId) {
             amount.textContent = bet;
             start.disabled = bet <= 0;
         });
+    });
+    document.querySelector("#px-clear-bet").addEventListener("click", () => {
+        bet = 0;
+        amount.textContent = bet;
+        start.disabled = true;
     });
     start.addEventListener("click", async () => {
         start.disabled = true;

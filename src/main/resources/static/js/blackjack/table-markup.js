@@ -38,9 +38,10 @@ export function tableMarkup() {
             <p id="bet-amount" name="amount">
             Bet amount: 0
             </p>
+            <button type="button" class="btn-clear-bet" id="bj-clear-bet">✕ Clear</button>
             <button type="submit">
               <span class="button_top">Start</span>
-            </button> 
+            </button>
           </form>
 
           <div id="player" class="bj-seat bj-player">

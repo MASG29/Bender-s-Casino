@@ -1,14 +1,45 @@
 import router from "/router.js";
 import state from "/js/state.js";
 
-export function init() {
+const BENDER_JOKES = [
+    "I was gonna go to law school, but that seemed like a lot of work, so I got a robot to bend the odds instead.",
+    "Bite my shiny metal odds.",
+    "Robots don't have a heart to break, but I do have a chip you can lose.",
+    "Kill all humans? Nah, just their bankrolls.",
+    "I'm 40% chrome, 60% grudge against the house — wait, I am the house.",
+    "New junk? No. New chips. Sit down, meatbag.",
+    "Ah, gambling. Not a good hobby, but I'm a horrible influence, so let's do it.",
+    "I once lost a planet in a card game. This table's low stakes by comparison.",
+    "Whisky. Cards. And whatever passes for luck around here.",
+    "I don't drink, but I know a robot who does.",
+];
 
-    document.querySelector("main").innerHTML = `
+function randomJoke() {
+    return BENDER_JOKES[Math.floor(Math.random() * BENDER_JOKES.length)];
+}
+
+export function init() {
+    const loggedIn = state.isLoggedIn();
+    const player = state.getPlayer();
+
+    const joinMarkup = loggedIn
+        ? `
+    <section class="join" id="join">
+      <h2>Welcome, ${player.playerName} to Bender's Casino</h2>
+      <p>"${randomJoke()}"</p>
+      <a href="#" class="btn" id="go-lobby-btn">Go To Lobby</a>
+    </section>
+    `
+        : `
     <section class="join" id="join">
       <h2>Membership Has Its Dents</h2>
       <p>Sign up for a starting stack and a dealer who remembers every bet you've lost.</p>
       <a href="#" class="btn" id="open-modal-btn">Pick A Name</a>
     </section>
+    `;
+
+    document.querySelector("main").innerHTML = `
+    ${joinMarkup}
 
     <section class="hero">
       <div class="hero-image">
@@ -20,6 +51,7 @@ export function init() {
       </div>
     </section>
 
+    ${loggedIn ? "" : `
     <div class="modal-backdrop" id="login-modal">
   <div class="modal-box">
     <button class="modal-close" id="modal-close-btn">✕</button>
@@ -56,7 +88,16 @@ export function init() {
     </button>
   </div>
 </div>
+    `}
     `;
+
+    if (loggedIn) {
+        document.getElementById("go-lobby-btn").addEventListener("click", (e) => {
+            e.preventDefault();
+            router.navigate("/lobby");
+        });
+        return;
+    }
 
     document.getElementById("open-modal-btn").addEventListener("click", function(e) {
         e.preventDefault();
@@ -85,10 +126,6 @@ export function init() {
 document.getElementById("login-password").addEventListener("keydown", (e) => {
     if (e.key === "Enter") submitLogin();
 });
-
-    if (sessionStorage.getItem("playerId")) {
-        router.navigate("/lobby");
-    }
 }
 
 

@@ -66,6 +66,11 @@ export async function startRound() {
         formContainer.textContent = "Bet amount: " + amount;
       });
     });
+
+    document.querySelector("#bj-clear-bet").addEventListener("click", () => {
+      amount = 0;
+      formContainer.textContent = "Bet amount: " + amount;
+    });
   }
 
   function renderPlayerCards() {
@@ -94,7 +99,8 @@ export async function startRound() {
     const cardEl = element("div", table, ["bj-card"]);
     playerCards++;
     move(cardEl, movement, directionChange * playerCards);
-    cardEl.style.background = `url(${gameState.playerHand.cards.image}) center / cover no-repeat`;
+    const lastCard = gameState.playerHand.cards[gameState.playerHand.cards.length - 1];
+    cardEl.style.background = `url(${lastCard.image}) center / cover no-repeat`;
   }
 
   function renderDealerCards() {
@@ -122,7 +128,8 @@ export async function startRound() {
     const cardEl = element("div", table, ["bj-card"]);
     dealerCards++;
     move(cardEl, movement, directionChange * dealerCards);
-    cardEl.style.background = `url(${gameState.dealerHand.cards.image}) center / cover no-repeat`;
+    const lastCard = gameState.dealerHand.cards[gameState.dealerHand.cards.length - 1];
+    cardEl.style.background = `url(${lastCard.image}) center / cover no-repeat`;
   }
 
   function checkForEnd() {

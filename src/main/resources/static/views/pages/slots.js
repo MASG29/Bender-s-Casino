@@ -97,7 +97,7 @@ export function init() {
                 <div class="slots-machine">
                     <div class="slots-readout">
                         <p>Balance <span id="slots-balance">${player.balance ?? "—"}</span></p>
-                        <p>Bet <span id="slots-bet">0</span></p>
+                        <p>Bet <span id="slots-bet">0</span> <button type="button" class="btn-clear-bet" id="slots-clear-bet">✕ Clear</button></p>
                     </div>
                     <div class="slots-window" id="slots-window">
                         ${reelWindow(0)}
@@ -130,6 +130,14 @@ export function init() {
             bet += parseInt(chip.dataset.chip, 10);
             betEl.textContent = String(bet);
         });
+    });
+
+    document.querySelector("#slots-clear-bet").addEventListener("click", () => {
+        if (spinning) {
+            return;
+        }
+        bet = 0;
+        betEl.textContent = String(bet);
     });
 
     spinBtn.addEventListener("click", async () => {
