@@ -205,11 +205,11 @@ class PlayerServiceTest {
         UUID id = player.getId();
 
         sessionRepository.save(new GameSession(id, "deck-1", "blackjack", 100));
-        assertThat(sessionRepository.findByPlayerId(id)).isPresent();
+        assertThat(sessionRepository.findByPlayerIdAndGame(id, "blackjack")).isPresent();
 
         service.reset(id, authFor("zoidberg"));
 
-        assertThat(sessionRepository.findByPlayerId(id)).isEmpty();
+        assertThat(sessionRepository.findByPlayerIdAndGame(id, "blackjack")).isEmpty();
     }
 
     @Test
@@ -221,7 +221,7 @@ class PlayerServiceTest {
         Player resetPlayer = service.reset(id, authFor("hermes"));
 
         assertThat(resetPlayer.getBalance()).isEqualTo(1000);
-        assertThat(sessionRepository.findByPlayerId(id)).isEmpty();
+        assertThat(sessionRepository.findByPlayerIdAndGame(id, "blackjack")).isEmpty();
     }
 
     @Test

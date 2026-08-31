@@ -55,7 +55,7 @@ public class VideoPokerService implements GameService {
             throw new InvalidBetException(bet);
         }
 
-        var existingSession = sessionRepository.findByPlayerId(playerId);
+        var existingSession = sessionRepository.findByPlayerIdAndGame(playerId, "videopoker");
         if (existingSession.isPresent() && !existingSession.get().isFinished()) {
             throw new InvalidGameStateException("Player already has an unfinished game");
         }
