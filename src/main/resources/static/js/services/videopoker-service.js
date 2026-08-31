@@ -1,5 +1,7 @@
+import { API_BASE_URL } from "../constants/utils.js";
+
 export async function deal(playerId, bet) {
-  const response = await fetch("http://localhost:8080/api/videopoker/deal", {
+  const response = await fetch(`${API_BASE_URL}videopoker/deal`, {
     method: "POST",
     headers: {
       "Content-type": "application/json",
@@ -20,7 +22,7 @@ export async function deal(playerId, bet) {
 
 export async function draw(handId, held) {
   const response = await fetch(
-    `http://localhost:8080/api/videopoker/${handId}/draw`,
+    `${API_BASE_URL}videopoker/${handId}/draw`,
     {
       method: "POST",
       headers: {

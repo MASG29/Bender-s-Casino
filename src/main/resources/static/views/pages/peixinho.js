@@ -3,10 +3,11 @@ import { CHIPS } from "../../js/blackjack/chips.js";
 import { API_BASE_URL } from "../../js/constants/utils.js";
 
 const VALUE_LABELS = { ACE: "Ás", JACK: "Valete", QUEEN: "Dama", KING: "Rei" };
+const VALUE_ORDER = ["ACE", "2", "3", "4", "5", "6", "7", "8", "9", "10", "JACK", "QUEEN", "KING"];
 const CARD_BACK_IMAGE = "/assets/Cards.Back/red.card.png";
 const BET_STORAGE_KEY = "peixinhoBet";
-let feedbackTimer;
-let botFeedbackTimer;
+const MESSAGE_DURATION_MS = 3400;
+const MESSAGE_FADE_MS = 400;
 let currentBet = Number(sessionStorage.getItem(BET_STORAGE_KEY)) || 0;
 
 async function api(path, options = {}) {
@@ -34,6 +35,10 @@ function visibleCardMarkup(card, askable) {
 function hiddenCardMarkup() {
     return `<li class="px-card px-card-hidden" aria-label="Carta do adversário virada para baixo"
         style="background: url('${CARD_BACK_IMAGE}') center / cover no-repeat"></li>`;
+}
+
+function sortHand(cards) {
+    return [...cards].sort((a, b) => VALUE_ORDER.indexOf(a.value) - VALUE_ORDER.indexOf(b.value));
 }
 
 function opponentEntries(state, playerId) {
@@ -68,15 +73,48 @@ function opponentMarkup(state, opponents) {
     `).join("");
 }
 
-function showFloatingText(main, text, className = "", delay = 0) {
+const messageQueue = [];
+let messageQueueRunning = false;
+let onQueueEmpty = null;
+
+function isMessageQueueBusy() {
+    return messageQueueRunning;
+}
+
+function enqueueFloatingText(main, text, className = "") {
+    messageQueue.push({ main, text, className });
+    if (!messageQueueRunning) runMessageQueue();
+}
+
+function runMessageQueue() {
+    const next = messageQueue.shift();
+    if (!next) {
+        messageQueueRunning = false;
+        if (onQueueEmpty) {
+            const callback = onQueueEmpty;
+            onQueueEmpty = null;
+            callback();
+        }
+        return;
+    }
+    messageQueueRunning = true;
+
+    const toast = document.createElement("div");
+    toast.className = `px-float-toast ${next.className}`;
+    toast.textContent = next.text;
+    document.body.append(toast);
     setTimeout(() => {
-        const toast = document.createElement("div");
-        toast.className = `px-float-toast ${className}`;
-        toast.textContent = text;
-        main.append(toast);
-        toast.addEventListener("animationend", () => toast.remove());
-        setTimeout(() => toast.remove(), 3200);
-    }, delay);
+        toast.remove();
+        runMessageQueue();
+    }, MESSAGE_DURATION_MS + MESSAGE_FADE_MS);
+}
+
+function waitForMessageQueue(callback) {
+    if (!messageQueueRunning && messageQueue.length === 0) {
+        callback();
+        return;
+    }
+    onQueueEmpty = callback;
 }
 
 function showAskFeedback(main, result, cardValue, playerId) {
@@ -84,69 +122,34 @@ function showAskFeedback(main, result, cardValue, playerId) {
     if (result.gotCards) {
         const count = result.cardsReceived.length;
         const plural = count === 1 ? "carta" : "cartas";
-        showFloatingText(main, `O adversário tinha ${count} ${plural} da carta ${label}`, "px-float-received");
+        enqueueFloatingText(main, `O adversário tinha ${count} ${plural} da carta ${label}`, "px-float-received");
+    } else if (result.drewFromDeck) {
+        const caught = result.drawnCard?.value === cardValue;
+        enqueueFloatingText(main, `Foste à pesca e ${caught ? "saiu" : "não saiu"} a carta que pediste`, "px-float-fish");
     } else {
-        showFloatingText(main, "Vai Pescar", "px-float-fish");
+        enqueueFloatingText(main, "Vai Pescar", "px-float-fish");
     }
 
     if (result.formedBook) {
         const books = bookCount(result.gameState, playerId);
-        showFloatingText(main, `Peixinho - ${books}`, "px-float-book", 1600);
+        enqueueFloatingText(main, `Peixinho - ${books}`, "px-float-book");
     }
 }
 
-function showFeedbackModal(main, className, title, details, message) {
-    clearTimeout(feedbackTimer);
-    document.querySelector(".px-feedback-backdrop")?.remove();
+function showBotFloatingFeedback(main, botAsk) {
+    const label = VALUE_LABELS[botAsk.cardValue] || botAsk.cardValue;
+    if (botAsk.fished) {
+        enqueueFloatingText(main, `Adversário foi à pesca e ${botAsk.caughtAskedCard ? "saiu" : "não saiu"} a carta que pediu`, "px-float-fish");
+    } else if (botAsk.gotCards) {
+        const plural = botAsk.cardsReceivedCount === 1 ? "carta" : "cartas";
+        enqueueFloatingText(main, `Adversário pediu ${label}, deste-lhe ${botAsk.cardsReceivedCount} ${plural}`, "px-float-received");
+    } else {
+        enqueueFloatingText(main, `Adversário pediu ${label}, não tinhas nenhuma carta para dar`, "px-float-fish");
+    }
 
-    const backdrop = document.createElement("div");
-    backdrop.className = "modal-backdrop px-feedback-backdrop open";
-    backdrop.innerHTML = `
-        <section class="modal-box px-feedback-modal ${className}" role="dialog" aria-modal="true" aria-labelledby="px-feedback-title">
-            <button class="modal-close" type="button" aria-label="Fechar resultado">×</button>
-            <p class="px-label">Resultado da jogada</p>
-            <h2 id="px-feedback-title" class="modal-title">${title}</h2>
-            <dl class="px-feedback-details">
-                ${details}
-            </dl>
-            ${message ? `<p class="modal-hint">${message}</p>` : ""}
-        </section>
-    `;
-
-    const modal = backdrop.querySelector(".px-feedback-modal");
-    const closeOnOutside = (event) => {
-        if (!modal.contains(event.target)) close();
-    };
-    const close = () => {
-        clearTimeout(feedbackTimer);
-        document.removeEventListener("click", closeOnOutside);
-        backdrop.remove();
-    };
-    backdrop.querySelector(".modal-close").addEventListener("click", close);
-    main.append(backdrop);
-    setTimeout(() => document.addEventListener("click", closeOnOutside, { once: true }), 0);
-    feedbackTimer = setTimeout(close, 4500);
-}
-
-function showBotFeedback(main, botAsk) {
-    const details = botAsk.fished
-        ? `
-            <div><dt>Jogador</dt><dd>Bot</dd></div>
-            <div><dt>Resultado</dt><dd>O bot foi pescar ao monte.</dd></div>
-            <div><dt>Conjunto</dt><dd>${botAsk.formedBook ? "Formou um conjunto." : "Nenhum conjunto formado."}</dd></div>
-        `
-        : `
-            <div><dt>Jogador</dt><dd>Bot</dd></div>
-            <div><dt>Pedido</dt><dd>${VALUE_LABELS[botAsk.cardValue] || botAsk.cardValue}</dd></div>
-            <div><dt>Resultado</dt><dd>${botAsk.gotCards ? "Recebeu cartas." : "Não recebeu cartas."}</dd></div>
-            <div><dt>Conjunto</dt><dd>${botAsk.formedBook ? "Formou um conjunto." : "Nenhum conjunto formado."}</dd></div>
-        `;
-    showFeedbackModal(main, "px-feedback-bot", "Jogada do bot", details);
-}
-
-function scheduleBotFeedback(main, botAsk, delay = 4700) {
-    clearTimeout(botFeedbackTimer);
-    botFeedbackTimer = setTimeout(() => showBotFeedback(main, botAsk), delay);
+    if (botAsk.formedBook) {
+        enqueueFloatingText(main, "Adversário fechou um conjunto", "px-float-book");
+    }
 }
 
 function renderGameResult(main, state, playerId, opponents) {
@@ -156,9 +159,6 @@ function renderGameResult(main, state, playerId, opponents) {
     const payout = currentBet * playerBooks;
     const betLabel = currentBet > 0 ? currentBet : "a mesma aposta";
 
-    clearTimeout(feedbackTimer);
-    clearTimeout(botFeedbackTimer);
-    document.querySelector(".px-feedback-backdrop")?.remove();
     main.innerHTML = `
         <section class="px-result-screen" aria-labelledby="px-result-title">
             <section class="modal-box px-game-result ${playerWon ? "px-game-result-win" : "px-game-result-loss"}">
@@ -204,7 +204,8 @@ function renderGame(main, state) {
         renderGameResult(main, state, playerId, opponents);
         return;
     }
-    const canAsk = state.status === "PLAYING"
+    const canAsk = !isMessageQueueBusy()
+        && state.status === "PLAYING"
         && state.currentPlayerId === playerId
         && opponents.length > 0
         && state.playerHand.length > 0;
@@ -250,7 +251,7 @@ function renderGame(main, state) {
                         <span class="px-count">${state.playerHand.length} cartas</span>
                     </div>
                     <ul class="px-hand px-visible-hand" aria-label="A tua mão">
-                        ${state.playerHand.map((card) => visibleCardMarkup(card, canAsk)).join("")}
+                        ${sortHand(state.playerHand).map((card) => visibleCardMarkup(card, canAsk)).join("")}
                     </ul>
                 </section>
             </div>
@@ -276,11 +277,10 @@ function renderGame(main, state) {
                     method: "POST",
                     body: JSON.stringify({ playerId, targetId: opponents[0][0], cardValue }),
                 });
-                renderGame(main, result.gameState);
                 if (result.gameState.status !== "FINISHED") showAskFeedback(main, result, cardValue, playerId);
-                if (result.botAsk) {
-                    scheduleBotFeedback(main, result.botAsk, result.gameState.status === "FINISHED" ? 0 : 4700);
-                }
+                if (result.botAsk) showBotFloatingFeedback(main, result.botAsk);
+                renderGame(main, result.gameState);
+                waitForMessageQueue(() => renderGame(main, result.gameState));
             } catch (error) {
                 renderError(main, state, error);
             }
@@ -300,9 +300,6 @@ function renderGame(main, state) {
 
 function renderBetScreen(main, playerId) {
     let bet = 0;
-    clearTimeout(feedbackTimer);
-    clearTimeout(botFeedbackTimer);
-    document.querySelector(".px-feedback-backdrop")?.remove();
     main.innerHTML = `
         <section class="px-bet-screen" aria-labelledby="px-bet-title">
             <p class="px-kicker">Peixinho</p>
