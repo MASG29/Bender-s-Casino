@@ -14,8 +14,9 @@ target/
 # H2 database files
 data/
 
-# Notas pessoais (não partilhadas com a equipa)
+# Notas pessoais
 docs/Marco-Progresso.md
 
 api.txt
 
+Prompt
