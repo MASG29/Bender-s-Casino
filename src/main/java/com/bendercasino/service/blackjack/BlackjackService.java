@@ -16,6 +16,7 @@ import com.bendercasino.model.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
 import com.bendercasino.repository.PlayerRepository;
 import com.bendercasino.service.GameService;
+import com.bendercasino.service.JokeService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

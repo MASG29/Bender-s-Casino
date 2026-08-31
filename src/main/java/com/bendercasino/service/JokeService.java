@@ -1,4 +1,4 @@
-package com.bendercasino.service.blackjack;
+package com.bendercasino.service;
 
 import com.bendercasino.model.blackjack.JokeTrigger;
 import com.bendercasino.model.blackjack.Outcome;

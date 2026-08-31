@@ -8,7 +8,7 @@ import com.bendercasino.model.GameStatus;
 import com.bendercasino.model.blackjack.JokeTrigger;
 import com.bendercasino.model.Player;
 import com.bendercasino.service.blackjack.BlackjackService;
-import com.bendercasino.service.blackjack.JokeService;
+import com.bendercasino.service.JokeService;
 import com.bendercasino.service.PlayerService;
 import com.bendercasino.util.CardMapper;
 import jakarta.validation.Valid;

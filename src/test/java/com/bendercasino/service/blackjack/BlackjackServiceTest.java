@@ -17,6 +17,7 @@ import com.bendercasino.model.blackjack.Outcome;
 import com.bendercasino.model.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
 import com.bendercasino.repository.PlayerRepository;
+import com.bendercasino.service.JokeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

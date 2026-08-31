@@ -65,6 +65,15 @@ class ApiSecurityTest {
     }
 
     @Test
+    @DisplayName("POST /api/videopoker/deal sem sessão devolve 401")
+    void videopokerDealWithoutSession_returns401() throws Exception {
+        mockMvc.perform(post("/api/videopoker/deal")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"playerId\":\"%s\",\"bet\":10}".formatted(UUID.randomUUID())))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @DisplayName("GET /api/players/{id} inválido sem sessão devolve 401, não 400 — o filtro corre antes do controller")
     void playersInvalidIdWithoutSession_returns401Not400() throws Exception {
         mockMvc.perform(get("/api/players/not-a-uuid"))

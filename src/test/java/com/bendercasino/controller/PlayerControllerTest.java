@@ -1,6 +1,5 @@
 package com.bendercasino.controller;
 
-import com.bendercasino.dto.PlayerResponse;
 import com.bendercasino.model.Player;
 import com.bendercasino.service.PlayerService;
 import org.junit.jupiter.api.BeforeEach;

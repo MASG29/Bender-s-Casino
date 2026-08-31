@@ -112,7 +112,6 @@ export async function startRound() {
       cardEl.style.background = `url(${c.image}) center / cover no-repeat`;
     });
   }
-
   function addDealerCard() {
     let movement = {
       left: -535,
