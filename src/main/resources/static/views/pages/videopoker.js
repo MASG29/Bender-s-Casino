@@ -3,9 +3,24 @@ import { CHIPS } from "../../js/blackjack/chips.js";
 import { element, button, stylizedButton } from "../../js/constants/element.js";
 import { PAYOUTS, cardImageUrl } from "../../js/videopoker/payouts.js";
 import { deal, draw } from "../../js/services/videopoker-service.js";
+import { initTutorial } from "../../js/tutorial.js";
 
 export function init() {
   const main = document.querySelector("main");
+
+  initTutorial({
+    game: "videopoker",
+    title: "How to play Video Poker",
+    body: `
+      <ul>
+        <li>Pick your chips to set a bet, then hit "Bet" to get 5 cards.</li>
+        <li>Click "Hold" on the cards you want to keep.</li>
+        <li>Hit "Draw" to replace the cards you didn't hold.</li>
+        <li>Your final hand is compared to the paytable to see your payout.</li>
+        <li>Hover a hand name in the paytable to see example cards.</li>
+      </ul>
+    `,
+  });
 
   main.innerHTML = `
     <section class="bj">

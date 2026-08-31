@@ -1,5 +1,6 @@
 import state from "/js/state.js";
 import { API_BASE_URL } from "/js/constants/utils.js";
+import { initTutorial } from "/js/tutorial.js";
 
 const EUROPEAN_ORDER = [
     0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11,
@@ -18,6 +19,19 @@ let currentBet = 0;
 export function init() {
     const main = document.querySelector("main");
     const balance = state.getPlayer().balance ?? 0;
+
+    initTutorial({
+        game: "roulette",
+        title: "How to play Roulette",
+        body: `
+          <ul>
+            <li>Pick your chips to set a bet amount.</li>
+            <li>Choose a bet type: Red/Black, Odd/Even, or 1-18/19-36.</li>
+            <li>Spin the wheel and see where the ball lands.</li>
+            <li>Matching your bet pays out; the number 0 belongs to the house.</li>
+          </ul>
+        `,
+    });
 
     main.innerHTML = `
         <div class="roulette-page">

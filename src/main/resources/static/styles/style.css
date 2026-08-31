@@ -621,6 +621,50 @@ button:active .button_top {
   margin-bottom: 26px;
   border-bottom: 1px solid var(--steel-dark);
 }
+
+/* ---------- game tutorials ---------- */
+
+.tutorial-btn {
+  position: fixed;
+  z-index: 90;
+  bottom: 28px;
+  right: 28px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 90, 0.4);
+  background: linear-gradient(155deg, var(--gold-bright), var(--gold) 60%, var(--gold-dim));
+  color: #201705;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.tutorial-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  filter: brightness(1.08);
+}
+
+.tutorial-body {
+  text-align: left;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.tutorial-body p {
+  margin-bottom: 12px;
+}
+
+.tutorial-body ul {
+  margin: 0 0 12px 20px;
+  padding: 0;
+}
+
+.tutorial-body li {
+  margin-bottom: 6px;
+}
 .modal-tab {
   flex: 1;
   padding: 10px;
