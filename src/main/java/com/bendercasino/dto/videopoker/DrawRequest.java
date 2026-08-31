@@ -1,4 +1,4 @@
-package com.bendercasino.dto;
+package com.bendercasino.dto.videopoker;
 
 import java.util.List;
 

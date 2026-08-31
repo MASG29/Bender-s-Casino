@@ -1,16 +1,16 @@
-package com.bendercasino.controller;
+package com.bendercasino.controller.videopoker;
 
 import com.bendercasino.dto.CardDto;
-import com.bendercasino.dto.DealResponse;
-import com.bendercasino.dto.DrawRequest;
-import com.bendercasino.dto.DrawResponse;
+import com.bendercasino.dto.videopoker.DealResponse;
+import com.bendercasino.dto.videopoker.DrawRequest;
+import com.bendercasino.dto.videopoker.DrawResponse;
 import com.bendercasino.dto.StartGameRequest;
 import com.bendercasino.model.Card;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.Player;
-import com.bendercasino.model.VideoPokerState;
+import com.bendercasino.model.videopoker.VideoPokerState;
 import com.bendercasino.service.PlayerService;
-import com.bendercasino.service.VideoPokerService;
+import com.bendercasino.service.videopoker.VideoPokerService;
 import com.bendercasino.util.CardMapper;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;

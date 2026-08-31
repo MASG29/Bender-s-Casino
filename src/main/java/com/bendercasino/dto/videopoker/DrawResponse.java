@@ -1,6 +1,7 @@
-package com.bendercasino.dto;
+package com.bendercasino.dto.videopoker;
 
-import com.bendercasino.model.PokerHandCategory;
+import com.bendercasino.dto.CardDto;
+import com.bendercasino.model.videopoker.PokerHandCategory;
 
 import java.util.List;
 

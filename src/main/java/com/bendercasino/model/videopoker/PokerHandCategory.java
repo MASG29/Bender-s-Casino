@@ -1,4 +1,4 @@
-package com.bendercasino.model;
+package com.bendercasino.model.videopoker;
 
 public enum PokerHandCategory {
     NOTHING,

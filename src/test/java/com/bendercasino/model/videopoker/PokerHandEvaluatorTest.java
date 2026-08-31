@@ -1,4 +1,6 @@
-package com.bendercasino.model;
+package com.bendercasino.model.videopoker;
+
+import com.bendercasino.model.Card;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

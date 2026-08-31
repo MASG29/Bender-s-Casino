@@ -1,7 +1,7 @@
-package com.bendercasino.service;
+package com.bendercasino.service.videopoker;
 
 import com.bendercasino.client.DeckClient;
-import com.bendercasino.dto.DrawRequest;
+import com.bendercasino.dto.videopoker.DrawRequest;
 import com.bendercasino.exception.GameNotFoundException;
 import com.bendercasino.exception.InsufficientBalanceException;
 import com.bendercasino.exception.InvalidBetException;
@@ -11,12 +11,14 @@ import com.bendercasino.model.Card;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
 import com.bendercasino.model.Player;
-import com.bendercasino.model.PokerHandCategory;
-import com.bendercasino.model.PokerHandEvaluator;
-import com.bendercasino.model.PokerPaytable;
-import com.bendercasino.model.VideoPokerState;
+import com.bendercasino.model.videopoker.PokerHandCategory;
+import com.bendercasino.model.videopoker.PokerHandEvaluator;
+import com.bendercasino.model.videopoker.PokerPaytable;
+import com.bendercasino.model.videopoker.VideoPokerState;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
 import com.bendercasino.repository.PlayerRepository;
+import com.bendercasino.service.GameService;
+import com.bendercasino.service.JokeService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
