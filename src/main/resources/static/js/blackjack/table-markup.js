@@ -4,6 +4,7 @@ export function tableMarkup() {
   return `
     <section class="bj">
       <h2>Blackjack</h2>
+      <p id="bj-joke" class="bj-joke"></p>
       <div class="bj-floor">
         <div id="chips" class="bj-chips">
           ${CHIPS.map(

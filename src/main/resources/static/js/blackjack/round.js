@@ -30,6 +30,11 @@ export async function startRound() {
   const playerScoreEl = document.querySelector("#player-score");
   const dealerScoreEl = document.querySelector("#dealer-score");
   const endingEl = document.querySelector("#ending");
+  const jokeEl = document.querySelector("#bj-joke");
+
+  function displayJoke() {
+    jokeEl.textContent = gameState.benderJoke ? "Bender: " + gameState.benderJoke : "";
+  }
 
   const playerSlot1 = document.querySelector("#player-slot-1");
   const playerSlot2 = document.querySelector("#player-slot-2");
@@ -164,6 +169,7 @@ export async function startRound() {
     }
     addPlayerCard();
     displayScores();
+    displayJoke();
     checkForEnd();
   });
 
@@ -177,6 +183,7 @@ export async function startRound() {
     }
     addDealerCard();
     displayScores();
+    displayJoke();
     checkForEnd();
   });
 
@@ -185,6 +192,7 @@ export async function startRound() {
     renderPlayerCards();
     renderDealerCards();
     displayScores();
+    displayJoke();
   } else {
     setControlsEnabled(false); // no hitting/standing before a bet exists
 
@@ -209,6 +217,7 @@ export async function startRound() {
       renderPlayerCards();
       renderDealerCards();
       displayScores();
+      displayJoke();
       setControlsEnabled(true);
     });
   }
