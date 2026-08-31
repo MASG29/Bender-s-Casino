@@ -17,7 +17,7 @@ export function init() {
     document.querySelector("main").innerHTML = `
         <section class="lobby">
             <h2>Pick A Table</h2>
-            <p>Only one game is live. The rest are still warming up the chrome.</p>
+            <p>Some tables are open, others are still warming up the chrome.</p>
             <div class="tables">
 ${gamesList.map(tableCard).join("\n")}
             </div>
