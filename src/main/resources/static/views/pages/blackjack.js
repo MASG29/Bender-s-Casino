@@ -1,4 +1,3 @@
-import { element, button, stylizedButton } from "../../js/constants/element.js";
 import {
   getState,
   startGame,
@@ -30,10 +29,5 @@ export function init() {
     return;
   }
 
-  const start = stylizedButton(main, "Start");
-
-  start.addEventListener("click", async () => {
-    main.removeChild(start);
-    await startRound();
-  });
+  startRound();
 }
