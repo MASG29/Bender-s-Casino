@@ -1,4 +1,6 @@
-package com.bendercasino.dto;
+package com.bendercasino.dto.blackjack;
+
+import com.bendercasino.dto.CardDto;
 
 import java.util.List;
 

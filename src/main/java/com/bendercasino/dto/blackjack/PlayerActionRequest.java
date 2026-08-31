@@ -1,4 +1,4 @@
-package com.bendercasino.dto;
+package com.bendercasino.dto.blackjack;
 
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;

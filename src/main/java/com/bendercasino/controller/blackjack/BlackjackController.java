@@ -1,13 +1,14 @@
-package com.bendercasino.controller;
+package com.bendercasino.controller.blackjack;
 
 import com.bendercasino.dto.*;
-import com.bendercasino.model.BlackjackState;
+import com.bendercasino.dto.blackjack.*;
+import com.bendercasino.model.blackjack.BlackjackState;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
-import com.bendercasino.model.JokeTrigger;
+import com.bendercasino.model.blackjack.JokeTrigger;
 import com.bendercasino.model.Player;
-import com.bendercasino.service.BlackjackService;
-import com.bendercasino.service.JokeService;
+import com.bendercasino.service.blackjack.BlackjackService;
+import com.bendercasino.service.blackjack.JokeService;
 import com.bendercasino.service.PlayerService;
 import com.bendercasino.util.CardMapper;
 import jakarta.validation.Valid;

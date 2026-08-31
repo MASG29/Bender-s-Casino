@@ -1,4 +1,4 @@
-package com.bendercasino.service;
+package com.bendercasino.service.blackjack;
 
 import com.bendercasino.model.Card;
 import org.junit.jupiter.api.DisplayName;

@@ -1,4 +1,6 @@
-package com.bendercasino.model;
+package com.bendercasino.model.blackjack;
+
+import com.bendercasino.model.Card;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,11 +20,11 @@ public class Hand {
     }
 
     public int value() {
-        return com.bendercasino.service.HandValueCalculator.value(cards);
+        return com.bendercasino.service.blackjack.HandValueCalculator.value(cards);
     }
 
     public boolean isSoft() {
-        return com.bendercasino.service.HandValueCalculator.isSoft(cards);
+        return com.bendercasino.service.blackjack.HandValueCalculator.isSoft(cards);
     }
 
     public boolean isBlackjack() {

@@ -1,7 +1,7 @@
-package com.bendercasino.service;
+package com.bendercasino.service.blackjack;
 
-import com.bendercasino.model.JokeTrigger;
-import com.bendercasino.model.Outcome;
+import com.bendercasino.model.blackjack.JokeTrigger;
+import com.bendercasino.model.blackjack.Outcome;
 import com.bendercasino.model.Player;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;

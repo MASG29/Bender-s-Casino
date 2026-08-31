@@ -1,4 +1,4 @@
-package com.bendercasino.service;
+package com.bendercasino.service.blackjack;
 
 import com.bendercasino.client.DeckClient;
 import com.bendercasino.exception.GameNotFoundException;
@@ -7,14 +7,15 @@ import com.bendercasino.exception.InvalidBetException;
 import com.bendercasino.exception.InvalidGameStateException;
 import com.bendercasino.exception.PlayerNotFoundException;
 import com.bendercasino.model.Bet;
-import com.bendercasino.model.BlackjackState;
+import com.bendercasino.model.blackjack.BlackjackState;
 import com.bendercasino.model.Card;
 import com.bendercasino.model.GameSession;
 import com.bendercasino.model.GameStatus;
-import com.bendercasino.model.Outcome;
+import com.bendercasino.model.blackjack.Outcome;
 import com.bendercasino.model.Player;
 import com.bendercasino.repository.InMemoryGameSessionRepository;
 import com.bendercasino.repository.PlayerRepository;
+import com.bendercasino.service.GameService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
