@@ -1,33 +1,41 @@
 # Bender's Casino
 
-A Blackjack-themed single-page application inspired by Bender, the wisecracking robot from *Futurama*. Players create a profile, sit at the table, bet chips and play hands of Blackjack against the dealer — while Bender comments, mocks and cheers (mostly mocks) after every move.
+A Futurama-themed online casino built as a single-page application, hosted by Bender — the wisecracking, chrome-plated dealer who runs the floor, cracks jokes and never lets you forget you're playing against the house. Create an account, sit at any of five tables, and try to leave with more chips than you came with.
+
+## Games
+
+- **Blackjack** — hit, stand, dealer plays to 17, natural blackjacks and pushes handled, with Bender reacting in character to streaks, busts and going broke.
+- **Roulette** — straight, split and outside bets (odd/even, red/black, high/low), full payout table.
+- **Peixinho** — a "books" card game where you ask other players for cards to complete sets, playable against Bender's bots.
+- **Slots** — three-reel slot machine with its own symbol/payout table.
+- **Video Poker** — five-card draw with hold/discard and a standard paytable.
 
 ## What it does
 
-- Create a player and start with a fixed amount of chips.
-- Place a bet and play a full hand of Blackjack: hit, stand, dealer turn, payout.
-- Track a player's balance and stats (wins, losses, pushes, blackjacks) across hands.
-- Reset a player's profile back to the starting balance at any time.
-- React to the game in real time with Bender's in-character remarks, triggered by streaks, blackjacks, busts and going broke.
+- Register and log in with an account (nickname or email + password), persisted in a database.
+- Sit at any live table and play with real chips tied to your account balance.
+- Track wins, losses, pushes and blackjacks across hands from your profile page.
+- Reset your profile back to the starting balance at any time.
+- React to the game in real time with Bender's in-character remarks.
 
 ## Languages and technologies
 
-- **Back-end:** Java 21, Spring Boot, Maven
+- **Back-end:** Java 21, Spring Boot, Maven, Spring Security (BCrypt-hashed passwords), Spring Data JPA
+- **Database:** H2 (file-based), accessed through JPA/Hibernate
 - **Front-end:** HTML, CSS, JavaScript (vanilla SPA using the History API — no framework)
-- **Architecture:** REST API consumed by the SPA, MVCS-style layering (Model / Service / Controller + DTOs). The game core is generic (`GameSession` + `GameService`) behind `/api/games/{game}/...`, with `/api/blackjack` kept as a stable alias for the current front end.
-- **Data:** in-memory storage on the service layer (no database yet — login/persistence is in progress, see below)
+- **Architecture:** REST API consumed by the SPA, MVCS-style layering (Model / Service / Controller + DTOs). Each game plugs into a generic core (`GameSession` + `GameService`) behind `/api/games/{game}/...`, and lives in its own subpackage (`model/blackjack`, `service/roleta`, `controller/slots`, etc.) alongside the classes shared by every game.
 
 ## External API
 
-- [Deck of Cards API](https://deckofcardsapi.com) — used to shuffle decks and draw cards for each hand.
+- [Deck of Cards API](https://deckofcardsapi.com) — used to shuffle decks and draw cards for Blackjack, Peixinho and Video Poker.
 
 ## Project structure
 
 The application is a single Maven project. The back-end exposes a REST API under `/api`, and the front-end SPA is served as static resources from the same origin (no CORS needed):
 
 ```
-src/main/java/...          → back-end (models, services, controllers, DTOs)
-src/main/resources/static  → front-end SPA (HTML/CSS/JS)
+src/main/java/...          → back-end (models, services, controllers, DTOs), one subpackage per game
+src/main/resources/static  → front-end SPA (HTML/CSS/JS, one page + service per game)
 src/test/java/...          → back-end tests
 ```
 
@@ -46,13 +54,6 @@ To run the back-end tests:
 ```bash
 ./mvnw test
 ```
-
-## Status
-
-Blackjack is the finished MVP. The project is now in Fase 2: extracting a game-agnostic core so
-Roleta, Peixinho, Slots, Video Poker and a login system can be built on top of it without each
-one duplicating the table/session code. See [docs/AGORA.md](docs/AGORA.md) for what's currently
-being worked on and by whom, and [docs/Fase2-Jogos.md](docs/Fase2-Jogos.md) for the full breakdown.
 
 ## Project management and collaboration tools
 
