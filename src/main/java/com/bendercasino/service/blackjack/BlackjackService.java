@@ -48,7 +48,7 @@ public class BlackjackService implements GameService {
             throw new InvalidBetException(bet);
         }
 
-        var existingSession = sessionRepository.findByPlayerId(playerId);
+        var existingSession = sessionRepository.findByPlayerIdAndGame(playerId, "blackjack");
         if (existingSession.isPresent() && !existingSession.get().isFinished()) {
             throw new InvalidGameStateException("Player already has an unfinished game");
         }
@@ -82,7 +82,7 @@ public class BlackjackService implements GameService {
     }
 
     public GameSession hit(UUID playerId) {
-        GameSession session = sessionRepository.findByPlayerId(playerId)
+        GameSession session = sessionRepository.findByPlayerIdAndGame(playerId, "blackjack")
                 .orElseThrow(() -> new GameNotFoundException(playerId));
         return applyHit(session);
     }
@@ -106,7 +106,7 @@ public class BlackjackService implements GameService {
     }
 
     public GameSession stand(UUID playerId) {
-        GameSession session = sessionRepository.findByPlayerId(playerId)
+        GameSession session = sessionRepository.findByPlayerIdAndGame(playerId, "blackjack")
                 .orElseThrow(() -> new GameNotFoundException(playerId));
         return applyStand(session);
     }
@@ -130,7 +130,7 @@ public class BlackjackService implements GameService {
     }
 
     public GameSession getState(UUID playerId) {
-        return sessionRepository.findByPlayerId(playerId)
+        return sessionRepository.findByPlayerIdAndGame(playerId, "blackjack")
                 .orElseThrow(() -> new GameNotFoundException(playerId));
     }
 
