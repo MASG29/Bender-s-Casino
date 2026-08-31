@@ -1,15 +1,27 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap");
 
 :root {
-  --bg: #161616;
-  --panel: #202020;
+  --bg: #14141a;
+  --panel: #1d1d24;
+  --panel-raised: #24242d;
   --steel: #7a7a76;
   --steel-light: #b7b7b1;
   --steel-lighter: #d4d4cf;
   --steel-dark: #383836;
   --steel-darker: #262624;
-  --text: #e2e1db;
-  --text-dim: #8c8c86;
+  --text: #e8e6dd;
+  --text-dim: #98968c;
+  --gold: #d4af5a;
+  --gold-bright: #f0ce85;
+  --gold-dim: #8a6f31;
+  --felt: #1a5c3f;
+  --felt-bright: #27916a;
+
+  --blackjack: #2c7a4b;
+  --roulette: #b4342f;
+  --peixinho: #2f86b8;
+  --slots: #9457c9;
+  --videopoker: #c98a2f;
 }
 
 * {
@@ -51,18 +63,23 @@ a {
 
 /* ---------- header ---------- */
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 5vw 18px;
-  border-bottom: 3px solid var(--steel-dark);
-  background: var(--panel);
+  border-bottom: 1px solid var(--steel-dark);
+  background: linear-gradient(180deg, var(--panel) 0%, var(--bg) 140%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 .logo {
   font-size: 1.3rem;
-  color: var(--steel-light);
+  color: var(--gold-bright);
   transform: rotate(-0.6deg);
   display: inline-block;
+  text-shadow: 0 0 18px rgba(240, 206, 133, 0.25);
 }
 .nav {
   display: flex;
@@ -72,9 +89,25 @@ a {
 }
 .nav a {
   color: var(--text-dim);
+  position: relative;
+  padding-bottom: 3px;
+  transition: color 0.15s;
+}
+.nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: right 0.2s ease;
 }
 .nav a:hover {
-  color: var(--steel-lighter);
+  color: var(--gold-bright);
+}
+.nav a:hover::after {
+  right: 0;
 }
 
 /* ---------- hero: circle is the whole point, everything else sits under it ---------- */
@@ -119,21 +152,35 @@ h1 {
 .btn {
   display: inline-block;
   margin-top: 22px;
-  padding: 12px 26px;
-  background: var(--steel-light);
-  color: #161616;
+  padding: 13px 30px;
+  background: linear-gradient(155deg, var(--gold-bright), var(--gold) 60%, var(--gold-dim));
+  color: #201705;
   font-weight: 700;
   font-size: 0.82rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border: 1px solid #0d0d0d;
+  letter-spacing: 0.06em;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 10px 22px rgba(212, 175, 90, 0.18),
+    0 2px 4px rgba(0, 0, 0, 0.4);
   transition:
-    background 0.15s,
-    transform 0.15s;
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
 }
 .btn:hover {
-  background: var(--steel-lighter);
-  transform: translateY(-1px);
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 14px 28px rgba(212, 175, 90, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.45);
+}
+.btn:active {
+  transform: translateY(0);
+  filter: brightness(0.97);
 }
 
 /* ---------- join: first thing on the page ---------- */
@@ -176,52 +223,102 @@ h1 {
 }
 .tables {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
 }
 .table {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 28px 18px 22px;
-  background: var(--panel);
-  border: 1px solid #0d0d0d;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 26px 20px 22px;
+  background:
+    radial-gradient(140% 100% at 20% -10%, rgba(255, 255, 255, 0.06), transparent 55%),
+    var(--panel);
+  border: 1px solid var(--steel-dark);
+  border-radius: 12px;
   color: var(--text);
   font-family: inherit;
   text-align: left;
   cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.table-glow {
+  position: absolute;
+  inset: -40% -20% auto auto;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  filter: blur(38px);
+  opacity: 0.35;
+  pointer-events: none;
+  background: var(--accent, var(--gold));
+  transition: opacity 0.2s ease;
+}
+.table-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.table-icon img {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
 .table-game {
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  z-index: 1;
 }
 .table-meta {
   font-size: 0.75rem;
   color: var(--text-dim);
+  z-index: 1;
 }
+
+.table-blackjack  { --accent: var(--blackjack); }
+.table-roulette   { --accent: var(--roulette); }
+.table-peixinho   { --accent: var(--peixinho); }
+.table-slots      { --accent: var(--slots); }
+.table-videopoker { --accent: var(--videopoker); }
+
 .table-live {
-  background: var(--steel-light);
-  color: #161616;
-  transition:
-    background 0.15s,
-    transform 0.15s,
-    box-shadow 0.15s;
-}
-.table-live .table-meta {
-  color: var(--steel-darker);
+  border-color: var(--accent, var(--gold-dim));
 }
 .table-live:hover {
-  background: var(--steel-lighter);
-  transform: translateY(-1px);
+  transform: translateY(-4px);
+  border-color: var(--accent, var(--gold));
   box-shadow:
-    0 0 0 1px #0d0d0d,
-    0 0 18px rgba(212, 212, 207, 0.4);
+    0 16px 32px rgba(0, 0, 0, 0.45),
+    0 0 0 1px var(--accent, var(--gold)) inset,
+    0 0 30px -6px var(--accent, var(--gold));
+}
+.table-live:hover .table-glow {
+  opacity: 0.55;
+}
+.table-live .table-meta {
+  color: var(--accent, var(--gold-bright));
+  font-weight: 600;
 }
 .table-soon {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+.table-soon .table-glow {
+  display: none;
 }
 
 /* ---------- profile ---------- */
@@ -245,8 +342,14 @@ h1 {
 .profile-card {
   padding: 22px 18px;
   background: var(--panel);
-  border: 1px solid #0d0d0d;
+  border: 1px solid var(--steel-dark);
+  border-radius: 10px;
   text-align: left;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.profile-card:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-2px);
 }
 .profile-label {
   font-size: 0.72rem;
