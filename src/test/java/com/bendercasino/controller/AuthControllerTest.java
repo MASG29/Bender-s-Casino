@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,6 +53,29 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.playerId").value(playerId.toString()))
                 .andExpect(jsonPath("$.name").value("TestPlayer"))
                 .andExpect(jsonPath("$.balance").value(1000));
+    }
+
+    @Test
+    @DisplayName("POST /register also authenticates the session, same as login")
+    void register_success_alsoAuthenticatesSession() throws Exception {
+        when(playerService.create("TestPlayer", "testplayer", "Test", "Player", "test@example.com", "secret123"))
+                .thenReturn(player);
+
+        var result = mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name":"TestPlayer","username":"testplayer","firstName":"Test","lastName":"Player","email":"test@example.com","password":"secret123"}
+                                """))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        var session = result.getRequest().getSession(false);
+        assertThat(session).isNotNull();
+        var securityContext = (org.springframework.security.core.context.SecurityContext)
+                session.getAttribute("SPRING_SECURITY_CONTEXT");
+        assertThat(securityContext).isNotNull();
+        assertThat(securityContext.getAuthentication().getName()).isEqualTo("testplayer");
+        assertThat(securityContext.getAuthentication().isAuthenticated()).isTrue();
     }
 
     @Test
