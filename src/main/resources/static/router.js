@@ -1,7 +1,7 @@
 import routes from "./routes.js";
 import state from "/js/state.js";
 
-const PROTECTED = ["/lobby", "/profile", "/blackjack"];
+const PROTECTED = ["/lobby", "/profile", "/blackjack", "/roulette", "/peixinho"];
 
 function navigate(path, firstLoad = false) {
     if (path == routes.currentPath.path) return;

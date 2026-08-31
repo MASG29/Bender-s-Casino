@@ -1,42 +1,44 @@
 const games = [
-  { id: "blackjack", label: "Blackjack", live: true },
-  { id: "videopoker", label: "Video Poker", live: true },
+    { id: "blackjack", label: "Blackjack", live: true },
+    { id: "roulette", label: "Roulette", live: true },
+    { id: "peixinho", label: "Peixinho", live: false },
+    { id: "videopoker", label: "Video Poker", live: true },
 ];
 
 const gameRoutes = Object.fromEntries(
-  games.map((game) => [
-    game.id,
-    {
-      path: `/${game.id}`,
-      controller: game.id,
-      label: game.label,
-      live: game.live,
-    },
-  ]),
+    games.map((game) => [
+        game.id,
+        {
+            path: `/${game.id}`,
+            controller: game.id,
+            label: game.label,
+            live: game.live
+        },
+    ]),
 );
 
 export const gamesList = games;
 
 export default {
-  home: {
-    path: "/",
-    controller: "home",
-  },
+    home: {
+        path: "/",
+        controller: "home",
+    },
 
-  lobby: {
-    path: "/lobby",
-    controller: "lobby",
-  },
+    lobby: {
+        path: "/lobby",
+        controller: "lobby",
+    },
 
-  ...gameRoutes,
+    ...gameRoutes,
 
-  profile: {
-    path: "/profile",
-    controller: "profile",
-  },
+    profile: {
+        path: "/profile",
+        controller: "profile",
+    },
 
-  currentPath: {
-    path: "",
-    controller: "",
-  },
+    currentPath: {
+        path: "",
+        controller: "",
+    },
 };

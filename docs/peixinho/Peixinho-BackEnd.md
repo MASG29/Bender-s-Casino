@@ -1,6 +1,6 @@
 # Peixinho (À Pesca / Go Fish) — Back-end (X)
 
-**Back-end: Diogo.** Branch: `feat/peixinho`.
+**Back-end: Diogo.** Branch: `feat/peixinho-backend`.
 
 ## Regras base
 

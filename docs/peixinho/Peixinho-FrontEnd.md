@@ -1,6 +1,6 @@
 # Peixinho (À Pesca) — Front-end (X-F)
 
-**Front-end: Marco** (o Diogo fica com o back-end do Peixinho). Branch: `feat/peixinho`.
+**Front-end: Marco** (o Diogo fica com o back-end do Peixinho). Branch: `feat/peixinho-frontend` (back-end do Diogo está em `feat/peixinho-backend`).
 
 | # | Tarefa | Detalhe | Depende de |
 |---|--------|---------|------------|
