@@ -3,6 +3,7 @@ const games = [
     { id: "roulette", label: "Roulette", live: true },
     { id: "peixinho", label: "Peixinho", live: true },
     { id: "slots", label: "Slots", live: true },
+    { id: "videopoker", label: "Video Poker", live: true },
 ];
 
 const gameRoutes = Object.fromEntries(
