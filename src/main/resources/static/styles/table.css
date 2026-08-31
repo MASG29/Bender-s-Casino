@@ -23,6 +23,15 @@
   gap: 28px;
 }
 
+.bj-joke {
+  min-height: 1.4em;
+  margin: -12px 0 20px;
+  padding-left: var(--bj-offset);
+  color: var(--gold-bright, #f0ce85);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
 .bj-table {
   position: relative;
   flex: 1;
