@@ -57,7 +57,7 @@ To run the back-end tests:
 
 ## Project management and collaboration tools
 
-- **Trello:** used for task management and sprint coordination.
+- **Linear:** used for task management and sprint coordination.
 - **Discord:** used for team communication and meetings.
 - **Git / GitHub:** used for version control and collaboration on this repository.
 
