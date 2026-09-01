@@ -53,7 +53,12 @@ public class RouletteService implements GameService {
         boolean won = payout > 0;
 
         player.credit(payout);
-        playerRepository.save(player);
+            if (won) {
+                player.registerWin();
+            } else {
+                player.registerLoss();
+            }
+            playerRepository.save(player);
 
         GameSession session = new GameSession(playerId, null, "roleta", bet);
         session.setStatus(GameStatus.FINISHED);

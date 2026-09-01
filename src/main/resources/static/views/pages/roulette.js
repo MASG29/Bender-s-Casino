@@ -300,6 +300,7 @@ function showResult(result) {
 function updateBalance(balance) {
     sessionStorage.setItem("balance", String(balance));
     document.getElementById("balance-display").textContent = `${balance} chips`;
+    state.updateHeader();
 }
 
 function wait(ms) {

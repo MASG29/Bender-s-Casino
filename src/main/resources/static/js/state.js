@@ -11,6 +11,7 @@ const state = {
         sessionStorage.setItem("playerId",   player.playerId);
         sessionStorage.setItem("playerName", player.name);
         sessionStorage.setItem("balance",    player.balance);
+        this.updateHeader();
     },
 
     clearPlayer() {
@@ -25,8 +26,14 @@ const state = {
 
     updateHeader() {
         const logoutBtn = document.getElementById("logout-btn");
-        if (!logoutBtn) return;
-        logoutBtn.style.display = this.isLoggedIn() ? "block" : "none";
+        const balanceEl = document.getElementById("header-balance");
+        const loggedIn = this.isLoggedIn();
+
+        if (logoutBtn) logoutBtn.style.display = loggedIn ? "block" : "none";
+        if (balanceEl) {
+            balanceEl.style.display = loggedIn ? "inline" : "none";
+            balanceEl.textContent = `${sessionStorage.getItem("balance") ?? 0} chips`;
+        }
     }
 }
 export default state;

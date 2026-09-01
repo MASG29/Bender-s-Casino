@@ -56,7 +56,12 @@ public class SlotsService implements GameService {
         int payout = (int) Math.round(bet * multiplier);
 
         player.credit(payout);
-        playerRepository.save(player);
+            if (payout > 0) {
+                player.registerWin();
+            } else {
+                player.registerLoss();
+            }
+            playerRepository.save(player);
 
         GameSession session = new GameSession(playerId, null, "slots", bet);
         session.setStatus(GameStatus.FINISHED);
