@@ -691,6 +691,20 @@ button:active .button_top {
   color: #c0392b;
   border-color: #c0392b;
 }
+
+/* ---------- bet controls grouped inside a chip rail (all games) ---------- */
+
+.bj-chips .chip-rail-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--steel-dark);
+}
+
 .modal-tab {
   flex: 1;
   padding: 10px;

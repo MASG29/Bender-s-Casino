@@ -204,7 +204,7 @@ export async function startRound() {
   });
 
   if (gameState.status === "PLAYER_TURN") {
-    table.removeChild(form);
+    form.remove();
     renderPlayerCards();
     renderDealerCards();
     displayScores();
@@ -220,7 +220,7 @@ export async function startRound() {
         formContainer.textContent = "Pick at least one chip before proceeding!";
         return;
       }
-      table.removeChild(form);
+      form.remove();
 
       try {
         gameState = await startGame(sessionStorage.getItem("playerId"), amount);
