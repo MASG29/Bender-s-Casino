@@ -83,22 +83,6 @@
     font-size: 0.85rem;
 }
 
-.btn-clear-bet {
-    background: transparent;
-    border: 1px solid var(--steel-dark);
-    color: var(--steel);
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
-}
-
-.btn-clear-bet:hover {
-    color: #c0392b;
-    border-color: #c0392b;
-}
-
 .bet-zone:hover {
     border-color: rgba(255, 255, 255, 0.85);
     background: rgba(255, 255, 255, 0.08);
