@@ -117,6 +117,14 @@ a {
   background: linear-gradient(180deg, var(--panel) 0%, var(--bg) 140%);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
+
+#header-balance {
+  font-size: 0.85rem;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  order: 0;
+}
+
 .logo {
   font-size: 1.3rem;
   color: var(--gold-bright);

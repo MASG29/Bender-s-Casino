@@ -138,9 +138,15 @@ public class PeixinhoService {
                 int payout = session.getBets().get(playerId)
                         * PeixinhoRules.countBooks(session.getBooks(), playerId);
                 winner.credit(payout);
+                winner.registerWin();
                 playerRepository.save(winner);
+                } else {
+                    Player loser = playerRepository.findById(playerId)
+                            .orElseThrow(() -> new PlayerNotFoundException(playerId));
+                    loser.registerLoss();
+                    playerRepository.save(loser);
+                }
             }
-        }
 
         if (!session.getStatus().equals("FINISHED")) {
             boolean allHandsEmpty = session.getHands().values().stream().allMatch(List::isEmpty);
