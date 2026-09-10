@@ -119,7 +119,7 @@
 .bj-card {
   position: absolute;
   top: 34px;
-  right: 93px;
+  right: 90px;
   width: 110px;
   height: 154px;
   border-radius: 10px;
@@ -233,6 +233,9 @@
     min-height: 56vh;
   }
 
+  /* .bj-deck and .bj-card must share the same top/right/width/height at
+     every breakpoint: round.js measures where a dealt card flies to by
+     reading #bj-deck's position, so the two boxes need to coincide. */
   .bj-deck {
     top: 18px;
     right: 26px;
@@ -251,6 +254,8 @@
   }
 
   .bj-card {
+    top: 18px;
+    right: 26px;
     width: 80px;
     height: 112px;
   }
