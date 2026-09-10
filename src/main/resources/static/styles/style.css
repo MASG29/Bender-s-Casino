@@ -935,15 +935,6 @@ button:active .button_top {
   font-size: 14px;
 }
 
-.lower-button-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 10px;
-}
-
 .vp-card-back {
   width: 90px;
   height: 130px;

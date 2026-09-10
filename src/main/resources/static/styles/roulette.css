@@ -96,7 +96,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    max-width: 820px;
+    max-width: 900px;
     font-size: 0.9rem;
     color: var(--text-dim);
     border-bottom: 1px solid var(--steel-dark);
