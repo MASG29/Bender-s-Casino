@@ -15,6 +15,11 @@ import { CHIPS } from "../../js/blackjack/chips.js";
 import { tableMarkup } from "../../js/blackjack/table-markup.js";
 import { initTutorial } from "../../js/tutorial.js";
 
+// "Play again" calls startRound() again without a full page reload, which
+// would otherwise stack a new resize listener (closing over that round's
+// now-detached hand elements) on top of the previous one every round.
+let activeResizeHandler = null;
+
 export async function startRound() {
   let amount = 0;
   let playerCards = 0;
@@ -53,6 +58,35 @@ export async function startRound() {
 
   const playerSlot1 = document.querySelector("#player-slot-1");
   const playerSlot2 = document.querySelector("#player-slot-2");
+  const playerHandEl = document.querySelector("#player-hand");
+  const dealerHandEl = document.querySelector("#dealer-hand");
+  const deckEl = document.querySelector("#bj-deck");
+
+  // Returns the pixel offset (for move()) that lands a card exactly on the
+  // slot at `cardIndex` within `handEl`. Measured from the deck, not from
+  // the card itself: `.bj-card` has a `transition: transform`, so reading a
+  // dealt card's own getBoundingClientRect() right after resetting its
+  // transform can still report the pre-reset (mid-transition) position —
+  // the deck never gets a transform, so it's a stable reference for both
+  // the initial deal and any later reposition (e.g. on resize). Cards
+  // beyond the two rendered .bj-slot elements (i.e. hits) fan out to the
+  // right of the last slot, spaced the same as the CSS `.bj-hand` gap, so
+  // they never land on the score/label above or below the hand.
+  function cardTargetOffset(handEl, cardIndex) {
+    const startRect = deckEl.getBoundingClientRect();
+    const slots = handEl.querySelectorAll(".bj-slot");
+    const lastSlot = slots[slots.length - 1];
+    const targetSlot = slots[cardIndex] || lastSlot;
+    const slotRect = targetSlot.getBoundingClientRect();
+    const gap = parseFloat(getComputedStyle(handEl).gap) || 12;
+    const extra =
+      cardIndex >= slots.length ? (cardIndex - slots.length + 1) * (slotRect.width + gap) : 0;
+
+    return {
+      left: slotRect.left - startRect.left + extra,
+      top: slotRect.top - startRect.top,
+    };
+  }
 
   const playerCardsContainer = element("div", playerTable);
   const dealerCardsContainer = element("div", dealerTable);
@@ -93,61 +127,59 @@ export async function startRound() {
     });
   }
 
+  function placeCard(cardEl, hand, handEl, cardIndex) {
+    cardEl.dataset.hand = hand;
+    cardEl.dataset.cardIndex = cardIndex;
+    move(cardEl, cardTargetOffset(handEl, cardIndex), 0);
+  }
+
+  // Card positions are computed once, at deal time, from each .bj-slot's
+  // real position. A window resize can change the table/slot layout (see
+  // the @media rules in table.css) without moving already-placed cards, so
+  // re-snap every dealt card to its slot whenever the window resizes.
+  function repositionDealtCards() {
+    document.querySelectorAll(".bj-card[data-hand]").forEach((cardEl) => {
+      const handEl = cardEl.dataset.hand === "player" ? playerHandEl : dealerHandEl;
+      move(cardEl, cardTargetOffset(handEl, Number(cardEl.dataset.cardIndex)), 0);
+    });
+  }
+  if (activeResizeHandler) window.removeEventListener("resize", activeResizeHandler);
+  activeResizeHandler = repositionDealtCards;
+  window.addEventListener("resize", activeResizeHandler);
+
   function renderPlayerCards() {
     playerCardsContainer.innerHTML = "";
-    let movement = {
-      left: -535,
-      top: 440,
-    };
-    let directionChange = 120;
 
     gameState.playerHand.cards.forEach((c) => {
       const cardEl = element("div", table, ["bj-card"]); // create the card
       playerCards++;
-      move(cardEl, movement, directionChange * playerCards);
+      placeCard(cardEl, "player", playerHandEl, playerCards - 1);
       cardEl.style.background = `url(${c.image}) center / cover no-repeat`;
     });
   }
 
   function addPlayerCard() {
-    let movement = {
-      left: -535,
-      top: 440,
-    };
-    let directionChange = 120;
-
     const cardEl = element("div", table, ["bj-card"]);
     playerCards++;
-    move(cardEl, movement, directionChange * playerCards);
+    placeCard(cardEl, "player", playerHandEl, playerCards - 1);
     const lastCard = gameState.playerHand.cards[gameState.playerHand.cards.length - 1];
     cardEl.style.background = `url(${lastCard.image}) center / cover no-repeat`;
   }
 
   function renderDealerCards() {
     playerCardsContainer.innerHTML = "";
-    let movement = {
-      left: -535,
-      top: 45,
-    };
-    let directionChange = 120;
 
     gameState.dealerHand.cards.forEach((c) => {
       const cardEl = element("div", table, ["bj-card"]); // create the card
       dealerCards++;
-      move(cardEl, movement, directionChange * dealerCards);
+      placeCard(cardEl, "dealer", dealerHandEl, dealerCards - 1);
       cardEl.style.background = `url(${c.image}) center / cover no-repeat`;
     });
   }
   function addDealerCard() {
-    let movement = {
-      left: -535,
-      top: 45,
-    };
-    let directionChange = 120;
-
     const cardEl = element("div", table, ["bj-card"]);
     dealerCards++;
-    move(cardEl, movement, directionChange * dealerCards);
+    placeCard(cardEl, "dealer", dealerHandEl, dealerCards - 1);
     const lastCard = gameState.dealerHand.cards[gameState.dealerHand.cards.length - 1];
     cardEl.style.background = `url(${lastCard.image}) center / cover no-repeat`;
   }
@@ -203,7 +235,7 @@ export async function startRound() {
   });
 
   if (gameState.status === "PLAYER_TURN") {
-    table.removeChild(form);
+    form.remove();
     renderPlayerCards();
     renderDealerCards();
     displayScores();
@@ -219,7 +251,7 @@ export async function startRound() {
         formContainer.textContent = "Pick at least one chip before proceeding!";
         return;
       }
-      table.removeChild(form);
+      form.remove();
 
       try {
         gameState = await startGame(sessionStorage.getItem("playerId"), amount);

@@ -1,6 +1,7 @@
 import state from "/js/state.js";
 import { API_BASE_URL } from "/js/constants/utils.js";
 import { initTutorial } from "/js/tutorial.js";
+import { CHIPS } from "/js/blackjack/chips.js";
 
 const EUROPEAN_ORDER = [
     0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11,
@@ -43,56 +44,39 @@ export function init() {
                     <span id="balance-display">${balance} chips</span>
                 </div>
 
-                <div class="table-img-wrap">
-                    <img src="/assets/roulette/rouletteTable.png" alt="Roulette table" />
-                    <button type="button" class="bet-zone zone-red"   data-bettype="RED"   aria-label="Bet Red"></button>
-                    <button type="button" class="bet-zone zone-black" data-bettype="BLACK" aria-label="Bet Black"></button>
-                    <button type="button" class="bet-zone zone-odd"   data-bettype="ODD"   aria-label="Bet Odd"></button>
-                    <button type="button" class="bet-zone zone-even"  data-bettype="EVEN"  aria-label="Bet Even"></button>
-                    <button type="button" class="bet-zone zone-low"   data-bettype="LOW"   aria-label="Bet 1 to 18"></button>
-                    <button type="button" class="bet-zone zone-high"  data-bettype="HIGH"  aria-label="Bet 19 to 36"></button>
-                </div>
-
-                <div class="roulette-bet-area">
-                    <p class="bet-area-label">Choose your chips</p>
-                    <div class="chip-tray">
-                        <button class="chip" data-value="1">
-                            <img src="/assets/Coins/1dollar.coin.png" alt="1" />
-                            <span>1</span>
+                <div class="bj-floor">
+                    <div id="chips" class="bj-chips">
+                        ${CHIPS.map(
+                            (chip) => `
+                        <button class="bj-chip" type="button" data-chip="${chip.value}" aria-label="Bet ${chip.value}">
+                            <img src="${chip.image}" alt="${chip.value} dollar chip">
                         </button>
-                        <button class="chip" data-value="5">
-                            <img src="/assets/Coins/5dollarcoin.png" alt="5" />
-                            <span>5</span>
-                        </button>
-                        <button class="chip" data-value="10">
-                            <img src="/assets/Coins/10dollarcoin.png" alt="10" />
-                            <span>10</span>
-                        </button>
-                        <button class="chip" data-value="25">
-                            <img src="/assets/Coins/25dollarcoin.png" alt="25" />
-                            <span>25</span>
-                        </button>
-                        <button class="chip" data-value="50">
-                            <img src="/assets/Coins/50dollarcoin.png" alt="50" />
-                            <span>50</span>
-                        </button>
-                        <button class="chip" data-value="100">
-                            <img src="/assets/Coins/100dollarcoin.png" alt="100" />
-                            <span>100</span>
-                        </button>
+                        `,
+                        ).join("")}
+                        <div class="chip-rail-controls">
+                            <p class="bet-display">
+                                <span class="bet-display-label">Bet:</span>
+                                <span id="bet-amount-display">0</span>
+                                <span class="bet-display-label">chips</span>
+                            </p>
+                            <button class="btn-clear-bet" id="clear-bet-btn">✕ Clear</button>
+                            <p class="roulette-bet-selected" id="bet-selected">No bet selected</p>
+                            <button class="btn roulette-spin-btn" id="spin-btn">SPIN</button>
+                        </div>
                     </div>
-                    <div class="bet-display">
-                        <span class="bet-display-label">Bet:</span>
-                        <span id="bet-amount-display">0</span>
-                        <span class="bet-display-label">chips</span>
-                        <button class="btn-clear-bet" id="clear-bet-btn">✕ Clear</button>
+
+                    <div class="table-img-wrap">
+                        <img src="/assets/roulette/rouletteTable.png" alt="Roulette table" />
+                        <button type="button" class="bet-zone zone-red"   data-bettype="RED"   aria-label="Bet Red"></button>
+                        <button type="button" class="bet-zone zone-black" data-bettype="BLACK" aria-label="Bet Black"></button>
+                        <button type="button" class="bet-zone zone-odd"   data-bettype="ODD"   aria-label="Bet Odd"></button>
+                        <button type="button" class="bet-zone zone-even"  data-bettype="EVEN"  aria-label="Bet Even"></button>
+                        <button type="button" class="bet-zone zone-low"   data-bettype="LOW"   aria-label="Bet 1 to 18"></button>
+                        <button type="button" class="bet-zone zone-high"  data-bettype="HIGH"  aria-label="Bet 19 to 36"></button>
                     </div>
                 </div>
 
-                <p class="roulette-bet-selected" id="bet-selected">No bet selected</p>
                 <p class="modal-error" id="roulette-error"></p>
-
-                <button class="btn roulette-spin-btn" id="spin-btn">SPIN</button>
             </div>
 
             <!-- VISTA 2: ROLETA (depois do spin) -->
@@ -123,9 +107,9 @@ function setupGame() {
         });
     });
 
-    document.querySelectorAll(".chip").forEach(chip => {
+    document.querySelectorAll(".bj-chip").forEach(chip => {
         chip.addEventListener("click", () => {
-            const value = parseInt(chip.dataset.value, 10);
+            const value = parseInt(chip.dataset.chip, 10);
             const player = state.getPlayer();
             if (currentBet + value > parseInt(player.balance, 10)) {
                 document.getElementById("roulette-error").textContent = "Not enough chips.";

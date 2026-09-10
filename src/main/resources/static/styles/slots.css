@@ -29,8 +29,6 @@
 }
 
 .slots-readout {
-    display: flex;
-    justify-content: space-between;
     margin-bottom: 22px;
     font-size: 0.85rem;
     color: var(--text-dim);

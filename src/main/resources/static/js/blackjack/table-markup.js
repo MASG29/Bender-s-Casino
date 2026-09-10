@@ -14,6 +14,15 @@ export function tableMarkup() {
             </button>
           `,
           ).join("")}
+          <form class="chip-rail-controls">
+            <p id="bet-amount" name="amount">
+            Bet amount: 0
+            </p>
+            <button type="button" class="btn-clear-bet" id="bj-clear-bet">✕ Clear</button>
+            <button type="submit">
+              <span class="button_top">Start</span>
+            </button>
+          </form>
         </div>
 
                 <div id="table" class="bj-table">
@@ -35,15 +44,6 @@ export function tableMarkup() {
                     </div>
 
           <p id="ending"></p>
-          <form>
-            <p id="bet-amount" name="amount">
-            Bet amount: 0
-            </p>
-            <button type="button" class="btn-clear-bet" id="bj-clear-bet">✕ Clear</button>
-            <button type="submit">
-              <span class="button_top">Start</span>
-            </button>
-          </form>
 
           <div id="player" class="bj-seat bj-player">
             <p class="bj-score" id="player-score">—</p>

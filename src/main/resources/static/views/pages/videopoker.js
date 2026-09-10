@@ -53,6 +53,7 @@ ${CHIPS.map(
               </button>
             `,
 ).join("")}
+            <div class="bet-panel chip-rail-controls"></div>
     </div>
     <div class="vp-table">
           <div id="game">
@@ -68,15 +69,17 @@ ${CHIPS.map(
                 </div>
                 <p class="vp-result"></p>
               </div>
-                <div class="lower-button-container">
-                    <div class="bet-panel">
-                      <p class="amount">Bet amount: 0</p>
-                      <button type="button" class="btn-clear-bet" id="vp-clear-bet">✕ Clear</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
+    `,
+  );
+
+  document.querySelector(".bet-panel").insertAdjacentHTML(
+    "beforeend",
+    `
+      <p class="amount">Bet amount: 0</p>
+      <button type="button" class="btn-clear-bet" id="vp-clear-bet">✕ Clear</button>
     `,
   );
 
@@ -102,7 +105,7 @@ ${CHIPS.map(
   });
 
   const buttonContainer = document.querySelector("#buttonContainer");
-  const lowerButContainer = document.querySelector(".lower-button-container");
+  const lowerButContainer = document.querySelector("#game");
   const betPanel = document.querySelector(".bet-panel");
   const amountEl = document.querySelector(".amount");
   const resultEl = document.querySelector(".vp-result");
