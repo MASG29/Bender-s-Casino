@@ -15,6 +15,11 @@ import { CHIPS } from "../../js/blackjack/chips.js";
 import { tableMarkup } from "../../js/blackjack/table-markup.js";
 import { initTutorial } from "../../js/tutorial.js";
 
+// "Play again" calls startRound() again without a full page reload, which
+// would otherwise stack a new resize listener (closing over that round's
+// now-detached hand elements) on top of the previous one every round.
+let activeResizeHandler = null;
+
 export async function startRound() {
   let amount = 0;
   let playerCards = 0;
@@ -138,7 +143,9 @@ export async function startRound() {
       move(cardEl, cardTargetOffset(handEl, Number(cardEl.dataset.cardIndex)), 0);
     });
   }
-  window.addEventListener("resize", repositionDealtCards);
+  if (activeResizeHandler) window.removeEventListener("resize", activeResizeHandler);
+  activeResizeHandler = repositionDealtCards;
+  window.addEventListener("resize", activeResizeHandler);
 
   function renderPlayerCards() {
     playerCardsContainer.innerHTML = "";
