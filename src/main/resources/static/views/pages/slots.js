@@ -107,11 +107,17 @@ export function init() {
                     </button>
                     `,
                     ).join("")}
+                    <div class="chip-rail-controls">
+                        <p>Bet <span id="slots-bet">0</span></p>
+                        <button type="button" class="btn-clear-bet" id="slots-clear-bet">✕ Clear</button>
+                        <button type="button" id="slots-spin">
+                            <span class="button_top">Spin</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="slots-machine">
                     <div class="slots-readout">
                         <p>Balance <span id="slots-balance">${player.balance ?? "—"}</span></p>
-                        <p>Bet <span id="slots-bet">0</span> <button type="button" class="btn-clear-bet" id="slots-clear-bet">✕ Clear</button></p>
                     </div>
                     <div class="slots-window" id="slots-window">
                         ${reelWindow(0)}
@@ -119,9 +125,6 @@ export function init() {
                         ${reelWindow(2)}
                     </div>
                     <p class="slots-result" id="slots-result">Pick a bet. Then spin.</p>
-                    <button type="button" id="slots-spin">
-                        <span class="button_top">Spin</span>
-                    </button>
                 </div>
             </div>
         </section>
